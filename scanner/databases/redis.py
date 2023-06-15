@@ -40,13 +40,6 @@ class RedisDocumentStore:
         self.distance_metric = distance_metric
         self.embedding_field = embedding_field
 
-    def _scale_to_unit_interval(self, score: float) -> float:
-        # cosine is the only supported distance metric
-        if self.distance_metric == 'cosine':
-            return (score + 1) / 2
-
-        return score
-
     def query_by_embedding(self, query_emb: list[float], top_k: int) -> list[str]:
         """Query documents by embedding."""
         score_field = 'vec_score'
@@ -60,5 +53,4 @@ class RedisDocumentStore:
         params: dict[str, float] = {vector_param: embedding}
         results = self.index.search(query, query_params=params)
 
-        embeddings = [doc.embeddings for doc in results.docs]
-        return embeddings
+        return results.docs
