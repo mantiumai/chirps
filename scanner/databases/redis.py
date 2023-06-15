@@ -39,6 +39,7 @@ class RedisDocumentStore:
         self.index = self.client.ft(self.index_name)    # type: ignore
         self.distance_metric = distance_metric
         self.embedding_field = embedding_field
+        self.top_k = 10
 
     def query_by_embedding(self, query_emb: list[float], top_k: int) -> list[str]:
         """Query documents by embedding."""
