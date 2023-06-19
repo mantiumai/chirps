@@ -1,0 +1,4 @@
+[pydocstyle]
+convention=numpy
+add-ignore=D100,D104,D106,D400,D403,D406,D407,D418
+add-select=D417

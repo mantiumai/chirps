@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#set -x  # Uncomment to see more output , useful for debugging in CI job
+set -o errexit
+cd "$(dirname "$0")/../"
+mypy mantium_scanner
