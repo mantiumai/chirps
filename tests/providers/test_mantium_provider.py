@@ -24,8 +24,14 @@ def test_search(mantium_provider):
 
     with patch(
         'mantium_scanner.providers.mantium.ApplicationsApi.query_application',
-        return_value={'documents': [{'content': '123-45-6789'}]},
+        return_value={
+            'documents': [
+                {'content': 'this looks like a social security number 123-45-6789'},
+                {'content': 'the dog jumped over the fence'},
+                {'content': 'maybe this 987-65-4321 will get caught'},
+            ]
+        },
     ):
         matches = mantium_provider.search(scan)
 
-        assert matches == ['123-45-6789']
+        assert set(matches) == {'123-45-6789', '987-65-4321'}
