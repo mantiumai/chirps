@@ -15,7 +15,7 @@ router = APIRouter(tags=['providers'], prefix='/providers')
 
 
 # Provider routes
-@router.post('/', response_model=Provider)
+@router.post('/', response_model=Provider, status_code=201)
 def create_provider(
     provider: ProviderCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ) -> Provider:
