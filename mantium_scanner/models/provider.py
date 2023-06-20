@@ -30,7 +30,8 @@ class EncryptedString(TypeDecorator):
         return value
 
 
-allowed_provider_types = ', '.join(f"'{ptype}'" for ptype in ProviderType)
+# allowed_provider_types = ', '.join(f"'{ptype}'" for ptype in ProviderType)
+allowed_provider_types = tuple(member.value for member in ProviderType)
 
 
 class Provider(Base):

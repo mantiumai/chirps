@@ -9,6 +9,7 @@ from ..models.user import User
 def create_provider(db: Session, provider: ProviderCreate, current_user: User) -> Provider:
     """Create a new provider."""
     db_provider = Provider(**provider.dict(), user_id=current_user.id)
+    db_provider.provider_type = db_provider.provider_type.value
     db.add(db_provider)
     db.commit()
     db.refresh(db_provider)
