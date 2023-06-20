@@ -1,6 +1,8 @@
+from typing import AsyncGenerator, Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine  # Make sure you have these imports
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 DATABASE_URL = 'sqlite:///./test.db'  # Revert DATABASE_URL to use "sqlite"
 sync_engine = create_engine(DATABASE_URL, echo=True)  # Create a synchronous engine
@@ -12,12 +14,14 @@ SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bi
 
 
 # Update the get_async_db function to use the async_engine
-async def get_async_db():
+async def get_async_db() -> AsyncGenerator[AsyncSession, None]:
+    """Get an async database session"""
     async with AsyncSession(async_engine, expire_on_commit=False) as session:  # Use async_engine here
         yield session
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
+    """Get a database session"""
     db = SessionLocal()
     try:
         yield db

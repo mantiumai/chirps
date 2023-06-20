@@ -21,6 +21,8 @@ passlib = "^1.7.4"
 python-jose = "^3.3.0"
 alembic = "^1.11.1"
 bcrypt = "^4.0.1"
+types-python-jose = "^3.3.4.7"
+types-passlib = "^1.7.7.12"
 
 
 [build-system]

@@ -2,7 +2,8 @@ import logging
 import sys
 
 
-def setup_logging():
+def setup_logging() -> None:
+    """Set up logging configuration"""
     root = logging.getLogger()
     root.setLevel(logging.INFO)
 

@@ -1,13 +1,13 @@
 import logging
 
 import uvicorn
-from error_handling import add_error_handlers
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from logging_config import setup_logging
 
 from mantium_scanner.api.routes.auth import auth_router
-from mantium_scanner.startup import create_tables
+from mantium_scanner.error_handling import add_error_handlers
+from mantium_scanner.logging_config import setup_logging
+from mantium_scanner.startup import startup_event
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -15,8 +15,7 @@ logger = logging.getLogger(__name__)
 setup_logging()
 
 
-# app = FastAPI(on_startup=[startup_event])
-app = FastAPI()
+app = FastAPI(on_startup=[startup_event])
 
 
 app.add_middleware(
@@ -33,7 +32,8 @@ add_error_handlers(app)
 
 
 @app.get('/ping')
-def pong():
+def pong() -> dict[str, str]:
+    """Health check endpoint"""
     return {'ping': 'pong!'}
 
 

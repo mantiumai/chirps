@@ -1,9 +1,11 @@
-from models.base import Base
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+
+from mantium_scanner.models.base import Base
 
 
 class User(Base):
+    """User model"""
+
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
