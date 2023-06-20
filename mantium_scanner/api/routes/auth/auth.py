@@ -4,14 +4,14 @@ from sqlalchemy.orm import Session
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.models.user import User
 
-from .schemas import LoginForm, NewUserCreate, Token, UserOut
+from .schemas import NewUserCreateRequest, NewUserCreateResponse, UserLoginRequest, UserLoginResponse
 from .services import get_password_hash, verify_password
 from .token import create_access_token
 
 router = APIRouter(tags=['auth'], prefix='/auth')
 
 
-def get_current_user(form_data: LoginForm, db: Session = Depends(get_db)) -> User:
+def get_current_user(form_data: UserLoginRequest, db: Session = Depends(get_db)) -> User:
     """Get the current user"""
     user = db.query(User).first()
     if not user:
@@ -26,8 +26,8 @@ def get_current_user(form_data: LoginForm, db: Session = Depends(get_db)) -> Use
     return user
 
 
-@router.post('/register', response_model=UserOut)
-async def register(user: NewUserCreate, db: Session = Depends(get_db)) -> dict:
+@router.post('/register', response_model=NewUserCreateResponse)
+async def register(user: NewUserCreateRequest, db: Session = Depends(get_db)) -> dict:
     """Register a new user"""
     existing_user = db.query(User).filter(User.username == user.username).first()
     if existing_user:
@@ -44,7 +44,7 @@ async def register(user: NewUserCreate, db: Session = Depends(get_db)) -> dict:
     }
 
 
-@router.post('/login', response_model=Token)
+@router.post('/login', response_model=UserLoginResponse)
 async def login(user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> dict[str, str]:
     """Login to the application"""
     access_token = create_access_token(data={'sub': user.username})

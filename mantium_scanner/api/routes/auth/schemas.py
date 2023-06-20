@@ -2,37 +2,36 @@ from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
+    """Base User Schema."""
+
     username: str
 
 
-class UserCreate(UserBase):
-    id: int
-    password: str
-    hashed_password: str
+class NewUserCreateRequest(BaseModel):
+    """User create request schema."""
 
-
-class NewUserCreate(BaseModel):
     password: str
     username: str
 
 
-class User(UserCreate):
-    class Config:
-        orm_mode = True
+class NewUserCreateResponse(UserBase):
+    """User create response schema."""
 
-
-class UserOut(UserBase):
     id: int
 
     class Config:
         orm_mode = True
 
 
-class Token(BaseModel):
+class UserLoginRequest(BaseModel):
+    """User login request schema."""
+
+    username: str
+    password: str
+
+
+class UserLoginResponse(BaseModel):
+    """User login response schema."""
+
     access_token: str
     token_type: str
-
-
-class LoginForm(BaseModel):
-    username: str
-    password: str
