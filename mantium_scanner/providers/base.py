@@ -5,7 +5,7 @@ from abc import ABC
 class BaseProvider(ABC):
     """Base provider class."""
 
-    def search(self, scan: dict, top_k: int) -> list[str]:
+    def search(self, scan: dict) -> list[str]:
         """Query documents by embedding."""
         raise NotImplementedError
 
