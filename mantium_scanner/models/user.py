@@ -13,4 +13,3 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     providers = relationship('Provider', back_populates='user')
-    # profiles = relationship("ScanProfile", back_populates="user")

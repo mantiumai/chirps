@@ -88,12 +88,7 @@ def upgrade() -> None:
         'scan_profiles',
         sa.Column('id', sa.INTEGER(), nullable=False),
         sa.Column('name', sa.VARCHAR(), nullable=True),
-        sa.Column('created_at', sa.DATETIME(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
-        sa.Column('user_id', sa.INTEGER(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ['user_id'],
-            ['users.id'],
-        ),
+        sa.Column('scans', sa.JSON(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index('ix_scan_profiles_id', 'scan_profiles', ['id'], unique=False)
