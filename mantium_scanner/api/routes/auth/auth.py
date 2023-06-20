@@ -20,9 +20,7 @@ def get_current_user(form_data: UserLoginRequest, db: Session = Depends(get_db))
 
     is_user_authenticated = verify_password(form_data.password, user.hashed_password)  # type: ignore
     if not is_user_authenticated:
-        raise HTTPException(
-            status_code=401, detail='Incorrect username or password', headers={'WWW-Authenticate': 'Bearer'}
-        )
+        raise HTTPException(status_code=401, detail='Incorrect username or password')
 
     return user
 

@@ -1,16 +1,15 @@
 import os
 import tempfile
-from typing import Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from main import app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from alembic import command
 from alembic.config import Config
 from mantium_scanner.db_utils import get_db
+from mantium_scanner.main import app
 
 
 @pytest.fixture(autouse=True)
@@ -32,7 +31,7 @@ def no_http_requests(monkeypatch, request):
 
 @pytest.fixture(autouse=True, scope='session')
 def database():
-    """Establish database connection and run migrations."""
+    """Establish database connection, run migrations, and provide a session."""
     # Create a temporary SQLite database file
     fd, path = tempfile.mkstemp()
 
@@ -47,10 +46,18 @@ def database():
     # Create an SQLAlchemy engine from the SQLite file
     engine = create_engine(f'sqlite:///{path}')
 
-    # Yield the database engine for use in the test
-    yield engine
+    # Create a session from the engine
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    session = SessionLocal()
 
-    # Close and remove the temporary SQLite database file
+    # Override the get_db dependency with the test session
+    app.dependency_overrides[get_db] = lambda: session
+
+    # Yield the test session for use in the test
+    yield session
+
+    # Close the test session and remove the temporary SQLite database file
+    session.close()
     os.close(fd)
     os.unlink(path)
 
@@ -58,14 +65,4 @@ def database():
 @pytest.fixture
 def http_client(database: Session):
     """Create http client for testing"""
-
-    def _get_db_override() -> Generator[Session, None, None]:
-        """Get a database session"""
-        session = sessionmaker(autocommit=False, autoflush=False, bind=database)()
-        try:
-            yield session
-        finally:
-            session.close()
-
-    app.dependency_overrides[get_db] = _get_db_override
     return TestClient(app, base_url='https://testserver')
