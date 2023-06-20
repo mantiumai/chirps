@@ -7,7 +7,7 @@ from mantium_scanner.providers.base import BaseProvider
 
 @pytest.fixture(params=['employee.json'])
 def scans(request):
-    with open(f'app/profiles/{request.param}') as f:
+    with open(f'mantium_scanner/profiles/{request.param}') as f:
         profile = json.load(f)
 
         scans = profile['scans']
