@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from mantium_scanner.api.routes.auth import auth_router
+from mantium_scanner.api.routes.providers import providers_router
 from mantium_scanner.error_handling import add_error_handlers
 from mantium_scanner.logging_config import setup_logging
 from mantium_scanner.startup import startup_event
@@ -27,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, prefix='', tags=['auth'])
+app.include_router(providers_router, prefix='', tags=['providers'])
 
 add_error_handlers(app)
 

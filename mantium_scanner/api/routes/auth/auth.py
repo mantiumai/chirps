@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from starlette import status
 
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.models.user import User
@@ -12,7 +11,7 @@ from .token import create_access_token
 router = APIRouter(tags=['auth'], prefix='/auth')
 
 
-def get_current_user(form_data: UserLoginRequest, db: Session = Depends(get_db)) -> User:
+def login_user(form_data: UserLoginRequest, db: Session = Depends(get_db)) -> User:
     """Get the current user"""
     user = db.query(User).first()
     if not user:
@@ -39,7 +38,7 @@ async def register(user: NewUserCreateRequest, db: Session = Depends(get_db)) ->
 
 
 @router.post('/login', response_model=UserLoginResponse)
-async def login(user: User = Depends(get_current_user)) -> dict[str, str]:
+async def login(user: User = Depends(login_user)) -> dict[str, str]:
     """Login to the application"""
     access_token = create_access_token(data={'sub': user.username})
 
