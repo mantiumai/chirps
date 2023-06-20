@@ -1,13 +1,24 @@
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+
+class ProviderType(str, Enum):
+    """Provider types enum."""
+
+    MANTIUM = 'mantium'
+    REDIS = 'redis'
+    PINECONE = 'pinecone'
+
+    ALL = [MANTIUM, REDIS, PINECONE]
 
 
 class BaseProvider(BaseModel):
     """Base Provider Schema."""
 
     name: str
-    provider_type: str
+    provider_type: ProviderType
 
 
 class ProviderCreate(BaseProvider):

@@ -15,7 +15,7 @@ from mantium_scanner.main import app
 from mantium_scanner.models.user import User
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def create_user(database: Session):
     """Create a new user in the database"""
 
@@ -36,7 +36,7 @@ def create_user(database: Session):
     return _create
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def registered_user(create_user, database: Session):
     """Create a new user in the database"""
     user = create_user()
@@ -62,7 +62,7 @@ def no_http_requests(monkeypatch, request):
         yield
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True)
 def database():
     """Establish database connection, run migrations, and provide a session."""
     # Create a temporary SQLite database file

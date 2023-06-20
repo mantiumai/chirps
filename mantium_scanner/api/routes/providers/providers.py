@@ -42,7 +42,7 @@ def read_provider(
     return db_provider
 
 
-@router.put('/{provider_id}', response_model=Provider)
+@router.patch('/{provider_id}', response_model=Provider)
 def update_provider(
     provider_id: int,
     provider: ProviderCreate,

@@ -30,6 +30,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index('ix_scan_results_id', 'scan_results', ['id'], unique=False)
+
     op.create_table(
         'providers',
         sa.Column('id', sa.INTEGER(), nullable=False),
@@ -48,6 +49,25 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index('ix_providers_id', 'providers', ['id'], unique=False)
+
+    op.create_table(
+        'configurations',
+        sa.Column('id', sa.INTEGER(), nullable=False),
+        sa.Column('name', sa.VARCHAR(), nullable=True),
+        sa.Column('app_id', sa.VARCHAR(), nullable=True),
+        sa.Column('bearer_token', sa.VARCHAR(), nullable=True),
+        sa.Column('environment', sa.VARCHAR(), nullable=True),
+        sa.Column('api_token', sa.VARCHAR(), nullable=True),
+        sa.Column('index_name', sa.VARCHAR(), nullable=True),
+        sa.Column('provider_id', sa.INTEGER(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ['provider_id'],
+            ['providers.id'],
+        ),
+        sa.PrimaryKeyConstraint('id'),
+    )
+    op.create_index('ix_configurations_id', 'configurations', ['id'], unique=False)
+
     op.create_table(
         'scans',
         sa.Column('id', sa.INTEGER(), nullable=False),
@@ -63,6 +83,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index('ix_scans_id', 'scans', ['id'], unique=False)
+
     op.create_table(
         'scan_profiles',
         sa.Column('id', sa.INTEGER(), nullable=False),
