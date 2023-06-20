@@ -14,6 +14,13 @@ types-redis = "^4.5.5.2"
 numpy = "^1.24.3"
 openai = "^0.27.8"
 mantium-client = "^0.1.4"
+uvicorn = "^0.22.0"
+sqlalchemy = "^2.0.16"
+aiosqlite = "^0.19.0"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+alembic = "^1.11.1"
+bcrypt = "^4.0.1"
 
 
 [build-system]
