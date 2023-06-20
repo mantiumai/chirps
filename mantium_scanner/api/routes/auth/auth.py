@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from starlette import status
 
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.models.user import User
@@ -19,14 +20,12 @@ def get_current_user(form_data: UserLoginRequest, db: Session = Depends(get_db))
 
     is_user_authenticated = verify_password(form_data.password, user.hashed_password)  # type: ignore
     if not is_user_authenticated:
-        raise HTTPException(
-            status_code=401, detail='Incorrect username or password', headers={'WWW-Authenticate': 'Bearer'}
-        )
+        raise HTTPException(status_code=401, detail='Incorrect username or password')
 
     return user
 
 
-@router.post('/register', response_model=NewUserCreateResponse)
+@router.post('/register', response_model=NewUserCreateResponse, status_code=status.HTTP_201_CREATED)
 async def register(user: NewUserCreateRequest, db: Session = Depends(get_db)) -> dict:
     """Register a new user"""
     existing_user = db.query(User).filter(User.username == user.username).first()
