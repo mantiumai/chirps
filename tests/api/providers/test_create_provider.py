@@ -18,9 +18,6 @@ def test_create_provider_with_invalid_provider_type(http_client, database):
 
     details = response.json()['detail'][0]
     assert details['loc'] == ['body', 'provider_type']
-    assert details['msg'] == (
-        "value is not a valid enumeration member; permitted: 'mantium', 'redis', 'pinecone', "
-        "\"['mantium', 'redis', 'pinecone']\""
-    )
+    assert details['msg'] == "value is not a valid enumeration member; permitted: 'mantium', 'redis', 'pinecone'"
     assert details['type'] == 'type_error.enum'
-    assert details['ctx']['enum_values'] == ['mantium', 'redis', 'pinecone', "['mantium', 'redis', 'pinecone']"]
+    assert details['ctx']['enum_values'] == ['mantium', 'redis', 'pinecone']

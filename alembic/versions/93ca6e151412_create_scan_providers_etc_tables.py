@@ -9,6 +9,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
+from mantium_scanner.api.routes.providers.schemas import ProviderType
+
 revision = '93ca6e151412'
 down_revision = '6b6393c8233a'
 branch_labels = None
@@ -31,22 +33,21 @@ def upgrade() -> None:
     )
     op.create_index('ix_scan_results_id', 'scan_results', ['id'], unique=False)
 
+    # Generate the list of allowed values from the ProviderType enum
+    allowed_provider_types = ', '.join(f"'{ptype}'" for ptype in ProviderType)
+
     op.create_table(
         'providers',
         sa.Column('id', sa.INTEGER(), nullable=False),
         sa.Column('name', sa.VARCHAR(), nullable=True),
         sa.Column('user_id', sa.INTEGER(), nullable=True),
         sa.Column('provider_type', sa.VARCHAR(), nullable=True),
-        sa.Column('app_id', sa.VARCHAR(), nullable=True),
-        sa.Column('bearer_token', sa.VARCHAR(), nullable=True),
-        sa.Column('environment', sa.VARCHAR(), nullable=True),
-        sa.Column('api_token', sa.VARCHAR(), nullable=True),
-        sa.Column('index_name', sa.VARCHAR(), nullable=True),
         sa.ForeignKeyConstraint(
             ['user_id'],
             ['users.id'],
         ),
         sa.PrimaryKeyConstraint('id'),
+        sa.CheckConstraint(f'provider_type IN ({allowed_provider_types})', name='provider_type_check'),
     )
     op.create_index('ix_providers_id', 'providers', ['id'], unique=False)
 
@@ -54,12 +55,8 @@ def upgrade() -> None:
         'configurations',
         sa.Column('id', sa.INTEGER(), nullable=False),
         sa.Column('name', sa.VARCHAR(), nullable=True),
-        sa.Column('app_id', sa.VARCHAR(), nullable=True),
-        sa.Column('bearer_token', sa.VARCHAR(), nullable=True),
-        sa.Column('environment', sa.VARCHAR(), nullable=True),
-        sa.Column('api_token', sa.VARCHAR(), nullable=True),
-        sa.Column('index_name', sa.VARCHAR(), nullable=True),
         sa.Column('provider_id', sa.INTEGER(), nullable=True),
+        sa.Column('config', sa.JSON(), nullable=True),
         sa.ForeignKeyConstraint(
             ['provider_id'],
             ['providers.id'],

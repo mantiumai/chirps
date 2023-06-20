@@ -1,10 +1,11 @@
 from typing import Any
 
 from cryptography.fernet import Fernet
-from sqlalchemy import Column, Dialect, ForeignKey, Integer, String
+from sqlalchemy import JSON, CheckConstraint, Column, Dialect, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import TypeDecorator
 
+from mantium_scanner.api.routes.providers.schemas import ProviderType
 from mantium_scanner.models.base import Base
 
 ENCRYPTION_KEY = Fernet.generate_key()
@@ -29,6 +30,9 @@ class EncryptedString(TypeDecorator):
         return value
 
 
+allowed_provider_types = ', '.join(f"'{ptype}'" for ptype in ProviderType)
+
+
 class Provider(Base):
     """Provider model"""
 
@@ -36,7 +40,7 @@ class Provider(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    provider_type = Column(String)
+    provider_type = Column(String, CheckConstraint(f'provider_type IN ({allowed_provider_types})'))
     user_id = Column(Integer, ForeignKey('users.id'))
 
     user = relationship('User', back_populates='providers')
@@ -50,11 +54,7 @@ class Configuration(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    app_id = Column(String)
-    bearer_token: Column = Column(EncryptedString())
-    environment = Column(String)
-    api_token: Column = Column(EncryptedString())
-    index_name = Column(String)
     provider_id = Column(Integer, ForeignKey('providers.id'))
+    config = Column(JSON)
 
     provider = relationship('Provider', back_populates='configurations')

@@ -11,8 +11,6 @@ class ProviderType(str, Enum):
     REDIS = 'redis'
     PINECONE = 'pinecone'
 
-    ALL = [MANTIUM, REDIS, PINECONE]
-
 
 class BaseProvider(BaseModel):
     """Base Provider Schema."""
