@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
-from mantium_scanner.api.dependencies import get_current_user
+from mantium_scanner.api.routes.auth.dependencies import get_current_user
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.models.provider import Provider
 from mantium_scanner.models.user import User

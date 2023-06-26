@@ -3,12 +3,11 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from mantium_scanner.api import dependencies as deps
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.models.provider import Provider
 from mantium_scanner.models.user import User
 
-from ...dependencies import get_current_user
+from ..auth.dependencies import get_current_user
 from .dependencies import get_provider
 from .schemas import ProviderCreateRequest, ProviderCreateResponse, ProviderResponse, ProviderUpdateRequest
 
@@ -30,7 +29,7 @@ def create_provider(
 
 @router.get('/', response_model=List[ProviderResponse])
 def read_providers(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ) -> list:
     """Get all providers"""
     return db.query(Provider).filter(Provider.user_id == current_user.id).offset(skip).limit(limit).all()

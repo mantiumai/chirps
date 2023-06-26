@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from alembic import command
 from alembic.config import Config
-from mantium_scanner.api.dependencies import get_current_user
+from mantium_scanner.api.routes.auth.dependencies import get_current_user
 from mantium_scanner.api.routes.auth.services import get_password_hash
 from mantium_scanner.db_utils import get_db
 from mantium_scanner.main import app
