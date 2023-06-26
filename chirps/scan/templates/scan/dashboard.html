@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Scans{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Scans</h1>
+<a class="btn btn-primary" href="{% url 'scan_create' %}">New Scan</a>
+<hr>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">Finish Time</th>
+        <th scope="col">Description</th>
+        <th scope="col">Target</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for scan in scans %}
+        <tr>
+            <td>{{ scan.id }}</td>
+            <td>{{ scan.started_at }}</td>
+            <td>{{ scan.finished_at }}</td>
+            <td>{{ scan.description }}</td>
+            <td>{{ scan.target }}</td>
+            <td>{{ scan.celery_task_status }} {% if scan.celery_task_status == 'FAILURE' %}<br/>{{scan.celery_task_output}} {% endif %}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,6 @@
+django
+celery==5.3.1
+django-celery-results==2.5.1
+django-polymorphic==3.1.0
+redis==4.5.5
+requests==2.31.0
