@@ -12,26 +12,29 @@ class ProviderType(str, Enum):
     PINECONE = 'pinecone'
 
 
-class BaseProvider(BaseModel):
-    """Base Provider Schema."""
+class ProviderBase(BaseModel):
+    """Base ProviderResponse Schema."""
 
     name: str
     provider_type: ProviderType
 
 
-class ProviderCreate(BaseProvider):
-    """Provider create request schema."""
-
-
-class Provider(BaseProvider):
+class ProviderResponse(ProviderBase):
     """Provider response schema."""
 
     id: int
-    name: str
     user_id: int
 
     class Config:
         orm_mode = True
+
+
+class ProviderCreateRequest(ProviderBase):
+    """Provider create request schema."""
+
+
+class ProviderCreateResponse(ProviderResponse):
+    """Provider response schema."""
 
 
 class ConfigurationBase(BaseModel):

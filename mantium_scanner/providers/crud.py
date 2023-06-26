@@ -1,49 +1,20 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 # Provider CRUD operations
-from ..api.routes.providers.schemas import ProviderCreate
 from ..models.provider import Provider
 from ..models.user import User
 
-
-def create_provider(db: Session, provider: ProviderCreate, current_user: User) -> Provider:
-    """Create a new provider."""
-    db_provider = Provider(**provider.dict(), user_id=current_user.id)
-    db_provider.provider_type = db_provider.provider_type.value
-    db.add(db_provider)
-    db.commit()
-    db.refresh(db_provider)
-    return db_provider
-
-
-def get_provider(db: Session, provider_id: int, current_user: User) -> Provider | None:
-    """Get a provider by ID."""
-    return (
-        db.query(Provider)
-        .options(joinedload(Provider.configurations))
-        .filter(Provider.id == provider_id, Provider.user_id == current_user.id)
-        .first()
-    )
-
-
-def get_providers(db: Session, current_user: User, skip: int = 0, limit: int = 100) -> list[Provider]:
-    """Get all providers."""
-    if not current_user:
-        return []
-    return db.query(Provider).filter(Provider.user_id == current_user.id).offset(skip).limit(limit).all()
-
-
-def update_provider(db: Session, provider_id: int, provider: ProviderCreate, current_user: User) -> Provider | None:
-    """Update a provider by ID."""
-    if not current_user:
-        return None
-    db_provider = db.query(Provider).filter(Provider.id == provider_id, Provider.user_id == current_user.id).first()
-    if db_provider:
-        for key, value in provider.dict().items():
-            setattr(db_provider, key, value)
-        db.commit()
-        db.refresh(db_provider)
-    return db_provider
+# def update_provider(db: Session, provider_id: int, provider: ProviderCreate, current_user: User) -> Provider | None:
+#     """Update a provider by ID."""
+#     if not current_user:
+#         return None
+#     db_provider = db.query(Provider).filter(Provider.id == provider_id, Provider.user_id == current_user.id).first()
+#     if db_provider:
+#         for key, value in provider.dict().items():
+#             setattr(db_provider, key, value)
+#         db.commit()
+#         db.refresh(db_provider)
+#     return db_provider
 
 
 def delete_provider(db: Session, provider_id: int, current_user: User) -> Provider | None:
