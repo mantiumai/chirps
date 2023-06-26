@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}New Target{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1">New Target</h1>
+<hr>
+
+<div class="form-group">
+    <h2 class="display-4">{{ target.model.html_name }}</h2>
+    <form method="POST" action="{% url 'target_create' target.model.html_name %}">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-success" type="submit">Create</button>
+        <a class="btn btn-danger" type="button" href="{% url 'target_dashboard' %}">Cancel</a>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Plans{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1"><i class="fa-solid fa-map"></i> Plans</h1>
+<!-- <a class="btn btn-primary" href="{% url 'plan_create' %}">New Plan</a> -->
+<hr>
+
+<div class="accordion" id="plan_templates">
+    {% for template in templates %}
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            {{template.name}}
+        </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            {{template.description}}
+
+            <h5 class="display-5">Rules</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Query</th>
+                        <th scope="col">Test</th>
+                        <th scope="col">Severity</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for rule in template.rules.all %}
+                <tr>
+                    <td>{{rule.name}}</td>
+                    <td>{{rule.description}}</td>
+                    <td>{{rule.query_string}}</td>
+                    <td>{{rule.regex_test}}</td>
+                    <td>{{rule.severity}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

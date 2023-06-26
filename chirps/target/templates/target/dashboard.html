@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Targets{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1"><i class="fa-solid fa-bullseye"></i> Targets</h1>
+
+<div>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"></a>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-success">Create</button>
+                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><h6 class="dropdown-header">Target</h6></li>
+                    <li><hr class="dropdown-divider"></li>
+                    {% for target in available_targets %}
+                        <li><a class="dropdown-item" href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</div>
+
+
+<hr>
+
+{% for target in user_targets %}
+
+    <div class="card">
+        <h5 class="card-header">{{ target.html_name }}</h5>
+        <div class="card-body">
+        <p class="card-text">
+
+            {% if target.html_name == 'Mantium' %}
+                Application ID: {{ target.app_id }}
+            {% elif target.html_name == 'Redis' %}
+                Host: {{ target.host }}<br/>
+                Port: {{ target.port }}<br/>
+                Database Name: {{ target.database_name }}<br/>
+                Username: {{ target.username }}
+            {% endif %}
+        </p>
+        <a href="#" class="btn btn-primary disabled">edit</a>
+        <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>
+    </div>
+
+
+
+{% endfor %}
+
+{% endblock %}
