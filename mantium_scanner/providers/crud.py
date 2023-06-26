@@ -1,33 +1,3 @@
-from sqlalchemy.orm import Session
-
-# Provider CRUD operations
-from ..models.provider import Provider
-from ..models.user import User
-
-# def update_provider(db: Session, provider_id: int, provider: ProviderCreate, current_user: User) -> Provider | None:
-#     """Update a provider by ID."""
-#     if not current_user:
-#         return None
-#     db_provider = db.query(Provider).filter(Provider.id == provider_id, Provider.user_id == current_user.id).first()
-#     if db_provider:
-#         for key, value in provider.dict().items():
-#             setattr(db_provider, key, value)
-#         db.commit()
-#         db.refresh(db_provider)
-#     return db_provider
-
-
-def delete_provider(db: Session, provider_id: int, current_user: User) -> Provider | None:
-    """Delete a provider by ID."""
-    if not current_user:
-        return None
-    db_provider = db.query(Provider).filter(Provider.id == provider_id, Provider.user_id == current_user.id).first()
-    if db_provider:
-        db.delete(db_provider)
-        db.commit()
-    return db_provider
-
-
 # Configuration CRUD operations
 # def create_configuration(
 # db: Session, provider_id: int, configuration: schemas.ConfigurationCreate, current_user: User

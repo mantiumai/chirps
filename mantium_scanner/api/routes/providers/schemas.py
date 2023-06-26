@@ -37,6 +37,13 @@ class ProviderCreateResponse(ProviderResponse):
     """Provider response schema."""
 
 
+class ProviderUpdateRequest(BaseModel):
+    """Provider update request schema."""
+
+    name: str | None
+    provider_type: ProviderType | None
+
+
 class ConfigurationBase(BaseModel):
     """Base Configuration Schema."""
 

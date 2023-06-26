@@ -10,12 +10,7 @@ def test_delete_provider(http_client, registered_user, create_user, database):
 
     # Delete provider by ID
     response = http_client.delete(f'/providers/{provider.id}')
-    assert response.status_code == 200
-
-    # Check if the provider is deleted
-    deleted_provider = response.json()
-    assert deleted_provider['name'] == 'Provider 1'
-    assert deleted_provider['provider_type'] == ProviderType.MANTIUM.value
+    assert response.status_code == 204
 
     # Check if the provider is removed from the database
     saved_provider = database.query(Provider).filter(Provider.id == provider.id).first()

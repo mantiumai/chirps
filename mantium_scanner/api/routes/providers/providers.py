@@ -1,7 +1,7 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from mantium_scanner.api import dependencies as deps
 from mantium_scanner.db_utils import get_db
@@ -9,7 +9,8 @@ from mantium_scanner.models.provider import Provider
 from mantium_scanner.models.user import User
 
 from ...dependencies import get_current_user
-from .schemas import ProviderCreateRequest, ProviderCreateResponse, ProviderResponse
+from .dependencies import get_provider
+from .schemas import ProviderCreateRequest, ProviderCreateResponse, ProviderResponse, ProviderUpdateRequest
 
 router = APIRouter(tags=['providers'], prefix='/providers')
 
@@ -36,47 +37,31 @@ def read_providers(
 
 
 @router.get('/{provider_id}', response_model=ProviderResponse)
-def read_provider(
-    provider_id: int, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)
-) -> Provider:
+def read_provider(provider: Provider = Depends(get_provider)) -> Provider:
     """Get a provider by ID"""
-    db_provider = (
-        db.query(Provider)
-        .options(joinedload(Provider.configurations))
-        .filter(Provider.id == provider_id, Provider.user_id == current_user.id)
-        .first()
-    )
-
-    if db_provider is None:
-        raise HTTPException(status_code=404, detail='Provider not found')
-    return db_provider
+    return provider
 
 
-#
-#
-# @router.patch('/{provider_id}', response_model=Provider)
-# def update_provider(
-#     provider_id: int,
-#     provider: ProviderCreateRequest,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(deps.get_current_user),
-# ) -> Provider:
-#     """Update a provider by ID"""
-#     db_provider = crud.update_provider(db, provider_id=provider_id, provider=provider, current_user=current_user)
-#     if db_provider is None:
-#         raise HTTPException(status_code=404, detail='Provider not found')
-#     return db_provider
-#
-#
-# @router.delete('/{provider_id}', response_model=Provider)
-# def delete_provider(
-#     provider_id: int, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)
-# ) -> Provider:
-#     """Delete a provider by ID"""
-#     db_provider = crud.delete_provider(db, provider_id=provider_id, current_user=current_user)
-#     if db_provider is None:
-#         raise HTTPException(status_code=404, detail='Provider not found')
-#     return db_provider
+@router.patch('/{provider_id}', response_model=ProviderResponse)
+def update_provider(
+    data: ProviderUpdateRequest,
+    db: Session = Depends(get_db),
+    provider: Provider = Depends(get_provider),
+) -> Provider:
+    """Update a provider by ID"""
+    for key, value in data.dict().items():
+        setattr(provider, key, value)
+    db.commit()
+    db.refresh(provider)
+
+    return provider
+
+
+@router.delete('/{provider_id}', status_code=204)
+def delete_provider(db: Session = Depends(get_db), provider: Provider = Depends(get_provider)) -> None:
+    """Delete a provider by ID"""
+    db.delete(provider)
+    db.commit()
 
 
 # Configuration routes
