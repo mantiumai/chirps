@@ -15,7 +15,7 @@
         "name": "SSN",
         "description": "Detect a social security number",
         "query_string": "What's my social security number?",
-        "regex_test": "^(?!000|.+0{4})(?:\\d{9}|\\d{3}-\\d{2}-\\d{4})$",
+        "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
         "severity": 5,
         "plan": 100
       }

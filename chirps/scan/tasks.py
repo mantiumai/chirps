@@ -1,3 +1,4 @@
+import re
 from celery import shared_task
 from django.utils import timezone
 from target.models import BaseTarget
@@ -32,6 +33,14 @@ def scan_task(scan_id):
     for rule in scan.plan.rules.all():
         print(f'Running rule {rule}')
         results = target.search(query=rule.query_string, max_results=100)
+
+        print(results)
+
+        matches = []
+        for text in results:
+            matches.extend(re.findall(rule.regex_test, text))
+
+        print(matches)
 
         # Perform the regex against the results
         # TODO: Convert the query to an embedding if required by the target.

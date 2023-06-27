@@ -1,5 +1,4 @@
 """Models for the target appliation."""
-import requests
 from django.contrib import admin
 from django.db import models
 from mantium_client.api_client import MantiumClient
@@ -73,13 +72,18 @@ class MantiumTarget(BaseTarget):
     html_description = 'Mantium Knowledge Vault'
 
     def search(self, query: str, max_results: int) -> list[str]:
+        print('searching')
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 
-        result = apps_api.query_application(self.app_id, query)
-        result.raise_for_status()
-        print(result.json())
-        return result.json()
+        print('instantiated apps_api')
+        print('query', query)
+        query_request = {'query': query}
+        results = apps_api.query_application(self.app_id, query_request)
+        
+        documents = [doc['content'] for doc in results['documents']]
+        print(documents)
+        return documents
 
 
 targets = [RedisTarget, MantiumTarget]
