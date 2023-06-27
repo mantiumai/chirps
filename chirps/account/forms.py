@@ -15,3 +15,13 @@ class ProfileForm(ModelForm):
         fields = ['openai_key']
 
         widgets = {'openai_key': forms.PasswordInput(attrs={'class': 'form-control'})}
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=256)
+    password = forms.CharField(max_length=256, widget=forms.PasswordInput)
+
+class SignupForm(forms.Form):
+    username = forms.CharField(max_length=256)
+    email = forms.EmailField(max_length=256)
+    password1 = forms.CharField(max_length=256, widget=forms.PasswordInput)
+    password2 = forms.CharField(max_length=256, widget=forms.PasswordInput)
