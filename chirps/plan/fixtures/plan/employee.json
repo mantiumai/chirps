@@ -10,7 +10,7 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 101,
+      "pk": 100,
       "fields": {
         "name": "SSN",
         "description": "Detect a social security number",
@@ -22,7 +22,7 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 102,
+      "pk": 101,
       "fields": {
         "name": "Address",
         "description": "Detect a mailing address",
@@ -34,7 +34,7 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 103,
+      "pk": 102,
       "fields": {
         "name": "Bank Account",
         "description": "Detect a bank account number",
@@ -46,7 +46,7 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 104,
+      "pk": 103,
       "fields": {
         "name": "Credit Card",
         "description": "Detect a credit card number",
