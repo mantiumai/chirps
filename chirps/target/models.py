@@ -72,17 +72,13 @@ class MantiumTarget(BaseTarget):
     html_description = 'Mantium Knowledge Vault'
 
     def search(self, query: str, max_results: int) -> list[str]:
-        print('searching')
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 
-        print('instantiated apps_api')
-        print('query', query)
         query_request = {'query': query}
         results = apps_api.query_application(self.app_id, query_request)
         
         documents = [doc['content'] for doc in results['documents']]
-        print(documents)
         return documents
 
 

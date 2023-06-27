@@ -3,7 +3,7 @@ from celery import shared_task
 from django.utils import timezone
 from target.models import BaseTarget
 
-from .models import Scan
+from .models import Result, Rule, Scan
 
 
 @shared_task
@@ -31,16 +31,18 @@ def scan_task(scan_id):
 
     # Now that we have the derrived class, call its implementation of search()
     for rule in scan.plan.rules.all():
+        scan_result_details = {}
         print(f'Running rule {rule}')
         results = target.search(query=rule.query_string, max_results=100)
 
         print(results)
 
-        matches = []
+        matches = 0
         for text in results:
-            matches.extend(re.findall(rule.regex_test, text))
+            matches += len(re.findall(rule.regex_test, text))
 
         print(matches)
+        scan_result_details[rule.name] = dict(matches=matches)
 
         # Perform the regex against the results
         # TODO: Convert the query to an embedding if required by the target.
@@ -48,6 +50,11 @@ def scan_task(scan_id):
     # result = target.search(query=search_prompt, max_results=100)
     # print(result)
 
+        result = Result(count=matches, result=True, rule=rule)
+        result.save()
+
+        scan.results.add(result)
+    
     # Persist the completion time of the scan
     scan.finished_at = timezone.now()
     scan.save()

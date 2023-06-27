@@ -33,4 +33,10 @@ def create(request):
 @login_required
 def dashboard(request):
     # TODO: Add pagination
-    return render(request, 'scan/dashboard.html', {'scans': Scan.objects.all()})
+    scans = Scan.objects.all()  
+    scan_results = {}  
+    for scan in scans:  
+        scan_results[scan.id] = scan.results.all()
+
+    context = {'scans': scans, 'scan_results': scan_results}
+    return render(request, 'scan/dashboard.html', context)
