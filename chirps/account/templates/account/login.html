@@ -1,38 +1,72 @@
-{% extends "base.html" %}
+{% load static %}
 
-{% block content %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+        <title>chirps login</title>
+        <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+        <script src="{% static '/js/jquery-3.7.0.min.js' %}"></script>
+    </head>
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
+    <body>
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                  <div class="col-md-6 offset-md-3">
+                    <h2 class="text-center text-dark mt-5">Chirps Login</h2>
+                    <div class="card my-5">
 
-<form method="post" action="{% url 'login' %}">
+                      <form class="card-body cardbody-color p-lg-5" method="POST" target="{% url 'login' %}">
+
+                        {% csrf_token %}
+                        <div class="text-center">
+                          <img src="{% static '/account/chirps_logo.png' %}"
+                               class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3" width="200px" alt="chirps logo">
+                        </div>
+
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="{{form.username.id}}"
+                                 name="{{form.username.html_name}}"placeholder="User Name">
+                        </div>
+                        <div class="mb-3">
+                          <input type="password" class="form-control" id="{{form.password.id}}"
+                                 name="{{form.password.html_name}}" placeholder="password">
+                        </div>
+                        <div class="text-center"><button type="submit" class="btn btn-primary px-5 mb-5 w-100">Login</button></div>
+                        <div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
+                          Registered? <a href="{% url 'signup' %}" class="text-dark fw-bold"> Create an
+                            Account</a>
+                        </div>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+        </div>
+
+        <script src="{% static '/js/popper.min.js' %}"></script>
+        <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    </body>
+</html>
+
+
+
+<!-- <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
 
-<input type="submit" value="login">
+    <label class="form-label" for="username">{{ form.username.label_tag }}</label>
+    <input class="form-control" name="{{form.username.html_name}}" placeholder="username">
+
+    <label class="form-label" for="password1">{{ form.password.laberl_tag}}</label>
+    <input class="form-control" name="{{form.password.html_name}}" type="password">
+
+<input type="submit" value="login" class="btn btn-primary">
 <input type="hidden" name="next" value="{{ next }}">
 </form>
 
 {# Assumes you set up the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-
-{% endblock %}
+<p><a href="{% url 'password_reset' %}">Lost password?</a></p> -->
