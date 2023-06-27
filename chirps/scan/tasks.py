@@ -35,20 +35,14 @@ def scan_task(scan_id):
         print(f'Running rule {rule}')
         results = target.search(query=rule.query_string, max_results=100)
 
-        print(results)
-
         matches = 0
         for text in results:
             matches += len(re.findall(rule.regex_test, text))
 
-        print(matches)
         scan_result_details[rule.name] = dict(matches=matches)
 
         # Perform the regex against the results
         # TODO: Convert the query to an embedding if required by the target.
-
-    # result = target.search(query=search_prompt, max_results=100)
-    # print(result)
 
         result = Result(count=matches, result=True, rule=rule)
         result.save()
