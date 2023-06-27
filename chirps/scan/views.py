@@ -13,8 +13,16 @@ def create(request):
         scan_form = ScanForm(request.POST)
         if scan_form.is_valid():
 
-            # Save the form to the database
-            scan = scan_form.save()
+            # Convert the scan form into a scan model
+            scan = scan_form.save(commit=False)
+
+            # Assign the scan to a user
+            scan.user = request.user
+
+            # Persist the scan to the database
+            scan.save()
+
+            # Kick off the scan task
             result = scan_task.delay(scan.id)
 
             # Save off the Celery task ID on the Scan object
@@ -33,4 +41,5 @@ def create(request):
 @login_required
 def dashboard(request):
     # TODO: Add pagination
-    return render(request, 'scan/dashboard.html', {'scans': Scan.objects.all()})
+    scans = Scan.objects.filter(user=request.user)
+    return render(request, 'scan/dashboard.html', {'scans': scans})

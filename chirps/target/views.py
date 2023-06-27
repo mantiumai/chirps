@@ -13,8 +13,9 @@ def dashboard(request):
     Args:
         request (HttpRequest): Django request object
     """
+    user_targets = BaseTarget.objects.filter(user=request.user)
     return render(
-        request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': BaseTarget.objects.all()}
+        request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets}
     )
 
 
@@ -33,8 +34,17 @@ def create(request, html_name):
 
         if form.is_valid():
 
-            # Save the form to the database
-            form.save()
+            # Persist the
+            form.user = request.user
+
+            # Convert the form into a target object (don't persist to the DB yet)
+            target = form.save(commit=False)
+
+            # Assign the target to the current user
+            target.user = request.user
+
+            # Off to the DB we go!
+            target.save()
 
             # Redirect the user back to the dashboard
             return redirect('target_dashboard')
