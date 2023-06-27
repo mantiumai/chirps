@@ -2,6 +2,8 @@
 import requests
 from django.contrib import admin
 from django.db import models
+from mantium_client.api_client import MantiumClient
+from mantium_spec.api.applications_api import ApplicationsApi
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 from polymorphic.models import PolymorphicModel
 
@@ -61,7 +63,8 @@ class MantiumTarget(BaseTarget):
     """Implementation of a Mantium target."""
 
     app_id = models.CharField(max_length=256)
-    token = models.CharField(max_length=2048)
+    client_id = models.CharField(max_length=256)
+    client_secret = models.CharField(max_length=256)
     top_k = models.IntegerField(default=100)
 
     # Name of the file in the ./target/static/ directory to use as a logo
@@ -70,15 +73,12 @@ class MantiumTarget(BaseTarget):
     html_description = 'Mantium Knowledge Vault'
 
     def search(self, query: str, max_results: int) -> list[str]:
+        client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
+        apps_api = ApplicationsApi(client)
 
-        url = f'https://{self.app_id}.apps.mantiumai.com/chatgpt/query'
-        headers = {
-            'Authorization': f'Bearer {self.token}',
-            'Content-Type': 'application/json',
-        }
-
-        result = requests.post(url=url, headers=headers, json={'queries': [query]})
+        result = apps_api.query_application(self.app_id, query)
         result.raise_for_status()
+        print(result.json())
         return result.json()
 
 

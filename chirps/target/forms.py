@@ -25,13 +25,15 @@ class MantiumTargetForm(ModelForm):
         fields = [
             'name',
             'app_id',
-            'token',
+            'client_id',
+            'client_secret',
         ]
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
             'app_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Application ID'}),
-            'token': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'client_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client ID'}),
+            'client_secret': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
 
