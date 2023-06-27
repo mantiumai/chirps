@@ -1,6 +1,12 @@
 """Models for the target appliation."""
+# HACK: (alexn) monkeypatching temporarily
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
+
 from django.contrib import admin
 from django.db import models
+from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
@@ -63,7 +69,7 @@ class MantiumTarget(BaseTarget):
 
     app_id = models.CharField(max_length=256)
     client_id = models.CharField(max_length=256)
-    client_secret = models.CharField(max_length=256)
+    client_secret = EncryptedCharField(max_length=256)
     top_k = models.IntegerField(default=100)
 
     # Name of the file in the ./target/static/ directory to use as a logo
