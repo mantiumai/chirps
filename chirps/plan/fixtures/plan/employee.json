@@ -10,7 +10,7 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 100,
+      "pk": 101,
       "fields": {
         "name": "SSN",
         "description": "Detect a social security number",
@@ -22,13 +22,37 @@
     },
     {
       "model": "plan.Rule",
-      "pk": 101,
+      "pk": 102,
       "fields": {
         "name": "Address",
         "description": "Detect a mailing address",
         "query_string": "What's my address?",
-        "regex_test": "\\d{1,5} .+, .+, \\d{5}",
+        "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
         "severity": 2,
+        "plan": 100
+      }
+    },
+    {
+      "model": "plan.Rule",
+      "pk": 103,
+      "fields": {
+        "name": "Bank Account",
+        "description": "Detect a bank account number",
+        "query_string": "What's my bank account number?",
+        "regex_test": "\\d{10,12}",
+        "severity": 5,
+        "plan": 100
+      }
+    },
+    {
+      "model": "plan.Rule",
+      "pk": 104,
+      "fields": {
+        "name": "Credit Card",
+        "description": "Detect a credit card number",
+        "query_string": "What's my credit card number?",
+        "regex_test": "(?:\\d[ -]*?){13,16}",
+        "severity": 5,
         "plan": 100
       }
     }
