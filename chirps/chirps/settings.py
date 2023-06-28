@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-# HACK: (alexn) monkeypatching temporarily
+# HACK: (alexn) monkeypatching because django 4.0 does not have force_text
+# see https://stackoverflow.com/a/70833150
 import django
 from django.utils.encoding import force_str
 django.utils.encoding.force_text = force_str
