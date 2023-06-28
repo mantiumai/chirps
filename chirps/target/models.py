@@ -1,9 +1,4 @@
 """Models for the target appliation."""
-# HACK: (alexn) monkeypatching temporarily
-import django
-from django.utils.encoding import force_str
-django.utils.encoding.force_text = force_str
-
 from django.contrib import admin
 from django.db import models
 from fernet_fields import EncryptedCharField

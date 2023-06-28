@@ -1,7 +1,7 @@
 django
 celery==5.3.1
 django-celery-results==2.5.1
-django-fernet-fields
+django-fernet-fields==0.6
 django-polymorphic==3.1.0
 mantium-client
 redis==4.5.5
