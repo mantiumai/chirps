@@ -11,6 +11,9 @@ class Plan(models.Model):
     # True if this plan is a template for other plans
     is_template = models.BooleanField(default=False)
 
+    # Bind this plan to a user if it isn't a template
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    
     def __str__(self):
         return self.name
 

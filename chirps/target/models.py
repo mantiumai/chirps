@@ -5,11 +5,13 @@ from django.db import models
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 from polymorphic.models import PolymorphicModel
 
+from django.contrib.auth.models import User
 
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""
 
     name = models.CharField(max_length=128)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Perform a query against the specified target, returning the max_results number of matches."""

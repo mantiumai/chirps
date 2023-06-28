@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db import models
 from django_celery_results.models import TaskResult
 from plan.models import Rule
-
+from django.contrib.auth.models import User
 
 class Scan(models.Model):
     """Model for a single scan run against a target."""
@@ -14,6 +14,7 @@ class Scan(models.Model):
     plan = models.ForeignKey('plan.Plan', on_delete=models.CASCADE)
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
         return self.description
