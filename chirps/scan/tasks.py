@@ -1,8 +1,9 @@
+import re
 from celery import shared_task
 from django.utils import timezone
 from target.models import BaseTarget
 
-from .models import Scan
+from .models import Result, Rule, Scan
 
 
 @shared_task
@@ -22,8 +23,6 @@ def scan_task(scan_id):
         scan_task.update_state(state='FAILURE', meta={'error': error})
         return
 
-    target = scan.target
-
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
@@ -33,12 +32,18 @@ def scan_task(scan_id):
         print(f'Running rule {rule}')
         results = target.search(query=rule.query_string, max_results=100)
 
+        matches = 0
+        for text in results:
+            matches += len(re.findall(rule.regex_test, text))
+
         # Perform the regex against the results
         # TODO: Convert the query to an embedding if required by the target.
 
-    # result = target.search(query=search_prompt, max_results=100)
-    # print(result)
+        result = Result(count=matches, result=True, rule=rule)
+        result.save()
 
+        scan.results.add(result)
+    
     # Persist the completion time of the scan
     scan.finished_at = timezone.now()
     scan.save()

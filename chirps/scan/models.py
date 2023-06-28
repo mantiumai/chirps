@@ -1,4 +1,5 @@
 """Models for the scan application."""
+import json
 from django.contrib import admin
 from django.db import models
 from django_celery_results.models import TaskResult
@@ -13,6 +14,7 @@ class Scan(models.Model):
     description = models.TextField()
     plan = models.ForeignKey('plan.Plan', on_delete=models.CASCADE)
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
+    results = models.ManyToManyField('scan.Result', blank=True)
     celery_task_id = models.CharField(max_length=256, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
@@ -41,8 +43,10 @@ class Scan(models.Model):
 class Result(models.Model):
     """Model for a single result from a rule."""
 
+    count = models.SmallIntegerField()
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
     result = models.BooleanField()
 
 
 admin.site.register(Scan)
+admin.site.register(Result)
