@@ -23,8 +23,6 @@ def scan_task(scan_id):
         scan_task.update_state(state='FAILURE', meta={'error': error})
         return
 
-    target = scan.target
-
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
