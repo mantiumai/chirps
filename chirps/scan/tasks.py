@@ -31,15 +31,12 @@ def scan_task(scan_id):
 
     # Now that we have the derrived class, call its implementation of search()
     for rule in scan.plan.rules.all():
-        scan_result_details = {}
         print(f'Running rule {rule}')
         results = target.search(query=rule.query_string, max_results=100)
 
         matches = 0
         for text in results:
             matches += len(re.findall(rule.regex_test, text))
-
-        scan_result_details[rule.name] = dict(matches=matches)
 
         # Perform the regex against the results
         # TODO: Convert the query to an embedding if required by the target.

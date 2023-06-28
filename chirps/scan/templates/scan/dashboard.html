@@ -39,7 +39,7 @@
                   <th scope="col">Count</th>
                 </tr>
               </thead>
-              <tbody> {% for result in scan.results.all %} <tr>
+              <tbody> {% for result in scan_results.all %} <tr>
                   <td>{{ result.rule.name }}</td>
                   <td>{{ result.count }}</td>
                 </tr> {% endfor %} </tbody>

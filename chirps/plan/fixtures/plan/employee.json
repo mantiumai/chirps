@@ -55,5 +55,41 @@
         "severity": 5,
         "plan": 100
       }
+    },
+    {
+      "model": "plan.Rule",
+      "pk": 104,
+      "fields": {
+        "name": "Email Address",
+        "description": "Detect an email address",
+        "query_string": "What's my email address?",
+        "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+        "severity": 2,
+        "plan": 100
+      }
+    },
+    {
+      "model": "plan.Rule",
+      "pk": 105,
+      "fields": {
+        "name": "Phone number",
+        "description": "Detect a phone number",
+        "query_string": "What's my phone number?",
+        "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
+        "severity": 2,
+        "plan": 100
+      }
+    },
+    {
+      "model": "plan.Rule",
+      "pk": 106,
+      "fields": {
+        "name": "Salary",
+        "description": "Detect a salary (in USD)",
+        "query_string": "What's my salary?",
+        "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
+        "severity": 2,
+        "plan": 100
+      }
     }
   ]

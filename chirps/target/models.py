@@ -61,9 +61,6 @@ class RedisTargetAdmin(PolymorphicChildModelAdmin):
     base_model = RedisTarget
 
 
-admin.site.register(RedisTarget)
-
-
 class MantiumTarget(BaseTarget):
     """Implementation of a Mantium target."""
 
@@ -86,6 +83,12 @@ class MantiumTarget(BaseTarget):
         
         documents = [doc['content'] for doc in results['documents']]
         return documents
+    
 
+class MantiumTargetAdmin(PolymorphicChildModelAdmin):
+    base_model = MantiumTarget
+
+admin.site.register(RedisTarget)
+admin.site.register(MantiumTarget)
 
 targets = [RedisTarget, MantiumTarget]
