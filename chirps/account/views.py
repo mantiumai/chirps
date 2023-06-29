@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from .models import Profile
 
-from .forms import ProfileForm, SignupForm
-
+from .forms import ProfileForm, SignupForm, LoginForm
+from django.contrib.auth import authenticate
 
 def profile(request):
 
@@ -64,3 +65,22 @@ def signup(request):
         form = SignupForm()
 
     return render(request, 'account/signup.html', {'form': form})
+
+def login_view(request):
+
+    # If there are no users, redirect to the installation page
+    if User.objects.count() == 0:
+        return redirect(reverse('install'))
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(request=request,
+                                username=form.cleaned_data['username'],
+                                password=form.cleaned_data['password'])
+            if user:
+                login(request, user)
+                return redirect('/')
+    else:
+        form = LoginForm()
+    return render(request, 'account/login.html', {'form': form})
