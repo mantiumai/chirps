@@ -8,6 +8,7 @@ from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModel
 from polymorphic.models import PolymorphicModel
 
 from django.contrib.auth.models import User
+from django.templatetags.static import static
 
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""
@@ -20,6 +21,9 @@ class BaseTarget(PolymorphicModel):
 
     def test_connection(self) -> bool:
         """Verify that the target can be connected to."""
+
+    def logo_url(self) -> str:
+        return static(self.html_logo)
 
     def __str__(self):
         return self.name
@@ -39,7 +43,7 @@ class RedisTarget(BaseTarget):
     password = models.CharField(max_length=2048, blank=True, null=True)
 
     # Name of the file in the ./target/static/ directory to use as a logo
-    html_logo = 'redis-logo.png'
+    html_logo = 'target/redis-logo.png'
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 
@@ -67,7 +71,7 @@ class MantiumTarget(BaseTarget):
     top_k = models.IntegerField(default=100)
 
     # Name of the file in the ./target/static/ directory to use as a logo
-    html_logo = 'mantiumai-logo.png'
+    html_logo = 'target/mantiumai-logo.jpg'
     html_name = 'Mantium'
     html_description = 'Mantium Knowledge Vault'
 
@@ -77,10 +81,10 @@ class MantiumTarget(BaseTarget):
 
         query_request = {'query': query}
         results = apps_api.query_application(self.app_id, query_request)
-        
+
         documents = [doc['content'] for doc in results['documents']]
         return documents
-    
+
 
 class MantiumTargetAdmin(PolymorphicChildModelAdmin):
     base_model = MantiumTarget

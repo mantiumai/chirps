@@ -33,22 +33,23 @@
 
 {% for target in user_targets %}
 
-    <div class="card">
-        <h5 class="card-header">{{ target.html_name }} - {{ target.name }}</h5>
+    <div class="card m-5">
+        <h5 class="card-header"><img width=64 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>
         <div class="card-body">
-        <p class="card-text">
+            <p class="card-text">
 
-            {% if target.html_name == 'Mantium' %}
-                Application ID: {{ target.app_id }}
-            {% elif target.html_name == 'Redis' %}
-                Host: {{ target.host }}<br/>
-                Port: {{ target.port }}<br/>
-                Database Name: {{ target.database_name }}<br/>
-                Username: {{ target.username }}
-            {% endif %}
-        </p>
-        <a href="#" class="btn btn-primary disabled">edit</a>
-        <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>
+                {% if target.html_name == 'Mantium' %}
+                    Application ID: {{ target.app_id }}
+                {% elif target.html_name == 'Redis' %}
+                    Host: {{ target.host }}<br/>
+                    Port: {{ target.port }}<br/>
+                    Database Name: {{ target.database_name }}<br/>
+                    Username: {{ target.username }}
+                {% endif %}
+            </p>
+            <a href="#" class="btn btn-primary disabled">edit</a>
+            <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>
+        </div>
     </div>
 
 

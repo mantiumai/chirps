@@ -3,15 +3,23 @@
 
 {% block content %}
 
-<h1 class="display-1">New Scan</h1>
-<hr>
-
-<div class="form-group">
-    <form method="POST" action="{% url 'scan_create' %}">
-        {% csrf_token %}
-        {{ scan_form }}
-        <button class="btn btn-primary" type="submit">Create</button>
-    </form>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="text-center text-dark mt-5 display-1">New Scan</h1>
+      <div class="card my-5">
+        <div class="card-body cardbody-color p-lg-5">
+            <div class="form-group">
+                <form method="POST" action="{% url 'scan_create' %}">
+                    {% csrf_token %}
+                    {{ scan_form }}
+                    <button class="btn btn-primary mt-2" type="submit">Create</button>
+                </form>
+            </div>
+        </div>
+      </div>
+    </div>
 </div>
+
+
 
 {% endblock %}
