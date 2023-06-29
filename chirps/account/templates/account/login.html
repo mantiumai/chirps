@@ -52,21 +52,3 @@
         <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
     </body>
 </html>
-
-
-
-<!-- <form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-    <label class="form-label" for="username">{{ form.username.label_tag }}</label>
-    <input class="form-control" name="{{form.username.html_name}}" placeholder="username">
-
-    <label class="form-label" for="password1">{{ form.password.laberl_tag}}</label>
-    <input class="form-control" name="{{form.password.html_name}}" type="password">
-
-<input type="submit" value="login" class="btn btn-primary">
-<input type="hidden" name="next" value="{{ next }}">
-</form>
-
-{# Assumes you set up the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p> -->

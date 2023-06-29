@@ -1,0 +1,67 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>chirps login</title>
+        <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+        <script src="{% static '/js/jquery-3.7.0.min.js' %}"></script>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                  <div class="col-md-6 offset-md-3">
+                    <h2 class="text-center text-dark mt-5">Chirps Install</h2>
+                    <div class="card my-5">
+
+                      <form class="card-body cardbody-color p-lg-5" method="POST" target="{% url 'install' %}">
+
+                        {% csrf_token %}
+                        <div class="text-center">
+                          <img src="{% static '/account/chirps_logo.png' %}"
+                               class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3" width="200px" alt="chirps logo">
+                        </div>
+
+                        <div class="mb-3">
+                          {% for error in form.superuser_username.errors %}
+                            <p class="text-danger">{{ error|escape }}</p>
+                          {% endfor %}
+                          <input type="text" class="form-control" id="{{form.superuser_username.id}}"
+                                 name="{{form.superuser_username.html_name}}"placeholder="superuser name">
+                        </div>
+                        <div class="mb-3">
+                            {% for error in form.superuser_email.errors %}
+                              <p class="text-danger">{{ error|escape }}</p>
+                            {% endfor %}
+                            <input type="email" class="form-control" id="{{form.superuser_email.id}}"
+                                   name="{{form.superuser_email.html_name}}"placeholder="superuser email">
+                          </div>
+                        <div class="mb-3">
+                          {% for error in form.superuser_password.errors %}
+                            <p class="text-danger">{{ error|escape }}</p>
+                          {% endfor %}
+                          <input type="password" class="form-control" id="{{form.superuser_password.id}}"
+                                 name="{{form.superuser_password.html_name}}" placeholder="password">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="{{form.superuser_password_confirm.id}}"
+                                   name="{{form.superuser_password_confirm.html_name}}" placeholder="password confirm">
+                          </div>
+                        <div class="text-center"><button type="submit" class="btn btn-primary px-5 mb-5 w-100">Install</button></div>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+        </div>
+
+        <script src="{% static '/js/popper.min.js' %}"></script>
+        <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    </body>
+</html>
