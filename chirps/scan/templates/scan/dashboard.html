@@ -36,12 +36,14 @@
               <thead>
                 <tr>
                   <th scope="col">Rule Name</th>
+                  <th scope="col">Severity</th>
                   <th scope="col">Count</th>
                   <th scope="col">Findings</th>
                 </tr>
               </thead>
               <tbody> {% for result in scan.results.all %} <tr>
                   <td>{{ result.rule.name }}</td>
+                  <td>{{ result.rule.severity }}</td>
                   <td>{{ result.count }}</td>
                   <td>
                     {% if result.count > 0 %}
