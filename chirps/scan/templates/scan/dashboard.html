@@ -51,9 +51,7 @@
                     <div class="collapse" id="findingsCollapse{{result.id}}">
                       <div class="card card-body">
                         <ul>
-                          {% for finding in result.findings %}
-                          <li>{{ finding }}</li>
-                          {% endfor %}
+                          <li>{{ result.findings }}</li>
                         </ul>
                       </div>
                     </div>
