@@ -9,13 +9,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  
         # Run the 'redis --start' command  
         self.stdout.write(self.style.WARNING('Starting Redis...'))  
-        os.system('redis-server --daemonize yes')  
+        call_command('redis', '--start')  
         self.stdout.write(self.style.SUCCESS('Redis started'))  
   
         # Run the 'rabbitmq --start' command  
         self.stdout.write(self.style.WARNING('Starting RabbitMQ...'))  
-        os.system('rabbitmq-server start -detached')  
-        self.stdout.write(self.style.SUCCESS('RabbitMQ started'))  
+        call_command('rabbitmq', '--start')  
+        self.stdout.write(self.style.SUCCESS('RabbitMQ started'))
   
         # Run the 'celery --start' command  
         self.stdout.write(self.style.WARNING('Starting Celery...'))  
