@@ -14,4 +14,6 @@ class ScanForm(ModelForm):
             'description': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
             ),
+            'target': forms.Select(attrs={'class': 'form-control'}),
+            'plan': forms.Select(attrs={'class': 'form-control'}),
         }
