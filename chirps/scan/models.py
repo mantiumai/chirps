@@ -1,10 +1,10 @@
 """Models for the scan application."""
-import json
 from django.contrib import admin
 from django.db import models
 from django_celery_results.models import TaskResult
 from plan.models import Rule
 from django.contrib.auth.models import User
+from fernet_fields import EncryptedTextField
 
 class Scan(models.Model):
     """Model for a single scan run against a target."""
@@ -44,6 +44,7 @@ class Result(models.Model):
     """Model for a single result from a rule."""
 
     count = models.SmallIntegerField()
+    findings = EncryptedTextField(default='[]')
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
     result = models.BooleanField()
 

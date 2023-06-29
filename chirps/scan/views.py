@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
@@ -40,6 +41,6 @@ def create(request):
 
 @login_required
 def dashboard(request):
-    # TODO: Add pagination
+    # TODO: Add pagination  
     scans = Scan.objects.filter(user=request.user)
     return render(request, 'scan/dashboard.html', {'scans': scans})

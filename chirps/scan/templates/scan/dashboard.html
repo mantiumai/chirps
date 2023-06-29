@@ -37,11 +37,28 @@
                 <tr>
                   <th scope="col">Rule Name</th>
                   <th scope="col">Count</th>
+                  <th scope="col">Findings</th>
                 </tr>
               </thead>
               <tbody> {% for result in scan.results.all %} <tr>
                   <td>{{ result.rule.name }}</td>
                   <td>{{ result.count }}</td>
+                  <td>
+                    {% if result.count > 0 %}
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#findingsCollapse{{result.id}}" aria-expanded="false"
+                      aria-controls="findingsCollapse{{result.id}}"> Show/Hide Findings </button>
+                    <div class="collapse" id="findingsCollapse{{result.id}}">
+                      <div class="card card-body">
+                        <ul>
+                          {% for finding in result.findings %}
+                          <li>{{ finding }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                    {% endif %}
+                  </td>
                 </tr> {% endfor %} </tbody>
             </table>
           </div>
