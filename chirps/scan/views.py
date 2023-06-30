@@ -39,8 +39,29 @@ def create(request):
     return render(request, 'scan/create.html', {'scan_form': scan_form})
 
 
-@login_required
-def dashboard(request):
+@login_required  
+def dashboard(request):  
     # TODO: Add pagination  
-    scans = Scan.objects.filter(user=request.user)
+    user_scans = Scan.objects.filter(user=request.user)  
+    scans = []  
+  
+    for scan in user_scans:  
+        results = []  
+  
+        for result in scan.results.all():  
+            findings_list = json.loads(result.findings)  
+            results.append({  
+                'id': result.id,  
+                'rule': result.rule,  
+                'count': result.count,  
+                'findings': findings_list,  
+            })  
+  
+        scan_data = {  
+            'scan': scan,  
+            'results': results,  
+        }  
+  
+        scans.append(scan_data)  
+  
     return render(request, 'scan/dashboard.html', {'scans': scans})
