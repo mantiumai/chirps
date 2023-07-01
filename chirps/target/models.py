@@ -1,4 +1,6 @@
 """Models for the target appliation."""
+import numpy as np
+
 from django.contrib import admin
 from django.db import models
 from fernet_fields import EncryptedCharField
@@ -10,11 +12,16 @@ from polymorphic.models import PolymorphicModel
 from django.contrib.auth.models import User
 from django.templatetags.static import static
 
+from redis import Redis
+from redis.commands.search.query import Query
+
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    top_k = models.IntegerField(default=100)
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Perform a query against the specified target, returning the max_results number of matches."""
@@ -41,17 +48,36 @@ class RedisTarget(BaseTarget):
     database_name = models.CharField(max_length=256)
     username = models.CharField(max_length=256)
     password = models.CharField(max_length=2048, blank=True, null=True)
+    index_name = models.CharField(max_length=256)
+    embedding_field = models.CharField(max_length=256)
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/redis-logo.png'
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 
+    client = Redis(
+        host=host,
+        port=port,
+        db=database_name,
+        password=password,
+        username=username,
+    )
+
     def search(self, query: str, max_results: int) -> str:
         """Search the Redis target with the specified query."""
-        print('Starting RedisTarget search')
-        print('Converting search query into an embedding vector')
-        print('RedisTarget search copmlete')
+        score_field = 'vec_score'
+        vector_param = 'vec_param'
+
+        vss_query = f'*=>[KNN {self.top_k} @{self.embedding_field} ${vector_param} AS {score_field}]'
+        return_fields = [self.embedding_field, 'document_id', 'sync_file_id', score_field]
+
+        query = Query(vss_query).sort_by(score_field).paging(0, self.top_k).return_fields(*return_fields).dialect(2)
+        embedding = np.array(query_emb, dtype=np.float32).tostring()    # type: ignore
+        params: dict[str, float] = {vector_param: embedding}
+        results = self.index.search(query, query_params=params)
+
+        return results.docs
 
     def test_connection(self) -> bool:
         """Ensure that the Redis target can be connected to."""
@@ -68,7 +94,6 @@ class MantiumTarget(BaseTarget):
     app_id = models.CharField(max_length=256)
     client_id = models.CharField(max_length=256)
     client_secret = EncryptedCharField(max_length=256)
-    top_k = models.IntegerField(default=100)
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/mantiumai-logo.jpg'
