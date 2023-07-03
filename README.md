@@ -1,5 +1,9 @@
 # chirps
 
+# Quick Start
+- `pip install -r requirements.txt`
+- Navigate to /chirps and run `./manage.py initialize_app`
+
 # Development - Getting Started
 Install required Python modules with `pip install -r requirements.txt`.
 
