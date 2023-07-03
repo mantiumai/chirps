@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Finding{% endblock %}
+
+{% block content %}
+<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Finding</h1>
+<hr>
+
+{{finding.with_highlight}}
+
+{% endblock %}

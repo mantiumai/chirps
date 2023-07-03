@@ -1,11 +1,20 @@
 import json
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from .forms import ScanForm
-from .models import Scan
+from .models import Result, Scan, Finding
 from .tasks import scan_task
 
+@login_required
+def finding_detail(request, finding_id):
+    finding = get_object_or_404(Finding, pk=finding_id, result__scan__user=request.user)
+    return render(request, 'scan/finding_detail.html', {'finding': finding})
+
+@login_required
+def result_detail(request, result_id):
+    result = get_object_or_404(Result, pk=result_id, scan__user=request.user)
+    return render(request, 'scan/result_detail.html', {'result': result})
 
 @login_required
 def create(request):
@@ -39,29 +48,21 @@ def create(request):
     return render(request, 'scan/create.html', {'scan_form': scan_form})
 
 
-@login_required  
-def dashboard(request):  
-    # TODO: Add pagination  
-    user_scans = Scan.objects.filter(user=request.user)  
-    scans = []  
-  
-    for scan in user_scans:  
-        results = []  
-  
-        for result in scan.results.all():  
-            findings_list = json.loads(result.findings)  
-            results.append({  
-                'id': result.id,  
-                'rule': result.rule,  
-                'count': result.count,  
-                'findings': findings_list,  
-            })  
-  
-        scan_data = {  
-            'scan': scan,  
-            'results': results,  
-        }  
-  
-        scans.append(scan_data)  
-  
-    return render(request, 'scan/dashboard.html', {'scans': scans})
+@login_required
+def dashboard(request):
+    # TODO: Add pagination
+    user_scans = Scan.objects.filter(user=request.user)
+
+    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
+    for scan in user_scans:
+
+        scan.rules = {}
+
+        for result in scan.result_set.all():
+            if result.rule.name not in scan.rules:
+                scan.rules[result.rule.name] = {'id': result.id, 'rule': result.rule, 'findings': Finding.objects.filter(result=result).count()}
+
+        # Convert the dictionary into a list that the template can iterate on
+        scan.rules = scan.rules.values()
+
+    return render(request, 'scan/dashboard.html', {'scans': user_scans})

@@ -1,82 +1,69 @@
-{% extends 'base.html' %}  
-{% block title %}Scans{% endblock %}  
-  
-{% block content %}  
-<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Scans</h1> <a class="btn btn-primary"  
-  href="{% url 'scan_create' %}">New Scan</a>  
-<hr>  
-<table class="table">  
-  <thead>  
-    <tr>  
-      <th scope="col">#</th>  
-      <th scope="col">Start Time</th>  
-      <th scope="col">Finish Time</th>  
-      <th scope="col">Description</th>  
-      <th scope="col">Target</th>  
-      <th scope="col">Status</th>  
-      <th scope="col">Details</th>  
-    </tr>  
-  </thead>  
-  <tbody>  
-    {% for scan_data in scans %}  
-    <tr>  
-      <td>{{ scan_data.scan.id }}</td>  
-      <td>{{ scan_data.scan.started_at }}</td>  
-      <td>{{ scan_data.scan.finished_at }}</td>  
-      <td>{{ scan_data.scan.description }}</td>  
-      <td>{{ scan_data.scan.target }}</td>  
-      <td>{{ scan_data.scan.celery_task_status }}  
-        {% if scan_data.scan.celery_task_status == 'FAILURE' %}<br />{{scan_data.scan.celery_task_output}}{% endif %}  
-      </td>  
-      <td>  
-        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan_data.scan.id}}"  
-          aria-expanded="false" aria-controls="collapse{{scan_data.scan.id}}"> View Details </button>  
-      </td>  
-    </tr>  
-    <tr>  
-      <td colspan="7">  
-        <div class="collapse" id="collapse{{scan_data.scan.id}}">  
-          <div class="card card-body">  
-            <table class="table">  
-              <thead>  
-                <tr>  
-                  <th scope="col">Rule Name</th>  
-                  <th scope="col">Severity</th>  
-                  <th scope="col">Count</th>  
-                  <th scope="col">Findings</th>  
-                </tr>  
-              </thead>  
-              <tbody>  
-                {% for result in scan_data.results %}  
-                <tr>  
-                  <td>{{ result.rule.name }}</td>  
-                  <td>{{ result.rule.severity }}</td>  
-                  <td>{{ result.count }}</td>  
-                  <td>  
-                    {% if result.count > 0 %}  
-                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"  
-                      data-bs-target="#findingsCollapse{{result.id}}" aria-expanded="false"  
-                      aria-controls="findingsCollapse{{result.id}}"> Show/Hide Findings </button>  
-                    <div class="collapse" id="findingsCollapse{{result.id}}">  
-                      <div class="card card-body">  
-                        <ul>  
-                          {% for finding in result.findings %}  
-                          <li>{{ finding }}</li>  
-                          {% endfor %}  
-                        </ul>  
-                      </div>  
-                    </div>  
-                    {% endif %}  
-                  </td>  
-                </tr>  
-                {% endfor %}  
-              </tbody>  
-            </table>  
-          </div>  
-        </div>  
-      </td>  
-    </tr>  
-    {% endfor %}  
-  </tbody>  
-</table>  
-{% endblock %}  
+{% extends 'base.html' %}
+{% block title %}Scans{% endblock %}
+
+{% block content %}
+<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Scans</h1> <a class="btn btn-primary"
+  href="{% url 'scan_create' %}">New Scan</a>
+<hr>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">Finish Time</th>
+      <th scope="col">Description</th>
+      <th scope="col">Target</th>
+      <th scope="col">Status</th>
+      <th scope="col">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for scan in scans %}
+    <tr>
+      <td>{{ scan.id }}</td>
+      <td>{{ scan.started_at }}</td>
+      <td>{{ scan.finished_at }}</td>
+      <td>{{ scan.description }}</td>
+      <td>{{ scan.target }}</td>
+      <td>{{ scan.celery_task_status }}
+        {% if scan.celery_task_status == 'FAILURE' %}<br />{{scan.celery_task_output}}{% endif %}
+      </td>
+      <td>
+        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan.id}}"
+          aria-expanded="false" aria-controls="collapse{{scan.id}}"> View Details </button>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="7">
+        <div class="collapse" id="collapse{{scan.id}}">
+          <div class="card card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Rule Name</th>
+                  <th scope="col">Severity</th>
+                  <th scope="col">Findings</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for result in scan.rules %}
+                <tr>
+                  <td>{{ result.rule.name }}</td>
+                  <td>{{ result.rule.severity }}</td>
+                  <td>
+                    {% if result.findings > 0 %}
+                    <a href="{% url 'result_detail' result.id %}" class="btn btn-primary">view ({{result.findings}})</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
