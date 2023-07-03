@@ -46,6 +46,7 @@ class Result(models.Model):
     count = models.SmallIntegerField()
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
     result = models.BooleanField()
+    details = models.TextField(null=True, blank=True, default='{}')  
 
 
 admin.site.register(Scan)

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}  
+  
+{% block content %}  
+    <h2>Result Details</h2>  
+    <table border="1" cellpadding="5" cellspacing="0">  
+        <thead>  
+            <tr>  
+                <th>Text</th>  
+                <th>Matches</th>  
+            </tr>  
+        </thead>  
+        <tbody>  
+            {% for detail in details %}  
+                <tr>  
+                    <td>{{ detail.text }}</td>  
+                    <td>{{ detail.matches|join:", " }}</td>  
+                </tr>  
+            {% endfor %}  
+        </tbody>  
+    </table>  
+{% endblock %}  

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # HACK: (alexn) monkeypatching because django 4.0 does not have force_text
@@ -143,3 +143,19 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
+
+# Logging
+LOGGING = {  
+    'version': 1,  
+    'disable_existing_loggers': False,  
+    'handlers': {  
+        'console': {  
+            'class': 'logging.StreamHandler',  
+        },  
+    },  
+    'root': {  
+        'handlers': ['console'],  
+        'level': 'DEBUG',  
+    },  
+}  
+
