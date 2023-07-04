@@ -4,5 +4,6 @@ django-celery-results==2.5.1
 django-fernet-fields==0.6
 django-polymorphic==3.1.0
 mantium-client
+numpy
 redis==4.5.5
 requests==2.31.0

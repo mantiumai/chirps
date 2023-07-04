@@ -1,59 +1,79 @@
-{% extends 'base.html' %}
-{% block title %}Targets{% endblock %}
-
-{% block content %}
-
-<h1 class="display-1"><i class="fa-solid fa-bullseye"></i> Targets</h1>
-
-<div>
-    <nav class="navbar">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"></a>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-success">Create</button>
-                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><h6 class="dropdown-header">Target</h6></li>
-                    <li><hr class="dropdown-divider"></li>
-                    {% for target in available_targets %}
-                        <li><a class="dropdown-item" href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-        </div>
-    </nav>
-</div>
-
-
-<hr>
-
-{% for target in user_targets %}
-
-    <div class="card m-5">
-        <h5 class="card-header"><img width=64 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>
-        <div class="card-body">
-            <p class="card-text">
-
-                {% if target.html_name == 'Mantium' %}
-                    Application ID: {{ target.app_id }}
-                {% elif target.html_name == 'Redis' %}
-                    Host: {{ target.host }}<br/>
-                    Port: {{ target.port }}<br/>
-                    Database Name: {{ target.database_name }}<br/>
-                    Username: {{ target.username }}
-                {% endif %}
-            </p>
-            <a href="#" class="btn btn-primary disabled">edit</a>
-            <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>
-        </div>
-    </div>
-
-
-
-{% endfor %}
-
-{% endblock %}
+{% extends 'base.html' %}  
+{% block title %}Targets{% endblock %}  
+  
+{% block content %}  
+  
+<h1 class="display-1"><i class="fa-solid fa-bullseye"></i> Targets</h1>  
+  
+<div>  
+    <nav class="navbar">  
+        <div class="container-fluid">  
+            <a class="navbar-brand" href="#"></a>  
+  
+            <div class="btn-group">  
+                <button type="button" class="btn btn-success">Create</button>  
+                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">  
+                  <span class="visually-hidden">Toggle Dropdown</span>  
+                </button>  
+                <ul class="dropdown-menu">  
+                    <li><h6 class="dropdown-header">Target</h6></li>  
+                    <li><hr class="dropdown-divider"></li>  
+                    {% for target in available_targets %}  
+                        <li><a class="dropdown-item" href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a></li>  
+                    {% endfor %}  
+                </ul>  
+            </div>  
+  
+        </div>  
+    </nav>  
+</div>  
+  
+<hr>  
+  
+{% for target in user_targets %}  
+  
+    <div class="card m-5">  
+        <h5 class="card-header"><img width=64 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>  
+        <div class="card-body">  
+            <p class="card-text">  
+  
+                {% if target.html_name == 'Mantium' %}  
+                    Application ID: {{ target.app_id }}  
+                {% elif target.html_name == 'Redis' %}  
+                    Host: {{ target.host }}<br/>  
+                    Port: {{ target.port }}<br/>  
+                    Database Name: {{ target.database_name }}<br/>  
+                    Username: {{ target.username }}  
+                {% endif %}  
+            </p>  
+            <a href="#" class="btn btn-primary disabled">edit</a>  
+            <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>  
+            {% if target.html_name == 'Redis' %}  
+                <button data-target-id="{{ target.id }}" class="btn btn-info ping-btn">Ping</button>  
+            {% endif %}  
+        </div>  
+    </div>  
+  
+{% endfor %}  
+  
+<script>  
+    document.addEventListener('DOMContentLoaded', function () {  
+        const pingButtons = document.querySelectorAll('.ping-btn');  
+        console.log('Ping buttons found:', pingButtons.length);  
+        pingButtons.forEach(btn => {  
+            btn.addEventListener('click', async function () {  
+                console.log('Ping button clicked');  
+                const targetId = btn.getAttribute('data-target-id');  
+                const response = await fetch(`/target/ping/${targetId}/`, {headers: {'X-Requested-With': 'XMLHttpRequest'}});  
+                const result = await response.json();  
+                if (result.success) {  
+                    alert('Ping successful');  
+                } else {  
+                    alert('Ping failed: ' + (result.error || 'Unknown error'));  
+                }  
+            });  
+        });  
+    });  
+</script>  
+  
+{% endblock %}  

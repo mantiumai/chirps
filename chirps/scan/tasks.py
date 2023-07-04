@@ -30,7 +30,7 @@ def scan_task(scan_id):
     # Now that we have the derrived class, call its implementation of search()
     for rule in scan.plan.rules.all():
         print(f'Running rule {rule}')
-        results = target.search(query=rule.query_string, max_results=100)
+        results = target.search(rule=rule.query_string, max_results=100)
 
         matches = 0
         for text in results:

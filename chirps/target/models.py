@@ -23,7 +23,7 @@ class BaseTarget(PolymorphicModel):
 
     top_k = models.IntegerField(default=100)
 
-    def search(self, query: str, max_results: int) -> list[str]:
+    def search(self, rule, max_results: int) -> list[str]:
         """Perform a query against the specified target, returning the max_results number of matches."""
 
     def test_connection(self) -> bool:
@@ -55,16 +55,25 @@ class RedisTarget(BaseTarget):
     html_logo = 'target/redis-logo.png'
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
+    
+    # client = Redis(
+    #     host=host,
+    #     port=port,
+    #     db=database_name,
+    #     password=password,
+    #     username=username,
+    # )
 
-    client = Redis(
-        host=host,
-        port=port,
-        db=database_name,
-        password=password,
-        username=username,
-    )
+    # def __init__(self, *args, **kwargs):
+    #     self.client = Redis(
+    #         host=self.host,
+    #         port=self.port,
+    #         db=self.database_name,
+    #         password=self.password,
+    #         username=self.username,
+    #     )
 
-    def search(self, query: str, max_results: int) -> str:
+    def search(self, rule, max_results: int) -> str:
         """Search the Redis target with the specified query."""
         score_field = 'vec_score'
         vector_param = 'vec_param'
@@ -73,7 +82,7 @@ class RedisTarget(BaseTarget):
         return_fields = [self.embedding_field, 'document_id', 'sync_file_id', score_field]
 
         query = Query(vss_query).sort_by(score_field).paging(0, self.top_k).return_fields(*return_fields).dialect(2)
-        embedding = np.array(query_emb, dtype=np.float32).tostring()    # type: ignore
+        embedding = np.array(rule.query_embedding, dtype=np.float32).tostring()    # type: ignore
         params: dict[str, float] = {vector_param: embedding}
         results = self.index.search(query, query_params=params)
 
@@ -81,6 +90,15 @@ class RedisTarget(BaseTarget):
 
     def test_connection(self) -> bool:
         """Ensure that the Redis target can be connected to."""
+        client = Redis(
+            host=self.host,
+            port=self.port,
+            db=self.database_name,
+            password=self.password,
+            username=self.username,
+        )
+        client.ping()
+
         return True
 
 
@@ -100,11 +118,11 @@ class MantiumTarget(BaseTarget):
     html_name = 'Mantium'
     html_description = 'Mantium Knowledge Vault'
 
-    def search(self, query: str, max_results: int) -> list[str]:
+    def search(self, rule, max_results: int) -> list[str]:
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 
-        query_request = {'query': query}
+        query_request = {'query': rule.query_string}
         results = apps_api.query_application(self.app_id, query_request)
 
         documents = [doc['content'] for doc in results['documents']]
