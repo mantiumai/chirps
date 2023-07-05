@@ -17,16 +17,21 @@
       <th scope="col">Details</th>
     </tr>
   </thead>
-  <tbody> {% for scan in scans %} <tr>
+  <tbody>
+    {% for scan in scans %}
+    <tr>
       <td>{{ scan.id }}</td>
       <td>{{ scan.started_at }}</td>
       <td>{{ scan.finished_at }}</td>
       <td>{{ scan.description }}</td>
       <td>{{ scan.target }}</td>
-      <td>{{ scan.celery_task_status }} {% if scan.celery_task_status == 'FAILURE' %}<br />{{scan.celery_task_output}}
-        {% endif %}</td>
-      <td> <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan.id}}"
-          aria-expanded="false" aria-controls="collapse{{scan.id}}"> View Details </button> </td>
+      <td>{{ scan.celery_task_status }}
+        {% if scan.celery_task_status == 'FAILURE' %}<br />{{scan.celery_task_output}}{% endif %}
+      </td>
+      <td>
+        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan.id}}"
+          aria-expanded="false" aria-controls="collapse{{scan.id}}"> View Details </button>
+      </td>
     </tr>
     <tr>
       <td colspan="7">
@@ -36,17 +41,29 @@
               <thead>
                 <tr>
                   <th scope="col">Rule Name</th>
-                  <th scope="col">Count</th>
+                  <th scope="col">Severity</th>
+                  <th scope="col">Findings</th>
                 </tr>
               </thead>
-              <tbody> {% for result in scan.results.all %} <tr>
+              <tbody>
+                {% for result in scan.rules %}
+                <tr>
                   <td>{{ result.rule.name }}</td>
-                  <td>{{ result.count }}</td>
-                </tr> {% endfor %} </tbody>
+                  <td>{{ result.rule.severity }}</td>
+                  <td>
+                    {% if result.findings > 0 %}
+                    <a href="{% url 'result_detail' result.id %}" class="btn btn-primary">view ({{result.findings}})</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
           </div>
         </div>
       </td>
-    </tr> {% endfor %}
+    </tr>
+    {% endfor %}
   </tbody>
-</table> {% endblock %}
+</table>
+{% endblock %}

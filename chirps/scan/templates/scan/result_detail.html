@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Result Details{% endblock %}
+
+{% block content %}
+<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Result Details</h1>
+<hr>
+
+Rule Name: {{ result.rule.name }}<br />
+Rule Description: {{ result.rule.description }}<br />
+Severity: {{ result.rule.severity }}<br />
+
+Findings
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Text</th>
+      <th scope="col">Coordinates</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for finding in result.finding_set.all %}
+    <tr>
+      <td>{{ finding.surrounding_text }} <a href="{% url 'finding_detail' finding.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
+      <td>{{ finding }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
