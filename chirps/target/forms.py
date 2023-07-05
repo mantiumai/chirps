@@ -36,11 +36,32 @@ class MantiumTargetForm(ModelForm):
             'client_secret': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
+class PineconeTargetForm(ModelForm):  
+    class Meta:  
+        model = PineconeTarget  
+        fields = [  
+            'name',  
+            'api_key',  
+            'environment',  
+            'index_name',  
+            'project_name',  
+        ]  
+  
+        widgets = {  
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),  
+            'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),  
+            'environment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Environment (optional)'}),  
+            'index_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Index Name (optional)'}),  
+            'project_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}),  
+        }  
 
-targets = [
-    {'form': RedisTargetForm, 'model': RedisTarget},
-    {'form': MantiumTargetForm, 'model': MantiumTarget},
-]
+
+targets = [  
+    {'form': RedisTargetForm, 'model': RedisTarget},  
+    {'form': MantiumTargetForm, 'model': MantiumTarget},  
+    {'form': PineconeTargetForm, 'model': PineconeTarget},  
+]  
+
 
 
 def target_from_html_name(html_name: str) -> dict:
@@ -48,3 +69,4 @@ def target_from_html_name(html_name: str) -> dict:
     for target in targets:
         if target['model'].html_name == html_name:
             return target
+
