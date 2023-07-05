@@ -79,7 +79,7 @@ import pinecone
 class PineconeTarget(BaseTarget):  
     """Implementation of a Pinecone target."""  
   
-    api_key = models.CharField(max_length=256)  
+    api_key = EncryptedCharField(max_length=256)  
     environment = models.CharField(max_length=256, blank=True, null=True)  
     index_name = models.CharField(max_length=256, blank=True, null=True)  
     project_name = models.CharField(max_length=256, blank=True, null=True)  

@@ -161,3 +161,4 @@ cython_debug/
 .vscode/launch.json
 
 chirps/erl_crash.dump
+*.dump
