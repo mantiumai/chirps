@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))  
 
 from pathlib import Path
 
@@ -146,4 +149,4 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 
 # FERNET SETTINGS
-FERNET_KEYS = [os.environ.get('FERNET_KEY', '8Zxa4qO2G7qKawIpyplyyCMi68ccy-OlwTNCID-cBII=')]  
+FERNET_KEY = os.getenv('FERNET_KEY')
