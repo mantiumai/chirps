@@ -6,3 +6,5 @@ django-polymorphic==3.1.0
 mantium-client
 redis==4.5.5
 requests==2.31.0
+pinecone-client
+python-dotenv

