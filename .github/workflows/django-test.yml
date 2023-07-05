@@ -27,4 +27,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        ./manage.py test
+        cd chirps; ./manage.py test
