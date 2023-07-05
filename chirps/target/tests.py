@@ -25,7 +25,8 @@ class TargetTests(TestCase):
         """Verify that targets are isolated to a single tenant."""
 
         # Create a target for user1
-        MantiumTarget.objects.create(name='Mantium Target', app_id='12345', token='1234', user=User.objects.get(username='user1'))
+        MantiumTarget.objects.create(name='Mantium Target', app_id='12345', client_id='1234',
+                                     client_secret='secret_dummy_value', user=User.objects.get(username='user1'))
 
         # Verify that the target is accessible to user1 (need to login first)
         response = self.client.post(
