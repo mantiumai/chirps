@@ -1,11 +1,10 @@
 """Views for the base application."""
+from account.models import Profile
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User  # noqa: E5142
 from django.shortcuts import redirect, render
 from django.urls import reverse
-
-from account.models import Profile
 
 from .forms import InstallForm
 

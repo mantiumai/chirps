@@ -2,7 +2,6 @@
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
-
 from target.models import MantiumTarget
 
 

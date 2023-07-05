@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
-
 from plan.models import Rule
 
 
