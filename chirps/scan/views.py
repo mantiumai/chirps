@@ -1,10 +1,12 @@
 import json
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ScanForm
-from .models import Result, Scan, Finding
+from .models import Finding, Result, Scan
 from .tasks import scan_task
+
 
 @login_required
 def finding_detail(request, finding_id):

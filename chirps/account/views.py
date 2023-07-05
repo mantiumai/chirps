@@ -1,11 +1,11 @@
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.contrib.auth import login
+
+from .forms import LoginForm, ProfileForm, SignupForm
 from .models import Profile
 
-from .forms import ProfileForm, SignupForm, LoginForm
-from django.contrib.auth import authenticate
 
 def profile(request):
 

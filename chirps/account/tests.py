@@ -1,8 +1,10 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password, make_password
 from django.test import TestCase
 from django.urls import reverse
+
 from .forms import ProfileForm
-from django.contrib.auth.forms import AuthenticationForm
+
 
 class AccountTests(TestCase):
     def test_openai_key_hash(self):

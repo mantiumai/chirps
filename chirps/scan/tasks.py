@@ -1,10 +1,11 @@
 import json
 import re
+
 from celery import shared_task
 from django.utils import timezone
 from target.models import BaseTarget
 
-from .models import Result, Rule, Scan, Finding
+from .models import Finding, Result, Rule, Scan
 
 
 @shared_task

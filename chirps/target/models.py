@@ -2,16 +2,17 @@
 import pinecone
 
 from django.contrib import admin
+from django.contrib.auth.models import User
 from django.db import models
+from django.templatetags.static import static
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
-from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
+from polymorphic.admin import (PolymorphicChildModelAdmin,
+                               PolymorphicParentModelAdmin)
 from polymorphic.models import PolymorphicModel
 from .custom_fields import CustomEncryptedCharField
 
-from django.contrib.auth.models import User
-from django.templatetags.static import static
 
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""

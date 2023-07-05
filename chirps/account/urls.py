@@ -1,8 +1,9 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from .views import login_view
 from .views import profile as profile_view
-from .views import signup, login_view
+from .views import signup
 
 urlpatterns = [
     # path('login/', auth_views.LoginView.as_view(template_name='account/login.html', next_page='/'), name='login'),

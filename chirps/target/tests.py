@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from target.models import MantiumTarget
-from django.contrib.auth.models import User
+
 
 class TargetTests(TestCase):
 
