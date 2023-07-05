@@ -1,5 +1,5 @@
 django
-celery==5.3.1
+celery==5.3.0
 django-celery-results==2.5.1
 django-fernet-fields==0.6
 django-polymorphic==3.1.0
