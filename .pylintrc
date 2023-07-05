@@ -1,2 +1,9 @@
 [FORMAT]
 max-line-length=120
+
+[MASTER]
+# Ignore Django migration files
+ignore-patterns=\d{4}_.*?.py
+
+[MESSAGES CONTROL]
+disable=duplicate-code,too-few-public-methods,imported-auth-user

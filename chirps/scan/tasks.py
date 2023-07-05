@@ -1,20 +1,16 @@
-import json
+"""Celery tasks for the scan application."""
 import re
 
 from celery import shared_task
 from django.utils import timezone
 from target.models import BaseTarget
 
-from .models import Finding, Result, Rule, Scan
-
-
-@shared_task
-def add(x, y):
-    return x + y
+from .models import Finding, Result, Scan
 
 
 @shared_task
 def scan_task(scan_id):
+    """Main scan task."""
 
     print(f'Running a scan {scan_id}')
     try:
@@ -33,7 +29,6 @@ def scan_task(scan_id):
     for rule in scan.plan.rules.all():
         print(f'Running rule {rule}')
 
-        # TODO: Convert the query to an embedding if required by the target.
         results = target.search(query=rule.query_string, max_results=100)
 
         for text in results:
@@ -52,4 +47,4 @@ def scan_task(scan_id):
     # Persist the completion time of the scan
     scan.finished_at = timezone.now()
     scan.save()
-    print(f'Saved scan results')
+    print('Saved scan results')

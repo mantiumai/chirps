@@ -1,3 +1,4 @@
+"""URLS for the scan application."""
 from django.urls import path
 
 from . import views

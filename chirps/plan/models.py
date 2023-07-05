@@ -1,6 +1,6 @@
-from django.contrib import admin
+"""Models for the plan application."""
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Plan(models.Model):
     """Model for what to do when scanning a target."""
@@ -12,8 +12,8 @@ class Plan(models.Model):
     is_template = models.BooleanField(default=False)
 
     # Bind this plan to a user if it isn't a template
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
-    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return self.name
 
@@ -41,7 +41,3 @@ class Rule(models.Model):
 
     def __str__(self):
         return self.name
-
-
-admin.site.register(Plan)
-admin.site.register(Rule)

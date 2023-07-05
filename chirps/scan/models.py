@@ -1,5 +1,4 @@
 """Models for the scan application."""
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.safestring import mark_safe
@@ -87,7 +86,3 @@ class Finding(models.Model):
         buffer += "</span>"
         buffer += self.result.text[self.offset + self.length + 1 : ]
         return mark_safe(buffer)
-
-admin.site.register(Scan)
-admin.site.register(Result)
-admin.site.register(Finding)

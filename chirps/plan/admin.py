@@ -1,3 +1,7 @@
+"""Admin interface definition for plan models."""
 from django.contrib import admin
 
-# Register your models here.
+from .models import Plan, Rule
+
+admin.site.register(Plan)
+admin.site.register(Rule)

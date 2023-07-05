@@ -1,12 +1,14 @@
+"""Forms for rendering scan application models."""
 from django import forms
 from django.forms import ModelForm
-from target.models import BaseTarget
 
 from .models import Scan
 
 
 class ScanForm(ModelForm):
+    """Form for the main scan model."""
     class Meta:
+        """Django Meta options for the ScanForm."""
         model = Scan
         fields = ['description', 'target', 'plan']
 

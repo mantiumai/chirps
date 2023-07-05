@@ -63,7 +63,7 @@ def create(request, html_name):
 
 
 @login_required
-def delete(request, target_id):
+def delete(request, target_id): # pylint: disable=unused-argument
     """Delete a target from the database."""
     get_object_or_404(BaseTarget, pk=target_id).delete()
     return redirect('target_dashboard')

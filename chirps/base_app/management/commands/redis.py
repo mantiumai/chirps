@@ -1,9 +1,11 @@
+"""Management command for interacting with redis."""
 import os
 
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    """Management command for interacting with redis."""
     help = 'Interact with the local redis development server'
 
     def add_arguments(self, parser):

@@ -1,9 +1,11 @@
+"""Management command for interacting with rabbitmq."""
 import os
 
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    """Management command for interacting with rabbitmq."""
     help = 'Interact with the local rabbitmq development server'
 
     def add_arguments(self, parser):

@@ -29,7 +29,7 @@ class LoginForm(forms.Form):
 
 class SignupForm(forms.Form):
     """Form for signing up."""
-    
+
     username = forms.CharField(max_length=256)
     email = forms.EmailField(max_length=256)
     password1 = forms.CharField(max_length=256, widget=forms.PasswordInput)

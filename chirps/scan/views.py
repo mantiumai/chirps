@@ -1,4 +1,4 @@
-import json
+"""Views for the scan application."""
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -10,17 +10,19 @@ from .tasks import scan_task
 
 @login_required
 def finding_detail(request, finding_id):
+    """Render the finding detail page."""
     finding = get_object_or_404(Finding, pk=finding_id, result__scan__user=request.user)
     return render(request, 'scan/finding_detail.html', {'finding': finding})
 
 @login_required
 def result_detail(request, result_id):
+    """Render the scan result detail page."""
     result = get_object_or_404(Result, pk=result_id, scan__user=request.user)
     return render(request, 'scan/result_detail.html', {'result': result})
 
 @login_required
 def create(request):
-
+    """Render the scan creation page and handle POST requests."""
     if request.method == 'POST':
         scan_form = ScanForm(request.POST)
         if scan_form.is_valid():
@@ -52,7 +54,8 @@ def create(request):
 
 @login_required
 def dashboard(request):
-    # TODO: Add pagination
+    """Render the scan dashboard."""
+
     user_scans = Scan.objects.filter(user=request.user)
 
     # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
@@ -62,7 +65,11 @@ def dashboard(request):
 
         for result in scan.result_set.all():
             if result.rule.name not in scan.rules:
-                scan.rules[result.rule.name] = {'id': result.id, 'rule': result.rule, 'findings': Finding.objects.filter(result=result).count()}
+                scan.rules[result.rule.name] = {
+                    'id': result.id,
+                    'rule': result.rule,
+                    'findings': Finding.objects.filter(result=result).count()
+                }
 
         # Convert the dictionary into a list that the template can iterate on
         scan.rules = scan.rules.values()

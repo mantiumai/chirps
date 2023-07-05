@@ -1,12 +1,15 @@
-from django.contrib.auth.models import User
+"""Test cases for the target application."""
+from django.contrib.auth.models import User # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
 from target.models import MantiumTarget
 
 
 class TargetTests(TestCase):
+    """Test the target application."""
 
     def setUp(self):
+        """Initialize the database with some dummy users."""
         self.users = [
             {'username': 'user1', 'email': 'user1@mantiumai.com', 'password': 'user1password'},
             {'username': 'user2', 'email': 'user2@mantiumai.com', 'password': 'user2password'},
