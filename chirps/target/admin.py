@@ -1,4 +1,3 @@
 from django.contrib import admin
 
-admin.site.register(PineconeTarget)  
-
+# Register your models here.

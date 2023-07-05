@@ -63,6 +63,19 @@ class RedisTarget(BaseTarget):
 class RedisTargetAdmin(PolymorphicChildModelAdmin):
     base_model = RedisTarget
 
+from django.contrib import admin  
+from django.db import models  
+from fernet_fields import EncryptedCharField  
+from mantium_client.api_client import MantiumClient  
+from mantium_spec.api.applications_api import ApplicationsApi  
+from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin  
+from polymorphic.models import PolymorphicModel  
+from django.contrib.auth.models import User  
+from django.templatetags.static import static  
+import pinecone  
+  
+# ... (other model classes)  
+  
 class PineconeTarget(BaseTarget):  
     """Implementation of a Pinecone target."""  
   
@@ -76,23 +89,20 @@ class PineconeTarget(BaseTarget):
     html_name = 'Pinecone'  
     html_description = 'Pinecone Vector Database'  
   
-import pinecone  
-  
-class PineconeTarget(BaseTarget):  
-    # ... (existing code)  
-  
     def search(self, query: str, max_results: int) -> list[str]:  
         """Search the Pinecone target with the specified query."""  
         pinecone.init(api_key=self.api_key, environment=self.environment)  
   
-        # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this. 
+        # Assuming the query is converted to a vector of the same dimension as the index  
         query_vector = convert_query_to_vector(query)  
   
         # Perform search on the Pinecone index  
         search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)  
   
-
+        # Clean up Pinecone resources  
         pinecone.deinit()  
+  
+        # Return search results  
         return search_results  
   
     def test_connection(self) -> bool:  
@@ -100,8 +110,13 @@ class PineconeTarget(BaseTarget):
         try:  
             pinecone.init(api_key=self.api_key, environment=self.environment)  
   
+            # Attempt to describe the index to test the connection  
             index_description = pinecone.describe_index(self.index_name)  
+  
+            # Clean up Pinecone resources  
             pinecone.deinit()  
+  
+            # If no exception is raised, the connection is successful  
             return True  
         except Exception as e:  
             print(f"Pinecone connection test failed: {e}")  

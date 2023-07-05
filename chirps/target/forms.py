@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import MantiumTarget, RedisTarget
+from .models import MantiumTarget, RedisTarget, PineconeTarget
 
 
 class RedisTargetForm(ModelForm):
