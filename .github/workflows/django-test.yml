@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pylint
-        pip instlal pylint-django
+        pip install pylint-django
         pip install isort
     - name: Run Tests
       run: |
