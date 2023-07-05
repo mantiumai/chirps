@@ -1,6 +1,6 @@
 """Views for the account application."""
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User # noqa: E5142
+from django.contrib.auth.models import User  # noqa: E5142
 from django.shortcuts import redirect, render
 from django.urls import reverse
 

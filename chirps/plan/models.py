@@ -1,6 +1,7 @@
 """Models for the plan application."""
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
 
 class Plan(models.Model):
     """Model for what to do when scanning a target."""

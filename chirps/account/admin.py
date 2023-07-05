@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 from .models import Profile
 
+
 class ProfileInline(admin.StackedInline):
     """Inline admin descriptor for the Profile model."""
 

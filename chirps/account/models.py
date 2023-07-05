@@ -1,6 +1,7 @@
 """Models for the account appliation."""
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
 
 class Profile(models.Model):
     """Custom profile model for users."""

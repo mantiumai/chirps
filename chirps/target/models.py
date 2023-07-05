@@ -11,7 +11,6 @@ from django.templatetags.static import static
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
-
 from polymorphic.models import PolymorphicModel
 from .custom_fields import CustomEncryptedCharField
 
