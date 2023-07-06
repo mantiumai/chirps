@@ -28,6 +28,10 @@ jobs:
         pip install pylint
         pip install pylint-django
         pip install isort
+    - name: Generate Fernet Key
+      run: |
+        cd chirps;
+        python -c "from cryptography.fernet import Fernet; print(f'FERNET_KEY={Fernet.generate_key().decode()}')" > .env
     - name: Run Tests
       run: |
         cd chirps; python manage.py test
@@ -35,4 +39,3 @@ jobs:
       run: |
         isort --check-only --diff .
         pylint --load-plugins pylint_django --django-settings-module="chirps.settings" $(find . -name "*.py" | xargs)
-  
