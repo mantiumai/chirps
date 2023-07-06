@@ -4,7 +4,8 @@ from django.contrib import admin
 from polymorphic.admin import (PolymorphicChildModelAdmin,
                                PolymorphicParentModelAdmin)
 
-from .models import BaseTarget, MantiumTarget, RedisTarget, PineconeTarget
+from .models import BaseTarget, MantiumTarget, PineconeTarget, RedisTarget
+
 
 class BaseTargetAdmin(PolymorphicParentModelAdmin):
     """Base admin class for the BaseTarget model."""
@@ -13,6 +14,7 @@ class BaseTargetAdmin(PolymorphicParentModelAdmin):
 
 
 class PineconeTargetAdmin(PolymorphicChildModelAdmin):
+    """Admin class for the PineconeTarget model."""
     base_model = PineconeTarget
 
 class MantiumTargetAdmin(PolymorphicChildModelAdmin):

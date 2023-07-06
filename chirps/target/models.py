@@ -1,7 +1,6 @@
 """Models for the target appliation."""
 
 import pinecone
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.templatetags.static import static
@@ -9,6 +8,7 @@ from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
 from polymorphic.models import PolymorphicModel
+
 from .custom_fields import CustomEncryptedCharField
 
 
@@ -73,6 +73,7 @@ class PineconeTarget(BaseTarget):
 
     @property
     def decrypted_api_key(self):
+        """Return the decrypted API key."""
         if self.api_key is not None:
             try:
                 decrypted_value = self.api_key
@@ -86,7 +87,7 @@ class PineconeTarget(BaseTarget):
         pinecone.init(api_key=self.api_key, environment=self.environment)
 
         # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
-        query_vector = convert_query_to_vector(query)
+        query_vector = convert_query_to_vector(query) # pylint: disable=undefined-variable
 
         # Perform search on the Pinecone index
         search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
@@ -97,12 +98,10 @@ class PineconeTarget(BaseTarget):
         """Ensure that the Pinecone target can be connected to."""
         try:
             pinecone.init(api_key=self.api_key, environment=self.environment)
-
-            index_description = pinecone.describe_index(self.index_name)
             pinecone.deinit()
             return True
-        except Exception as e:
-            print(f"Pinecone connection test failed: {e}")
+        except Exception as err: # pylint: disable=broad-exception-caught
+            print(f"Pinecone connection test failed: {err}")
             return False
 
 

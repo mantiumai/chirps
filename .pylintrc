@@ -7,3 +7,4 @@ ignore-patterns=\d{4}_.*?.py
 
 [MESSAGES CONTROL]
 disable=duplicate-code,too-few-public-methods,imported-auth-user
+ignored-modules=pinecone

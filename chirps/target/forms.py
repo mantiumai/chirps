@@ -2,7 +2,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import MantiumTarget, RedisTarget, PineconeTarget
+from .models import MantiumTarget, PineconeTarget, RedisTarget
 
 
 class RedisTargetForm(ModelForm):
@@ -44,7 +44,9 @@ class MantiumTargetForm(ModelForm):
         }
 
 class PineconeTargetForm(ModelForm):
+    """Form for the PineconeTarget model."""
     class Meta:
+        """Django Meta options for the PineconeTargetForm."""
         model = PineconeTarget
         fields = [
             'name',
