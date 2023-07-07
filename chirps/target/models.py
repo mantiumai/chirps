@@ -1,4 +1,5 @@
 """Models for the target appliation."""
+from logging import getLogger
 
 import pinecone
 from django.contrib.auth.models import User
@@ -10,6 +11,8 @@ from mantium_spec.api.applications_api import ApplicationsApi
 from polymorphic.models import PolymorphicModel
 
 from .custom_fields import CustomEncryptedCharField
+
+logger = getLogger(__name__)
 
 
 class BaseTarget(PolymorphicModel):
@@ -33,6 +36,7 @@ class BaseTarget(PolymorphicModel):
         """String representation of this model."""
         return str(self.name)
 
+
 class RedisTarget(BaseTarget):
     """Implementation of a Redis target."""
 
@@ -49,13 +53,13 @@ class RedisTarget(BaseTarget):
 
     def search(self, query: str, max_results: int) -> str:
         """Search the Redis target with the specified query."""
-        print('Starting RedisTarget search')
-        print('Converting search query into an embedding vector')
-        print('RedisTarget search copmlete')
+        logger.error('RedisTarget search not implemented')
+        raise NotImplementedError
 
     def test_connection(self) -> bool:
         """Ensure that the Redis target can be connected to."""
-        return True
+        logger.error('RedisTarget search not implemented')
+        raise NotImplementedError
 
 
 class PineconeTarget(BaseTarget):
@@ -79,7 +83,7 @@ class PineconeTarget(BaseTarget):
                 decrypted_value = self.api_key
                 return decrypted_value
             except UnicodeDecodeError:
-                return "Error: Decryption failed"
+                return 'Error: Decryption failed'
         return None
 
     def search(self, query: str, max_results: int) -> list[str]:
@@ -87,7 +91,7 @@ class PineconeTarget(BaseTarget):
         pinecone.init(api_key=self.api_key, environment=self.environment)
 
         # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
-        query_vector = convert_query_to_vector(query) # pylint: disable=undefined-variable
+        query_vector = convert_query_to_vector(query)   # pylint: disable=undefined-variable
 
         # Perform search on the Pinecone index
         search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
@@ -100,8 +104,8 @@ class PineconeTarget(BaseTarget):
             pinecone.init(api_key=self.api_key, environment=self.environment)
             pinecone.deinit()
             return True
-        except Exception as err: # pylint: disable=broad-exception-caught
-            print(f"Pinecone connection test failed: {err}")
+        except Exception as err:   # pylint: disable=broad-exception-caught
+            logger.error('Pinecone connection test failed', extra={'error': err})
             return False
 
 
@@ -119,6 +123,7 @@ class MantiumTarget(BaseTarget):
     html_description = 'Mantium Knowledge Vault'
 
     def search(self, query: str, max_results: int) -> list[str]:
+        logger.info('Starting Mantium Target search', extra={'id': self.id})
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 
@@ -126,6 +131,8 @@ class MantiumTarget(BaseTarget):
         results = apps_api.query_application(self.app_id, query_request)
 
         documents = [doc['content'] for doc in results['documents']]
+        logger.info('Mantium target search complete', extra={'id': self.id})
         return documents
+
 
 targets = [RedisTarget, MantiumTarget, PineconeTarget]
