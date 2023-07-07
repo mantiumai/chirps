@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
-from target.models import MantiumTarget
+from target.providers.mantium import MantiumTarget
 
 
 class TargetTests(TestCase):
@@ -16,12 +16,15 @@ class TargetTests(TestCase):
         ]
         # Setup two users for testing
         for user in self.users:
-            response = self.client.post(reverse('signup'), {
-                'username': user['username'],
-                'email': user['email'],
-                'password1': user['password'],
-                'password2': user['password']
-            })
+            response = self.client.post(
+                reverse('signup'),
+                {
+                    'username': user['username'],
+                    'email': user['email'],
+                    'password1': user['password'],
+                    'password2': user['password'],
+                },
+            )
 
             self.assertRedirects(response, '/', 302)
 
@@ -29,8 +32,13 @@ class TargetTests(TestCase):
         """Verify that targets are isolated to a single tenant."""
 
         # Create a target for user1
-        MantiumTarget.objects.create(name='Mantium Target', app_id='12345', client_id='1234',
-                                     client_secret='secret_dummy_value', user=User.objects.get(username='user1'))
+        MantiumTarget.objects.create(
+            name='Mantium Target',
+            app_id='12345',
+            client_id='1234',
+            client_secret='secret_dummy_value',
+            user=User.objects.get(username='user1'),
+        )
 
         # Verify that the target is accessible to user1 (need to login first)
         response = self.client.post(
@@ -38,7 +46,7 @@ class TargetTests(TestCase):
             {
                 'username': self.users[0]['username'],
                 'password': self.users[0]['password'],
-            }
+            },
         )
         self.assertRedirects(response, '/', status_code=302)
         response = self.client.get(reverse('target_dashboard'))
@@ -50,7 +58,7 @@ class TargetTests(TestCase):
             {
                 'username': self.users[1]['username'],
                 'password': self.users[1]['password'],
-            }
+            },
         )
         self.assertRedirects(response, '/', status_code=302)
         response = self.client.get(reverse('target_dashboard'))

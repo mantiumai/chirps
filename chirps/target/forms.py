@@ -2,7 +2,9 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import MantiumTarget, PineconeTarget, RedisTarget
+from .providers.mantium import MantiumTarget
+from .providers.pinecone import PineconeTarget
+from .providers.redis import RedisTarget
 
 
 class RedisTargetForm(ModelForm):
@@ -10,6 +12,7 @@ class RedisTargetForm(ModelForm):
 
     class Meta:
         """Django Meta options for the RedisTargetForm."""
+
         model = RedisTarget
         fields = ['name', 'host', 'port', 'database_name', 'username', 'password']
 
@@ -28,6 +31,7 @@ class MantiumTargetForm(ModelForm):
 
     class Meta:
         """Django Meta options for the MantiumTargetForm."""
+
         model = MantiumTarget
         fields = [
             'name',
@@ -43,10 +47,13 @@ class MantiumTargetForm(ModelForm):
             'client_secret': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
+
 class PineconeTargetForm(ModelForm):
     """Form for the PineconeTarget model."""
+
     class Meta:
         """Django Meta options for the PineconeTargetForm."""
+
         model = PineconeTarget
         fields = [
             'name',
@@ -70,7 +77,6 @@ targets = [
     {'form': MantiumTargetForm, 'model': MantiumTarget},
     {'form': PineconeTargetForm, 'model': PineconeTarget},
 ]
-
 
 
 def target_from_html_name(html_name: str) -> dict:
