@@ -1,18 +1,21 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
-from django.contrib.auth.models import User
+"""Views for the base application."""
+from account.models import Profile
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User  # noqa: E5142
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from . forms import InstallForm
-from account.models import Profile
+from .forms import InstallForm
+
 
 @login_required
 def index(request):
+    """Render the index page."""
     return render(request, 'dashboard/index.html', {})
 
 def install(request):
+    """Render the install page."""
 
     # If there are uses already, redirect to the dashboard
     if User.objects.count() > 0:

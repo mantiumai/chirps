@@ -1,11 +1,11 @@
 """Models for the scan application."""
-from django.contrib import admin
-from django.db import models
-from django_celery_results.models import TaskResult
-from plan.models import Rule
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils.safestring import mark_safe
+from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
+from plan.models import Rule
+
 
 class Scan(models.Model):
     """Model for a single scan run against a target."""
@@ -86,7 +86,3 @@ class Finding(models.Model):
         buffer += "</span>"
         buffer += self.result.text[self.offset + self.length + 1 : ]
         return mark_safe(buffer)
-
-admin.site.register(Scan)
-admin.site.register(Result)
-admin.site.register(Finding)

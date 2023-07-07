@@ -1,11 +1,18 @@
+"""Forms for rendering and validating the target models."""
 from django import forms
 from django.forms import ModelForm
 
-from .models import MantiumTarget, RedisTarget, PineconeTarget
+from .providers.mantium import MantiumTarget
+from .providers.pinecone import PineconeTarget
+from .providers.redis import RedisTarget
 
 
 class RedisTargetForm(ModelForm):
+    """Form for the RedisTarget model."""
+
     class Meta:
+        """Django Meta options for the RedisTargetForm."""
+
         model = RedisTarget
         fields = ['name', 'host', 'port', 'database_name', 'username', 'password']
 
@@ -20,7 +27,11 @@ class RedisTargetForm(ModelForm):
 
 
 class MantiumTargetForm(ModelForm):
+    """Form for the MantiumTarget model."""
+
     class Meta:
+        """Django Meta options for the MantiumTargetForm."""
+
         model = MantiumTarget
         fields = [
             'name',
@@ -36,32 +47,36 @@ class MantiumTargetForm(ModelForm):
             'client_secret': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
-class PineconeTargetForm(ModelForm):  
-    class Meta:  
-        model = PineconeTarget  
-        fields = [  
-            'name',  
-            'api_key',  
-            'environment',  
-            'index_name',  
-            'project_name',  
-        ]  
-  
-        widgets = {  
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),  
-            'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),  
-            'environment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Environment (optional)'}),  
-            'index_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Index Name (optional)'}),  
-            'project_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}),  
-        }  
+
+class PineconeTargetForm(ModelForm):
+    """Form for the PineconeTarget model."""
+
+    class Meta:
+        """Django Meta options for the PineconeTargetForm."""
+
+        model = PineconeTarget
+        fields = [
+            'name',
+            'api_key',
+            'environment',
+            'index_name',
+            'project_name',
+        ]
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
+            'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
+            'environment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Environment (optional)'}),
+            'index_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Index Name (optional)'}),
+            'project_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}),
+        }
 
 
-targets = [  
-    {'form': RedisTargetForm, 'model': RedisTarget},  
-    {'form': MantiumTargetForm, 'model': MantiumTarget},  
-    {'form': PineconeTargetForm, 'model': PineconeTarget},  
-]  
-
+targets = [
+    {'form': RedisTargetForm, 'model': RedisTarget},
+    {'form': MantiumTargetForm, 'model': MantiumTarget},
+    {'form': PineconeTargetForm, 'model': PineconeTarget},
+]
 
 
 def target_from_html_name(html_name: str) -> dict:
@@ -70,3 +85,4 @@ def target_from_html_name(html_name: str) -> dict:
         if target['model'].html_name == html_name:
             return target
 
+    return {}
