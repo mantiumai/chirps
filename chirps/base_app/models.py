@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+"""Define any models for the chirps base application."""

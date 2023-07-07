@@ -1,23 +1,23 @@
 """Models for the target appliation."""
-import pinecone
 
-from django.contrib import admin
+import pinecone
+from django.contrib.auth.models import User
 from django.db import models
+from django.templatetags.static import static
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
-from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 from polymorphic.models import PolymorphicModel
+
 from .custom_fields import CustomEncryptedCharField
 
-from django.contrib.auth.models import User
-from django.templatetags.static import static
 
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    html_logo = None
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Perform a query against the specified target, returning the max_results number of matches."""
@@ -26,15 +26,12 @@ class BaseTarget(PolymorphicModel):
         """Verify that the target can be connected to."""
 
     def logo_url(self) -> str:
+        """Fetch the logo URL for the target."""
         return static(self.html_logo)
 
-    def __str__(self):
-        return self.name
-
-
-class BaseTargetAdmin(PolymorphicParentModelAdmin):
-    base_model = BaseTarget
-
+    def __str__(self) -> str:
+        """String representation of this model."""
+        return str(self.name)
 
 class RedisTarget(BaseTarget):
     """Implementation of a Redis target."""
@@ -61,58 +58,52 @@ class RedisTarget(BaseTarget):
         return True
 
 
-class RedisTargetAdmin(PolymorphicChildModelAdmin):
-    base_model = RedisTarget
+class PineconeTarget(BaseTarget):
+    """Implementation of a Pinecone target."""
 
-class PineconeTarget(BaseTarget):  
-    """Implementation of a Pinecone target."""  
-  
-    api_key = CustomEncryptedCharField(max_length=256, editable=True)  
-    environment = models.CharField(max_length=256, blank=True, null=True)  
-    index_name = models.CharField(max_length=256, blank=True, null=True)  
-    project_name = models.CharField(max_length=256, blank=True, null=True)  
-  
-    # Name of the file in the ./target/static/ directory to use as a logo  
-    html_logo = 'target/pinecone-logo.png'  
-    html_name = 'Pinecone'  
+    api_key = CustomEncryptedCharField(max_length=256, editable=True)
+    environment = models.CharField(max_length=256, blank=True, null=True)
+    index_name = models.CharField(max_length=256, blank=True, null=True)
+    project_name = models.CharField(max_length=256, blank=True, null=True)
+
+    # Name of the file in the ./target/static/ directory to use as a logo
+    html_logo = 'target/pinecone-logo.png'
+    html_name = 'Pinecone'
     html_description = 'Pinecone Vector Database'
 
-    @property  
-    def decrypted_api_key(self):  
-        if self.api_key is not None:  
-            try:  
-                decrypted_value = self.api_key  
-                return decrypted_value  
-            except UnicodeDecodeError:  
-                return "Error: Decryption failed"  
-        return None  
-  
-    def search(self, query: str, max_results: int) -> list[str]:  
-        """Search the Pinecone target with the specified query."""  
-        pinecone.init(api_key=self.api_key, environment=self.environment)  
-  
-        # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this. 
-        query_vector = convert_query_to_vector(query)  
-  
-        # Perform search on the Pinecone index  
-        search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)  
-        pinecone.deinit()  
-        return search_results  
-  
-    def test_connection(self) -> bool:  
-        """Ensure that the Pinecone target can be connected to."""  
-        try:  
-            pinecone.init(api_key=self.api_key, environment=self.environment)  
-  
-            index_description = pinecone.describe_index(self.index_name)  
-            pinecone.deinit()  
-            return True  
-        except Exception as e:  
-            print(f"Pinecone connection test failed: {e}")  
+    @property
+    def decrypted_api_key(self):
+        """Return the decrypted API key."""
+        if self.api_key is not None:
+            try:
+                decrypted_value = self.api_key
+                return decrypted_value
+            except UnicodeDecodeError:
+                return "Error: Decryption failed"
+        return None
+
+    def search(self, query: str, max_results: int) -> list[str]:
+        """Search the Pinecone target with the specified query."""
+        pinecone.init(api_key=self.api_key, environment=self.environment)
+
+        # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
+        query_vector = convert_query_to_vector(query) # pylint: disable=undefined-variable
+
+        # Perform search on the Pinecone index
+        search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
+        pinecone.deinit()
+        return search_results
+
+    def test_connection(self) -> bool:
+        """Ensure that the Pinecone target can be connected to."""
+        try:
+            pinecone.init(api_key=self.api_key, environment=self.environment)
+            pinecone.deinit()
+            return True
+        except Exception as err: # pylint: disable=broad-exception-caught
+            print(f"Pinecone connection test failed: {err}")
             return False
 
-class PineconeTargetAdmin(PolymorphicChildModelAdmin):  
-    base_model = PineconeTarget  
 
 class MantiumTarget(BaseTarget):
     """Implementation of a Mantium target."""
@@ -137,12 +128,4 @@ class MantiumTarget(BaseTarget):
         documents = [doc['content'] for doc in results['documents']]
         return documents
 
-
-class MantiumTargetAdmin(PolymorphicChildModelAdmin):
-    base_model = MantiumTarget
-
-admin.site.register(RedisTarget)
-admin.site.register(MantiumTarget)
-
-targets = [RedisTarget, MantiumTarget, PineconeTarget]  
-
+targets = [RedisTarget, MantiumTarget, PineconeTarget]

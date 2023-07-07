@@ -1,3 +1,1 @@
-from django.contrib import admin
-
-# Register your models here.
+"""Define any admin interface models for the base application."""

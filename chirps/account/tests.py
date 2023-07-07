@@ -1,10 +1,13 @@
-from django.contrib.auth.hashers import check_password, make_password
+"""Tests for the account application."""
 from django.test import TestCase
 from django.urls import reverse
+
 from .forms import ProfileForm
-from django.contrib.auth.forms import AuthenticationForm
+
 
 class AccountTests(TestCase):
+    """Main test class for the account application."""
+
     def test_openai_key_hash(self):
         """Verify that the openai_key paramater is correctly hashed by the form"""
         secret_val = 'secret_12345abcd'

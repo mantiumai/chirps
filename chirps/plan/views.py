@@ -1,3 +1,4 @@
+"""Views for the plan app."""
 from django.shortcuts import render
 
 from .models import Plan
