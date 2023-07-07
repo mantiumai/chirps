@@ -4,7 +4,8 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import target_from_html_name, targets
-from .models import BaseTarget, PineconeTarget
+from .models import BaseTarget
+from .providers.pinecone import PineconeTarget
 
 
 def decrypted_keys(request):
@@ -14,6 +15,7 @@ def decrypted_keys(request):
         keys.append(target.decrypted_api_key)
     return JsonResponse({'keys': keys})
 
+
 @login_required
 def dashboard(request):
     """Render the dashboard for the target app.
@@ -22,9 +24,7 @@ def dashboard(request):
         request (HttpRequest): Django request object
     """
     user_targets = BaseTarget.objects.filter(user=request.user)
-    return render(
-        request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets}
-    )
+    return render(request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets})
 
 
 @login_required
@@ -65,7 +65,7 @@ def create(request, html_name):
 
 
 @login_required
-def delete(request, target_id): # pylint: disable=unused-argument
+def delete(request, target_id):   # pylint: disable=unused-argument
     """Delete a target from the database."""
     get_object_or_404(BaseTarget, pk=target_id).delete()
     return redirect('target_dashboard')
