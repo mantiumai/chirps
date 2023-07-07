@@ -1,3 +1,4 @@
+"""Logic for interfacing with a Redis target."""
 from logging import getLogger
 
 from django.db import models

@@ -1,3 +1,4 @@
+"""Logic for interfacing with a Pinecone target."""
 from logging import getLogger
 
 import pinecone as pinecone_lib
