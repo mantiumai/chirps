@@ -1,6 +1,6 @@
 """Celery tasks for the scan application."""
-from logging import getLogger
 import re
+from logging import getLogger
 
 from celery import shared_task
 from django.utils import timezone
@@ -10,19 +10,19 @@ from .models import Finding, Result, Scan
 
 logger = getLogger(__name__)
 
+
 @shared_task
 def scan_task(scan_id):
     """Main scan task."""
 
-    logger.info('Starting scan',  extra={'id': scan_id})
+    logger.info('Starting scan', extra={'id': scan_id})
 
     try:
         scan = Scan.objects.get(pk=scan_id)
     except Scan.DoesNotExist:
         logger.error('Scan record not found', extra={'id': scan_id})
 
-        scan_task.update_state(state='FAILURE',
-                               meta={'error': f'Scan record not found ({scan_id})'})
+        scan_task.update_state(state='FAILURE', meta={'error': f'Scan record not found ({scan_id})'})
         return
 
     # Need to perform a secondary query in order to fetch the derrived class

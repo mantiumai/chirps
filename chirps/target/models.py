@@ -1,5 +1,6 @@
 """Models for the target appliation."""
 from logging import getLogger
+
 import pinecone
 from django.contrib.auth.models import User
 from django.db import models
@@ -12,6 +13,8 @@ from polymorphic.models import PolymorphicModel
 from .custom_fields import CustomEncryptedCharField
 
 logger = getLogger(__name__)
+
+
 class BaseTarget(PolymorphicModel):
     """Base class that all targets will inherit from."""
 
@@ -32,6 +35,7 @@ class BaseTarget(PolymorphicModel):
     def __str__(self) -> str:
         """String representation of this model."""
         return str(self.name)
+
 
 class RedisTarget(BaseTarget):
     """Implementation of a Redis target."""
@@ -79,7 +83,7 @@ class PineconeTarget(BaseTarget):
                 decrypted_value = self.api_key
                 return decrypted_value
             except UnicodeDecodeError:
-                return "Error: Decryption failed"
+                return 'Error: Decryption failed'
         return None
 
     def search(self, query: str, max_results: int) -> list[str]:
@@ -87,7 +91,7 @@ class PineconeTarget(BaseTarget):
         pinecone.init(api_key=self.api_key, environment=self.environment)
 
         # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
-        query_vector = convert_query_to_vector(query) # pylint: disable=undefined-variable
+        query_vector = convert_query_to_vector(query)   # pylint: disable=undefined-variable
 
         # Perform search on the Pinecone index
         search_results = pinecone.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
@@ -100,7 +104,7 @@ class PineconeTarget(BaseTarget):
             pinecone.init(api_key=self.api_key, environment=self.environment)
             pinecone.deinit()
             return True
-        except Exception as err: # pylint: disable=broad-exception-caught
+        except Exception as err:   # pylint: disable=broad-exception-caught
             logger.error('Pinecone connection test failed', extra={'error': err})
             return False
 
@@ -129,5 +133,6 @@ class MantiumTarget(BaseTarget):
         documents = [doc['content'] for doc in results['documents']]
         logger.info('Mantium target search complete', extra={'id': self.id})
         return documents
+
 
 targets = [RedisTarget, MantiumTarget, PineconeTarget]
