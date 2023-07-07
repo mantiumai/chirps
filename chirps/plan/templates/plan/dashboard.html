@@ -3,25 +3,26 @@
 
 {% block content %}
 
-<h1 class="display-1"><i class="fa-solid fa-map"></i> Plans</h1>
+<h1 class="text-success">Plans</h1>
 <!-- <a class="btn btn-primary" href="{% url 'plan_create' %}">New Plan</a> -->
 <hr>
 
 <div class="accordion" id="plan_templates">
     {% for template in templates %}
     <div class="accordion-item">
-        <h2 class="accordion-header">
+        <div class="accordion-header">
         <button class="accordion-button collapsed" type="button"
                 data-bs-toggle="collapse" data-bs-target="#collapse-{{template.id}}"
                 aria-expanded="false" aria-controls="collapse-{{template.id}}">
-            {{template.name}}
+            <div class="d-flex">
+                <h5 class="ml-0 mr-3 my-auto">{{template.name}}</h5>
+                <small class="ml-0 mr-auto my-auto">{{template.description}}</small>
+            </div>
         </button>
-        </h2>
+        </div>
         <div id="collapse-{{template.id}}" class="accordion-collapse collapse">
         <div class="accordion-body">
-            {{template.description}}
-
-            <h5 class="display-5">Rules</h4>
+            <h5>Rules</h4>
             <table class="table">
                 <thead>
                     <tr>
