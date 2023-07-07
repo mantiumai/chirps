@@ -13,11 +13,12 @@
     </head>
 
     <body>
-        <div class="container">
-        {% include 'header.html' %}
-        {% block content%}{%endblock%}
-        {% include 'footer.html' %}
-
+        <div>
+            {% include 'header.html' %}
+            <div class="container mt-3">
+                {% block content%}{%endblock%}
+            </div>
+            {% include 'footer.html' %}
         </div>
         <script src="{% static '/js/htmx-1.9.2.min.js' %}"></script>
         <script src="{% static '/js/fa/all.min.js' %}"></script>

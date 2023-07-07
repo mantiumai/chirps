@@ -2,14 +2,18 @@
 
 {% block content %}
 
-<h1 class="display-1"><i class="fa-regular fa-circle-user"></i> Account Settings</h1>
+<h1 class="text-success">Account Settings</h1>
 <hr>
 
 <div class="form-group">
     <form method="POST" action="{% url 'profile'%}">
-        {% csrf_token %}
-        {{ form }}
-        <button class="btn btn-success" type="submit">Save</button>
+        <div>
+            {% csrf_token %}
+            {{ form }}
+        </div>
+        <div class="mt-3 d-flex">
+            <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
+        </div>
     </form>
 </div>
 

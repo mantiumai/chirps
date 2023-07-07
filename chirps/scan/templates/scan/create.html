@@ -3,21 +3,23 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-      <h1 class="text-center text-dark mt-5 display-1">New Scan</h1>
-      <div class="card my-5">
-        <div class="card-body cardbody-color p-lg-5">
+<div>
+      <h1 class="text-success">New Scan</h1>
+      <hr>
+      <div class="card my-4">
+        <div class="card-body cardbody-color p-4">
             <div class="form-group">
                 <form method="POST" action="{% url 'scan_create' %}">
                     {% csrf_token %}
                     {{ scan_form }}
-                    <button class="btn btn-primary mt-2" type="submit">Create</button>
+                    <div class="d-flex mt-3">
+                      <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
+                      <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
+                    </div>
                 </form>
             </div>
         </div>
       </div>
-    </div>
 </div>
 
 

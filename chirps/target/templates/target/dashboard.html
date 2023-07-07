@@ -2,62 +2,57 @@
 {% block title %}Targets{% endblock %}  
   
 {% block content %}  
+<div>
+    <div class="d-flex">
+        <div class="ml-0 mr-auto my-auto">
+            <h1 class="text-success">Targets</h1>
+        </div>
+        <div class="ml-auto mr-0 my-auto">
+            <div class="dropdown"></div>
+                <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Create</button>
+                <div class="dropdown-menu">
+                    {% for target in available_targets %}
+                        <a class="dropdown-item" href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
   
-<h1 class="display-1"><i class="fa-solid fa-bullseye"></i> Targets</h1>  
+    {% for target in user_targets %}  
   
-<div>  
-    <nav class="navbar">  
-        <div class="container-fluid">  
-            <a class="navbar-brand" href="#"></a>  
-  
-            <div class="btn-group">  
-                <button type="button" class="btn btn-success">Create</button>  
-                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">  
-                  <span class="visually-hidden">Toggle Dropdown</span>  
-                </button>  
-                <ul class="dropdown-menu">  
-                    <li><h6 class="dropdown-header">Target</h6></li>  
-                    <li><hr class="dropdown-divider"></li>  
-                    {% for target in available_targets %}  
-                        <li><a class="dropdown-item" href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a></li>  
-                    {% endfor %}  
-                </ul>  
+        <div class="card my-4">
+            <div class="d-flex card-header">
+                <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{target.logo_url}}">
+                <h5 class="my-auto ml-0 mr-auto">{{ target.name }}</h5>
             </div>  
-  
+            <!-- <h5 class="card-header"><img width=48 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>   -->
+            <div class="card-body">  
+                <p class="card-text">  
+    
+                {% if target.html_name == 'Mantium' %}  
+                    Application ID: {{ target.app_id }}  
+                {% elif target.html_name == 'Redis' %}  
+                    Host: {{ target.host }}<br/>  
+                    Port: {{ target.port }}<br/>  
+                    Database Name: {{ target.database_name }}<br/>  
+                    Username: {{ target.username }}  
+                {% endif %}  
+                {% if target.html_name == 'Pinecone' %}  
+                    API Key: {{ target.decrypted_api_key }}<br/>  
+                    Environment: {{ target.environment }}<br/>  
+                    Index Name: {{ target.index_name }}<br/>  
+                    Project Name: {{ target.project_name }}  
+                {% endif %}  
+                </p>
+                <div class="d-flex">
+                    <a href="{% url 'target_delete' target.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
+                    <a href="#" class="btn btn-primary ml-2 mr-0 disabled">Edit</a> 
+                </div> 
+            </div>  
         </div>  
-    </nav>  
-</div>  
   
-  
-<hr>  
-  
-{% for target in user_targets %}  
-  
-    <div class="card m-5">  
-        <h5 class="card-header"><img width=64 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>  
-        <div class="card-body">  
-            <p class="card-text">  
-  
-            {% if target.html_name == 'Mantium' %}  
-                Application ID: {{ target.app_id }}  
-            {% elif target.html_name == 'Redis' %}  
-                Host: {{ target.host }}<br/>  
-                Port: {{ target.port }}<br/>  
-                Database Name: {{ target.database_name }}<br/>  
-                Username: {{ target.username }}  
-            {% endif %}  
-            {% if target.html_name == 'Pinecone' %}  
-                API Key: {{ target.decrypted_api_key }}<br/>  
-                Environment: {{ target.environment }}<br/>  
-                Index Name: {{ target.index_name }}<br/>  
-                Project Name: {{ target.project_name }}  
-            {% endif %}  
-            </p>  
-            <a href="#" class="btn btn-primary disabled">edit</a>  
-            <a href="{% url 'target_delete' target.id %}" class="btn btn-danger">delete</a>  
-        </div>  
-    </div>  
-  
-{% endfor %}  
-  
+    {% endfor %}  
+</div> 
 {% endblock %}  

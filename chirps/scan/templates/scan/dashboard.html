@@ -2,10 +2,12 @@
 {% block title %}Scans{% endblock %}
 
 {% block content %}
-<h1 class="display-1"><i class="fa-solid fa-magnifying-glass"></i> Scans</h1> <a class="btn btn-primary"
-  href="{% url 'scan_create' %}">New Scan</a>
-<hr>
-<table class="table">
+<div class="d-flex">
+  <h1 class="my-auto ml-0 mr-auto text-success">Scans</h1> 
+  <a class="btn btn-primary my-auto ml-auto mr-0" href="{% url 'scan_create' %}">New Scan</a>
+</div>
+
+<table class="table mt-3">
   <thead>
     <tr>
       <th scope="col">#</th>
