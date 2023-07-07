@@ -1,7 +1,8 @@
 """Admin interface definitions for target application models."""
 
 from django.contrib import admin
-from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
+from polymorphic.admin import (PolymorphicChildModelAdmin,
+                               PolymorphicParentModelAdmin)
 
 from .models import BaseTarget
 from .providers.mantium import MantiumTarget
