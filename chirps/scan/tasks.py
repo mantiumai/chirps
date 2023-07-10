@@ -4,7 +4,6 @@ from logging import getLogger
 
 from celery import shared_task
 from django.utils import timezone
-
 from target.models import BaseTarget
 
 from .models import Finding, Result, Scan

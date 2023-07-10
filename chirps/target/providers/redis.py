@@ -3,7 +3,6 @@ from logging import getLogger
 
 from django.db import models
 from redis import Redis
-
 from target.models import BaseTarget
 
 logger = getLogger(__name__)
