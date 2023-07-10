@@ -5,6 +5,7 @@ from django.db import models
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
 from mantium_spec.api.applications_api import ApplicationsApi
+
 from target.models import BaseTarget
 
 logger = getLogger(__name__)

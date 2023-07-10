@@ -2,9 +2,10 @@
 
 import django.db.models.deletion
 import fernet_fields.fields
-import target.custom_fields
 from django.conf import settings
 from django.db import migrations, models
+
+import target.custom_fields
 
 
 class Migration(migrations.Migration):

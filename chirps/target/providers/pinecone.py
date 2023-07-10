@@ -3,6 +3,7 @@ from logging import getLogger
 
 import pinecone as pinecone_lib
 from django.db import models
+
 from target.custom_fields import CustomEncryptedCharField
 from target.models import BaseTarget
 
