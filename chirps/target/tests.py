@@ -30,7 +30,6 @@ class TargetTests(TestCase):
 
     def test_target_tenant_isolation(self):
         """Verify that targets are isolated to a single tenant."""
-
         # Create a target for user1
         MantiumTarget.objects.create(
             name='Mantium Target',

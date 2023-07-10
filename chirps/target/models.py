@@ -27,5 +27,5 @@ class BaseTarget(PolymorphicModel):
         return static(self.html_logo)
 
     def __str__(self) -> str:
-        """String representation of this model."""
+        """Stringify the model's name."""
         return str(self.name)

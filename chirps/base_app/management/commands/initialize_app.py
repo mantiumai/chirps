@@ -12,6 +12,7 @@ class Command(BaseCommand):
     help = 'Initialize the app by running multiple management commands'
 
     def handle(self, *args, **options):
+        """Handle the command"""
         # Run the 'redis --start' command
         self.stdout.write(self.style.WARNING('Starting Redis...'))
         call_command('redis', '--start')

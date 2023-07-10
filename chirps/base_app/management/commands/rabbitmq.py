@@ -10,13 +10,13 @@ class Command(BaseCommand):
     help = 'Interact with the local rabbitmq development server'
 
     def add_arguments(self, parser):
-
+        """Add arguments to rabbitmq command"""
         parser.add_argument('--start', action='store_true', help='Start rabbitmq server')
         parser.add_argument('--stop', action='store_true', help='Stop rabbitmq server')
         parser.add_argument('--status', action='store_true', help='Check rabbitmq server status')
 
     def handle(self, *args, **options):
-
+        """Handle rabbitmq command"""
         if options['start']:
             os.system('rabbitmq-server start -detached')
         elif options['stop']:

@@ -10,7 +10,6 @@ def dashboard(request):
     Args:
         request (HttpRequest): Django request object
     """
-
     # Fetch a list of all the available template plans
     templates = Plan.objects.filter(is_template=True)
 
