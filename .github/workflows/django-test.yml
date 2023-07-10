@@ -37,5 +37,5 @@ jobs:
         cd chirps; python manage.py test
     - name: Run Linting
       run: |
-        isort --check-only --diff .
+        pre-commit run -a
         pylint --load-plugins pylint_django --django-settings-module="chirps.settings" $(find . -name "*.py" | xargs)

@@ -16,6 +16,7 @@ class ProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     """Define a new User admin."""
+
     inlines = [ProfileInline]
 
 
