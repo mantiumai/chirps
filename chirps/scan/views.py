@@ -1,6 +1,7 @@
 """Views for the scan application."""
 
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ScanForm
@@ -14,11 +15,13 @@ def finding_detail(request, finding_id):
     finding = get_object_or_404(Finding, pk=finding_id, result__scan__user=request.user)
     return render(request, 'scan/finding_detail.html', {'finding': finding})
 
+
 @login_required
 def result_detail(request, result_id):
     """Render the scan result detail page."""
     result = get_object_or_404(Result, pk=result_id, scan__user=request.user)
     return render(request, 'scan/result_detail.html', {'result': result})
+
 
 @login_required
 def create(request):
@@ -68,10 +71,25 @@ def dashboard(request):
                 scan.rules[result.rule.name] = {
                     'id': result.id,
                     'rule': result.rule,
-                    'findings': Finding.objects.filter(result=result).count()
+                    'findings': Finding.objects.filter(result=result).count(),
                 }
 
         # Convert the dictionary into a list that the template can iterate on
         scan.rules = scan.rules.values()
 
     return render(request, 'scan/dashboard.html', {'scans': user_scans})
+
+
+@login_required
+def status(request, scan_id):
+    """Fetch the status of a scan job."""
+    scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
+
+    # Respond with the status of the celery task and the progress percentage of the scan
+    response = f'{scan.celery_task_status()} : {scan.progress} %'
+
+    if scan.finished_at is not None:
+        # HTMX will stop polling if we return a 286
+        return HttpResponse(content=response, status=286)
+
+    return HttpResponse(content=response, status=200)

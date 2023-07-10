@@ -30,6 +30,8 @@ def scan_task(scan_id):
     target = BaseTarget.objects.get(id=scan.target.id)
 
     # Now that we have the derrived class, call its implementation of search()
+    total_rules = scan.plan.rules.all().count()
+    rules_run = 0
     for rule in scan.plan.rules.all():
         logger.info('Starting rule evaluation', extra={'id': rule.id})
         results = target.search(query=rule.query_string, max_results=100)
@@ -46,6 +48,11 @@ def scan_task(scan_id):
                 # Persist the finding
                 finding = Finding(result=result, offset=match.start(), length=match.end() - match.start())
                 finding.save()
+
+        # Update the progress counter based on the number of rules that have been evaluated
+        rules_run += 1
+        scan.progress = int(rules_run / total_rules * 100)
+        scan.save()
 
     # Persist the completion time of the scan
     scan.finished_at = timezone.now()

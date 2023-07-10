@@ -16,6 +16,7 @@ class Scan(models.Model):
     plan = models.ForeignKey('plan.Plan', on_delete=models.CASCADE)
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
+    progress = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
@@ -55,6 +56,7 @@ class Result(models.Model):
     def __str__(self):
         return f'{self.rule.name} - {self.scan.id}'
 
+
 class Finding(models.Model):
     """Model to identify the location of a finding within a result."""
 
@@ -67,15 +69,15 @@ class Finding(models.Model):
 
     def text(self):
         """Return the text of the finding."""
-        return self.result.text[self.offset:self.offset + self.length]
+        return self.result.text[self.offset : self.offset + self.length]
 
     def surrounding_text(self):
         """return the text of the finding, with some surrounding context."""
-        buffer = self.result.text[self.offset - 20: self.offset - 1]
+        buffer = self.result.text[self.offset - 20 : self.offset - 1]
         buffer += "<span class='text-danger'>"
         buffer += self.result.text[self.offset : self.offset + self.length]
-        buffer += "</span>"
-        buffer += self.result.text[self.offset + self.length + 1: self.offset + self.length + 19]
+        buffer += '</span>'
+        buffer += self.result.text[self.offset + self.length + 1 : self.offset + self.length + 19]
         return mark_safe(buffer)
 
     def with_highlight(self):
@@ -83,6 +85,6 @@ class Finding(models.Model):
         buffer = self.result.text[0 : self.offset - 1]
         buffer += "<span class='bg-danger text-white'>"
         buffer += self.result.text[self.offset : self.offset + self.length]
-        buffer += "</span>"
-        buffer += self.result.text[self.offset + self.length + 1 : ]
+        buffer += '</span>'
+        buffer += self.result.text[self.offset + self.length + 1 :]
         return mark_safe(buffer)
