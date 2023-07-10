@@ -58,7 +58,6 @@ def create(request):
 @login_required
 def dashboard(request):
     """Render the scan dashboard."""
-    
     user_scans = Scan.objects.filter(user=request.user)
 
     # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())

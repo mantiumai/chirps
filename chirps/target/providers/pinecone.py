@@ -35,7 +35,6 @@ class PineconeTarget(BaseTarget):
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Search the Pinecone target with the specified query."""
-        # TODO: (alexn) uncomment when embeddings have been figured out
         # pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
         # # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
