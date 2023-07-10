@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """Manage a local celery installation with this command."""
+
     help = 'Interact with the local celery broker'
 
     def add_arguments(self, parser):

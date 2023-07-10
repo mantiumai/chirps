@@ -16,16 +16,19 @@ class ProfileForm(ModelForm):
 
     class Meta:
         """Meta class for ProfileForm."""
+
         model = Profile
         fields = ['openai_key']
 
         widgets = {'openai_key': forms.PasswordInput(attrs={'class': 'form-control'})}
+
 
 class LoginForm(forms.Form):
     """Form for logging in."""
 
     username = forms.CharField(max_length=256)
     password = forms.CharField(max_length=256, widget=forms.PasswordInput)
+
 
 class SignupForm(forms.Form):
     """Form for signing up."""

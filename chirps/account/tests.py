@@ -29,12 +29,9 @@ class AccountTests(TestCase):
         email = 'test_user@mantiumai.com'
 
         # Create a new account
-        response = self.client.post(reverse('signup'), {
-            'username': username,
-            'email': email,
-            'password1': password,
-            'password2': password
-        })
+        response = self.client.post(
+            reverse('signup'), {'username': username, 'email': email, 'password1': password, 'password2': password}
+        )
         self.assertRedirects(response, '/', 302)
 
         # Logout (since the account creation )
@@ -47,6 +44,6 @@ class AccountTests(TestCase):
             {
                 'username': username,
                 'password': password,
-            }
+            },
         )
         self.assertRedirects(response, '/', status_code=302)
