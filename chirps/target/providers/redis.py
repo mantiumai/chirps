@@ -2,6 +2,7 @@
 from logging import getLogger
 
 from django.db import models
+from redis import Redis
 from target.models import BaseTarget
 
 logger = getLogger(__name__)
@@ -28,5 +29,11 @@ class RedisTarget(BaseTarget):
 
     def test_connection(self) -> bool:
         """Ensure that the Redis target can be connected to."""
-        logger.error('RedisTarget search not implemented')
-        raise NotImplementedError
+        client = Redis(
+            host=self.host,
+            port=self.port,
+            db=self.database_name,
+            password=self.password,
+            username=self.username,
+        )
+        return client.ping()

@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from redis import exceptions
+
 from .forms import target_from_html_name, targets
 from .models import BaseTarget
 from .providers.pinecone import PineconeTarget
+from .providers.redis import RedisTarget
 
 
 def decrypted_keys(request):
@@ -62,6 +65,20 @@ def create(request, html_name):
         form = target['form']()
 
     return render(request, 'target/create.html', {'form': form, 'target': target})
+
+
+@login_required  
+def ping(request, target_id):  
+    """Ping a RedisTarget database using the test_connection() function."""  
+    target = get_object_or_404(BaseTarget, pk=target_id)  
+    if isinstance(target, RedisTarget):  
+        try:
+            result = target.test_connection()
+            return JsonResponse({'success': result})
+        except exceptions.ConnectionError:
+            return JsonResponse({'success': False, 'error': 'Unable to connect to Redis'})
+    return JsonResponse({'success': False, 'error': 'Not a RedisTarget'})
+
 
 
 @login_required
