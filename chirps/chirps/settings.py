@@ -148,28 +148,28 @@ CELERY_CACHE_BACKEND = 'django-cache'
 
 # FERNET SETTINGS
 if os.getenv('FERNET_KEY') is None:
-    raise Exception('FERNET_KEY environment variable is not set') # pylint: disable=broad-exception-raised
+    raise Exception('FERNET_KEY environment variable is not set')   # pylint: disable=broad-exception-raised
 
 FERNET_KEY = os.getenv('FERNET_KEY')
 
 # LOGGING Configuration Options
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
         },
     },
-    "root": {
-        "handlers": ["console"],
-        "level": "WARNING",
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
-            "propagate": False,
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
         },
     },
 }

@@ -33,6 +33,7 @@ def create(request, html_name):
 
     Args:
         request (HttpRequest): Django request object
+        html_name (str): used to get the target dictionary entry
     """
     if request.method == 'POST':
 

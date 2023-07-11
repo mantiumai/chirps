@@ -13,8 +13,7 @@ logger = getLogger(__name__)
 
 @shared_task
 def scan_task(scan_id):
-    """Main scan task."""
-
+    """Scan task."""
     logger.info('Starting scan', extra={'id': scan_id})
 
     try:

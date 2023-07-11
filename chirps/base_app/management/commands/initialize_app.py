@@ -8,9 +8,11 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """Initialize the app by running multiple management commands."""
+
     help = 'Initialize the app by running multiple management commands'
 
     def handle(self, *args, **options):
+        """Handle the command"""
         # Run the 'redis --start' command
         self.stdout.write(self.style.WARNING('Starting Redis...'))
         call_command('redis', '--start')

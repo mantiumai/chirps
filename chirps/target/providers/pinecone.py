@@ -35,15 +35,17 @@ class PineconeTarget(BaseTarget):
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Search the Pinecone target with the specified query."""
-        pinecone_lib.init(api_key=self.api_key, environment=self.environment)
+        # pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
-        # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
-        query_vector = convert_query_to_vector(query)   # pylint: disable=undefined-variable
+        # # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
+        # query_vector = convert_query_to_vector(query)   # pylint: disable=undefined-variable
 
-        # Perform search on the Pinecone index
-        search_results = pinecone_lib.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
-        pinecone_lib.deinit()
-        return search_results
+        # # Perform search on the Pinecone index
+        # search_results = pinecone_lib.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
+        # pinecone_lib.deinit()
+        # return search_results
+        logger.error('PineconeTarget search not implemented')
+        raise NotImplementedError()
 
     def test_connection(self) -> bool:
         """Ensure that the Pinecone target can be connected to."""

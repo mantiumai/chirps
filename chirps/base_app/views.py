@@ -14,9 +14,9 @@ def index(request):
     """Render the index page."""
     return render(request, 'dashboard/index.html', {})
 
+
 def install(request):
     """Render the install page."""
-
     # If there are uses already, redirect to the dashboard
     if User.objects.count() > 0:
         return redirect(reverse('index'))
@@ -42,7 +42,7 @@ def install(request):
                 user = User.objects.create_superuser(
                     form.cleaned_data['superuser_username'],
                     form.cleaned_data['superuser_email'],
-                    form.cleaned_data['superuser_password']
+                    form.cleaned_data['superuser_password'],
                 )
 
                 # Create the user profile

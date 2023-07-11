@@ -27,6 +27,7 @@ def profile(request):
 
     return render(request, 'account/profile.html', {'form': form})
 
+
 def signup(request):
     """Render the signup page and handle posts."""
     if request.method == 'POST':
@@ -48,9 +49,7 @@ def signup(request):
             if has_error is False:
                 # Create the user:
                 user = User.objects.create_user(
-                    form.cleaned_data['username'],
-                    form.cleaned_data['email'],
-                    form.cleaned_data['password1']
+                    form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password1']
                 )
                 user.save()
 
@@ -68,9 +67,9 @@ def signup(request):
 
     return render(request, 'account/signup.html', {'form': form})
 
+
 def login_view(request):
     """Render the login page."""
-
     # If there are no users, redirect to the installation page
     if User.objects.count() == 0:
         return redirect(reverse('install'))
@@ -78,9 +77,9 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(request=request,
-                                username=form.cleaned_data['username'],
-                                password=form.cleaned_data['password'])
+            user = authenticate(
+                request=request, username=form.cleaned_data['username'], password=form.cleaned_data['password']
+            )
             if user:
                 login(request, user)
                 return redirect('/')

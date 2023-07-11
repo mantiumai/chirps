@@ -20,6 +20,7 @@ class Scan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
+        """Stringify the description"""
         return self.description
 
     def celery_task_status(self) -> str:
@@ -54,6 +55,7 @@ class Result(models.Model):
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
 
     def __str__(self):
+        """Stringify the rule name and scan ID"""
         return f'{self.rule.name} - {self.scan.id}'
 
 
@@ -65,6 +67,7 @@ class Finding(models.Model):
     length = models.IntegerField()
 
     def __str__(self):
+        """Stringify the offset and length separated by a colon"""
         return f'{self.offset}:{self.length}'
 
     def text(self):

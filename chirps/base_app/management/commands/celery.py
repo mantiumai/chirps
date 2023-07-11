@@ -6,10 +6,11 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """Manage a local celery installation with this command."""
+
     help = 'Interact with the local celery broker'
 
     def add_arguments(self, parser):
-
+        """Add arguments to celery command"""
         parser.add_argument('--start', action='store_true', help='Start celery server')
         parser.add_argument('--stop', action='store_true', help='Stop celery server')
         parser.add_argument('--restart', action='store_true', help='Restart celery server')

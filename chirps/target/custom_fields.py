@@ -7,6 +7,7 @@ from fernet_fields import EncryptedCharField
 
 class CustomEncryptedCharField(EncryptedCharField):
     """Custom encrypted char field that uses the fernet key from settings."""
+
     def __init__(self, *args, **kwargs):
         """Initialize the field."""
         self.fernet = Fernet(settings.FERNET_KEY)
