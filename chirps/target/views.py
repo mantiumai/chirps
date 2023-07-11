@@ -2,6 +2,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from redis import exceptions
@@ -27,8 +28,14 @@ def dashboard(request):
     Args:
         request (HttpRequest): Django request object
     """
+    # Paginate the number of items returned to the user, defaulting to 25 per page
+    user_targets = BaseTarget.objects.filter(user=request.user).order_by('id')
+    paginator = Paginator(user_targets, request.GET.get('item_count', 25))
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     user_targets = BaseTarget.objects.filter(user=request.user)
-    return render(request, 'target/dashboard.html', {'available_targets': targets, 'user_targets': user_targets})
+    return render(request, 'target/dashboard.html', {'available_targets': targets, 'page_obj': page_obj})
 
 
 @login_required

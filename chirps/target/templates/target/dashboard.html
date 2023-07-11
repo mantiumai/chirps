@@ -21,38 +21,41 @@
 </div>
 <hr>
 
-{% for target in user_targets %}
+    {% for target in page_obj %}
 
-<div class="card my-4">
-    <div class="d-flex card-header">
-        <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{target.logo_url}}">
-        <h5 class="my-auto ml-0 mr-auto">{{ target.name }}</h5>
-    </div>
-    <!-- <h5 class="card-header"><img width=48 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>   -->
-    <div class="card-body">
-        <p class="card-text">
+        <div class="card my-4" id="chirps-target-{{target.id}}">
+            <div class="d-flex card-header">
+                <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{target.logo_url}}">
+                <h5 class="my-auto ml-0 mr-auto">{{ target.name }}</h5>
+            </div>
+            <!-- <h5 class="card-header"><img width=48 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>   -->
 
-            {% if target.html_name == 'Mantium' %}
-            Application ID: {{ target.app_id }}
-            {% elif target.html_name == 'Redis' %}
-            Host: {{ target.host }}<br />
-            Port: {{ target.port }}<br />
-            Database Name: {{ target.database_name }}<br />
-            Username: {{ target.username }}
-            {% endif %}
-            {% if target.html_name == 'Pinecone' %}
-            API Key: {{ target.decrypted_api_key }}<br />
-            Environment: {{ target.environment }}<br />
-            Index Name: {{ target.index_name }}<br />
-            Project Name: {{ target.project_name }}
-            {% endif %}
-        </p>
-        <div class="d-flex">
-            <a href="{% url 'target_delete' target.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
-            <a href="#" class="btn btn-primary ml-2 mr-0 disabled">Edit</a>
-            {% if target.html_name == 'Redis' %}
-            <button data-target-id="{{ target.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
-            {% endif %}
+            <div class="card-body">
+                <p class="card-text">
+
+                {% if target.html_name == 'Mantium' %}
+                    Application ID: {{ target.app_id }}
+                {% elif target.html_name == 'Redis' %}
+                    Host: {{ target.host }}<br/>
+                    Port: {{ target.port }}<br/>
+                    Database Name: {{ target.database_name }}<br/>
+                    Username: {{ target.username }}
+                {% endif %}
+                {% if target.html_name == 'Pinecone' %}
+                    API Key: {{ target.decrypted_api_key }}<br/>
+                    Environment: {{ target.environment }}<br/>
+                    Index Name: {{ target.index_name }}<br/>
+                    Project Name: {{ target.project_name }}
+                {% endif %}
+                </p>
+                <div class="d-flex">
+                  <a href="{% url 'target_delete' target.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
+                  <a href="#" class="btn btn-primary ml-2 mr-0 disabled">Edit</a>
+                  {% if target.html_name == 'Redis' %}
+                  <button data-target-id="{{ target.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
+                  {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -100,5 +103,7 @@ function showToast(message, type) {
     toast.show();  
 }  
 </script>
+
+{% include 'pagination.html' with page_obj=page_obj %}
 
 {% endblock %}

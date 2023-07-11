@@ -20,8 +20,8 @@
     </tr>
   </thead>
   <tbody>
-    {% for scan in scans %}
-    <tr>
+    {% for scan in page_obj %}
+    <tr id="chirps-scan-{{scan.id}}">
       <td>{{ scan.id }}</td>
       <td>{{ scan.started_at }}</td>
       <td>{{ scan.finished_at }}</td>
@@ -66,4 +66,7 @@
     {% endfor %}
   </tbody>
 </table>
+
+{% include 'pagination.html' with page_obj=page_obj %}
+
 {% endblock %}
