@@ -4,7 +4,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.list, name='embedding_list'),
+    path('', views.show, name='embedding_list'),
     path('create/', views.create, name='embedding_create'),
     path('delete/<int:embedding_id>/', views.delete, name='embedding_delete'),
 ]

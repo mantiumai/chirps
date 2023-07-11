@@ -37,8 +37,8 @@ def create(request):
             embed_result = service.embed(
                 user=request.user, model=form.cleaned_data['model'], text=form.cleaned_data['text']
             )
-        except EmbeddingError as e:
-            return HttpResponseBadRequest(json.dumps({'error': str(e)}), status=400)
+        except EmbeddingError as err:
+            return HttpResponseBadRequest(json.dumps({'error': str(err)}), status=400)
 
         # Save the embedding result to the database
         embedding = Embedding.objects.create(
@@ -61,7 +61,7 @@ def delete(request, embedding_id):
 
 
 @login_required
-def list(request):
+def show(request):
     """List all embeddings."""
     # Paginate the number of items returned to the user, defaulting to 25 per page
     user_embeddings = Embedding.objects.filter(user=request.user).order_by('id')

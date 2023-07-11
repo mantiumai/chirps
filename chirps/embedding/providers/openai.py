@@ -1,3 +1,4 @@
+"""OpenAI implementation for embedding provider."""
 import logging
 from typing import Any
 
@@ -22,8 +23,8 @@ class OpenAIEmbeddingProvider(BaseEmbeddingProvider):
         # Generate the embedding
         try:
             response = openai.Embedding.create(model=model, input=text)
-        except openai.error.InvalidRequestError as e:
-            raise EmbeddingError(f'Embedding failure: {str(e)}') from e
+        except openai.error.InvalidRequestError as err:
+            raise EmbeddingError(f'Embedding failure: {str(err)}') from err
 
         logger.debug(
             'Embedding complete',

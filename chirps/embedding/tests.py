@@ -1,3 +1,5 @@
+"""Tests for the embedding app."""
+# pylint: disable=consider-using-with
 import json
 from pathlib import Path
 from unittest.mock import patch
@@ -54,7 +56,7 @@ class TestEmbedding(TestCase):
         'openai.Embedding.create',
         side_effect=openai.error.InvalidRequestError('The model `invalid-model-001` does not exist', ''),
     )
-    def test_create_invalid_openai_model(self, mock_openai_embedding_create):
+    def test_create_invalid_openai_model(self, _mock_openai_embedding_create):
         """Pass in a junk model name to the OpenAI service."""
         response = self.client.get(
             reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OA'}
@@ -67,9 +69,9 @@ class TestEmbedding(TestCase):
 
     @patch(
         'openai.Embedding.create',
-        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json').read()),
+        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json', encoding='utf-8').read()),
     )
-    def test_create_valid(self, mock_openai_embedding_create):
+    def test_create_valid(self, _mock_openai_embedding_create):
         """Test creating a valid embedding."""
         # Verify there are no embeddings in the database
         self.assertEqual(0, Embedding.objects.all().count())
@@ -93,9 +95,9 @@ class TestEmbedding(TestCase):
 
     @patch(
         'openai.Embedding.create',
-        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json').read()),
+        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json', encoding='utf-8').read()),
     )
-    def test_delete(self, mock_openai_embedding_create):
+    def test_delete(self, _mock_openai_embedding_create):
         """Test deleting an embedding."""
         # Verify there are no embeddings in the database
         self.assertEqual(0, Embedding.objects.all().count())

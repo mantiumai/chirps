@@ -15,7 +15,8 @@ class Embedding(models.Model):
         OPEN_AI = 'OA', 'OpenAI'
         LOCAL = 'LH', 'Locally Hosted: NOT IMPLEMENTED'
 
-        def get_provider_from_service_name(name: str) -> BaseEmbeddingProvider:
+        @classmethod
+        def get_provider_from_service_name(cls, name: str) -> BaseEmbeddingProvider:
             """Get the provider for the service."""
             if name == Embedding.Service.OPEN_AI:
                 return OpenAIEmbeddingProvider()

@@ -1,3 +1,4 @@
+"""Base implementation for embedding providers."""
 from abc import ABC
 from typing import Any
 
