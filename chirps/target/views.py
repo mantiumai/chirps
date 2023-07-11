@@ -1,6 +1,7 @@
 """View handlers for targets."""
+import json
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from redis import exceptions
 
@@ -76,8 +77,8 @@ def ping(request, target_id):
             result = target.test_connection()
             return JsonResponse({'success': result})
         except exceptions.ConnectionError:
-            return JsonResponse({'success': False, 'error': 'Unable to connect to Redis'})
-    return JsonResponse({'success': False, 'error': 'Not a RedisTarget'})
+            return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Unable to connect to Redis'}), content_type="application/json")
+    return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Not a RedisTarget'}))
 
 
 @login_required
