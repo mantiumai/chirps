@@ -24,6 +24,7 @@ class MantiumTarget(BaseTarget):
     html_description = 'Mantium Knowledge Vault'
 
     def search(self, query: str, max_results: int) -> list[str]:
+        """Search the vector database"""
         logger.info('Starting Mantium Target search', extra={'id': self.id})
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)

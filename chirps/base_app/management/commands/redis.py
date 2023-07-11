@@ -10,13 +10,13 @@ class Command(BaseCommand):
     help = 'Interact with the local redis development server'
 
     def add_arguments(self, parser):
-
+        """Add arguments to redis command"""
         parser.add_argument('--start', action='store_true', help='Start redis server')
         parser.add_argument('--stop', action='store_true', help='Stop redis server')
         parser.add_argument('--status', action='store_true', help='Check redis server status')
 
     def handle(self, *args, **options):
-
+        """Handle redis command"""
         if options['start']:
             os.system('redis-server --daemonize yes')
         elif options['stop']:

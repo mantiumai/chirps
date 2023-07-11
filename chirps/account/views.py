@@ -70,7 +70,6 @@ def signup(request):
 
 def login_view(request):
     """Render the login page."""
-
     # If there are no users, redirect to the installation page
     if User.objects.count() == 0:
         return redirect(reverse('install'))

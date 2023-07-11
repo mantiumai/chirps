@@ -16,6 +16,7 @@ class Plan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
+        """Stringify the name"""
         return self.name
 
 
@@ -41,4 +42,5 @@ class Rule(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='rules')
 
     def __str__(self):
+        """Stringify the name"""
         return self.name

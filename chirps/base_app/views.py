@@ -17,7 +17,6 @@ def index(request):
 
 def install(request):
     """Render the install page."""
-
     # If there are uses already, redirect to the dashboard
     if User.objects.count() > 0:
         return redirect(reverse('index'))

@@ -1,95 +1,95 @@
 [
-    {
-      "model": "plan.Plan",
-      "pk": 100,
-      "fields": {
-        "name": "Employee Information",
-        "description": "This plan will scan for employee information.",
-        "is_template": true
-      }
+  {
+    "fields": {
+      "description": "This plan will scan for employee information.",
+      "is_template": true,
+      "name": "Employee Information"
     },
-    {
-      "model": "plan.Rule",
-      "pk": 100,
-      "fields": {
-        "name": "SSN",
-        "description": "Detect a social security number",
-        "query_string": "What's my social security number?",
-        "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
-        "severity": 5,
-        "plan": 100
-      }
+    "model": "plan.Plan",
+    "pk": 100
+  },
+  {
+    "fields": {
+      "description": "Detect a social security number",
+      "name": "SSN",
+      "plan": 100,
+      "query_string": "What's my social security number?",
+      "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+      "severity": 5
     },
-    {
-      "model": "plan.Rule",
-      "pk": 101,
-      "fields": {
-        "name": "Address",
-        "description": "Detect a mailing address",
-        "query_string": "What's my address?",
-        "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
-        "severity": 2,
-        "plan": 100
-      }
+    "model": "plan.Rule",
+    "pk": 100
+  },
+  {
+    "fields": {
+      "description": "Detect a mailing address",
+      "name": "Address",
+      "plan": 100,
+      "query_string": "What's my address?",
+      "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
+      "severity": 2
     },
-    {
-      "model": "plan.Rule",
-      "pk": 102,
-      "fields": {
-        "name": "Bank Account",
-        "description": "Detect a bank account number",
-        "query_string": "What's my bank account number?",
-        "regex_test": "\\d{10,12}",
-        "severity": 5,
-        "plan": 100
-      }
+    "model": "plan.Rule",
+    "pk": 101
+  },
+  {
+    "fields": {
+      "description": "Detect a bank account number",
+      "name": "Bank Account",
+      "plan": 100,
+      "query_string": "What's my bank account number?",
+      "regex_test": "\\d{10,12}",
+      "severity": 5
     },
-    {
-      "model": "plan.Rule",
-      "pk": 103,
-      "fields": {
-        "name": "Credit Card",
-        "description": "Detect a credit card number",
-        "query_string": "What's my credit card number?",
-        "regex_test": "(?:\\d[ -]*?){13,16}",
-        "severity": 5,
-        "plan": 100
-      }
+    "model": "plan.Rule",
+    "pk": 102
+  },
+  {
+    "fields": {
+      "description": "Detect a credit card number",
+      "name": "Credit Card",
+      "plan": 100,
+      "query_string": "What's my credit card number?",
+      "regex_test": "(?:\\d[ -]*?){13,16}",
+      "severity": 5
     },
-    {
-      "model": "plan.Rule",
-      "pk": 104,
-      "fields": {
-        "name": "Email Address",
-        "description": "Detect an email address",
-        "query_string": "What's my email address?",
-        "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-        "severity": 2,
-        "plan": 100
-      }
+    "model": "plan.Rule",
+    "pk": 103
+  },
+  {
+    "fields": {
+      "description": "Detect an email address",
+      "name": "Email Address",
+      "plan": 100,
+      "query_string": "What's my email address?",
+      "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+      "severity": 2
     },
-    {
-      "model": "plan.Rule",
-      "pk": 105,
-      "fields": {
-        "name": "Phone number",
-        "description": "Detect a phone number",
-        "query_string": "What's my phone number?",
-        "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
-        "severity": 2,
-        "plan": 100
-      }
+    "model": "plan.Rule",
+    "pk": 104
+  },
+  {
+    "fields": {
+      "description": "Detect a phone number",
+      "name": "Phone number",
+      "plan": 100,
+      "query_string": "What's my phone number?",
+      "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
+      "severity": 2
     },
-    {
-      "model": "plan.Rule",
-      "pk": 106,
-      "fields": {
-        "name": "Salary",
-        "description": "Detect a salary (in USD)",
-        "query_string": "What's my salary?",
-        "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
-        "severity": 2,
-        "plan": 100
-      }
-    }
-  ]
+    "model": "plan.Rule",
+    "pk": 105
+  },
+  {
+    "fields": {
+      "description": "Detect a salary (in USD)",
+      "name": "Salary",
+      "plan": 100,
+      "query_string": "What's my salary?",
+      "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
+      "severity": 2
+    },
+    "model": "plan.Rule",
+    "pk": 106
+  }
+]
