@@ -6,7 +6,7 @@ import pytest
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
-from redis.exceptions import ConnectionError
+from redis import exceptions
 from target.providers.mantium import MantiumTarget
 from target.providers.redis import RedisTarget
 
@@ -139,5 +139,5 @@ class RedisTargetTests(TestCase):
 
         with mock.patch('target.providers.redis.Redis', return_value=self.redis):
             target = RedisTarget(host='localhost', port=12000)
-            with pytest.raises(ConnectionError):
+            with pytest.raises(exceptions.ConnectionError):
                 assert target.test_connection()
