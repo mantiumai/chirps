@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'target',
     'account',
     'plan',
+    'embedding',
 ]
 
 MIDDLEWARE = [
