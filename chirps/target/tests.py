@@ -70,12 +70,11 @@ class TargetPaginationTests(TestCase):
     fixtures = ['target/test_dash_pagination.json']
 
     def setUp(self):
-        # Login the user before performing any tests
+        """Login the user before performing any tests."""
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
 
     def test_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
-
         response = self.client.get(reverse('target_dashboard'))
 
         # No pagination widget should be present
@@ -88,7 +87,6 @@ class TargetPaginationTests(TestCase):
 
     def test_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""
-
         # First page
         response = self.client.get(reverse('target_dashboard'), {'item_count': 1})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
@@ -106,7 +104,6 @@ class TargetPaginationTests(TestCase):
 
     def test_scan_dashboard_last_page(self):
         """If the page number exceeds the number of pages, verify that the last page is returned"""
-
         response = self.client.get(reverse('target_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-target-3', status_code=200)

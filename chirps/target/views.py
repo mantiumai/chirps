@@ -24,7 +24,6 @@ def dashboard(request):
     Args:
         request (HttpRequest): Django request object
     """
-
     # Paginate the number of items returned to the user, defaulting to 25 per page
     user_targets = BaseTarget.objects.filter(user=request.user).order_by('id')
     paginator = Paginator(user_targets, request.GET.get('item_count', 25))

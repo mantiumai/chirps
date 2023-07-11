@@ -1,9 +1,7 @@
 """Tests for the scan application."""
 
-from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
-from target.providers.mantium import MantiumTarget
 
 
 class ScanTest(TestCase):
@@ -12,12 +10,11 @@ class ScanTest(TestCase):
     fixtures = ['scan/test_dash_pagination.json']
 
     def setUp(self):
-        # Login the user before performing any tests
+        """Login the user before performing any tests"""
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
 
     def test_scan_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
-
         response = self.client.get(reverse('scan_dashboard'))
 
         # No pagination widget should be present
@@ -30,7 +27,6 @@ class ScanTest(TestCase):
 
     def test_scan_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""
-
         # First page
         response = self.client.get(reverse('scan_dashboard'), {'item_count': 1})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
@@ -48,7 +44,6 @@ class ScanTest(TestCase):
 
     def test_scan_dashboard_last_page(self):
         """If the page number exceeds the number of pages, verify that the last page is returned"""
-
         response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-scan-6', status_code=200)

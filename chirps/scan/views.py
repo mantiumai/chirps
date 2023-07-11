@@ -58,7 +58,6 @@ def create(request):
 @login_required
 def dashboard(request):
     """Render the scan dashboard."""
-
     # Paginate the number of items returned to the user, defaulting to 25 per page
     user_scans = Scan.objects.filter(user=request.user).order_by('started_at')
     paginator = Paginator(user_scans, request.GET.get('item_count', 25))
