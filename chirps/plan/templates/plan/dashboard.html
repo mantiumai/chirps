@@ -8,8 +8,8 @@
 <hr>
 
 <div class="accordion" id="plan_templates">
-    {% for template in templates %}
-    <div class="accordion-item">
+    {% for template in page_obj %}
+    <div class="accordion-item", id="chirps-plan-{{template.id}}">
         <div class="accordion-header">
         <button class="accordion-button collapsed" type="button"
                 data-bs-toggle="collapse" data-bs-target="#collapse-{{template.id}}"
@@ -51,5 +51,7 @@
     </div>
     {% endfor %}
 </div>
+
+{% include 'pagination.html' with page_obj=page_obj %}
 
 {% endblock %}

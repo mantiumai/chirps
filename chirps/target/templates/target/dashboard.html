@@ -20,14 +20,15 @@
     </div>
     <hr>
 
-    {% for target in user_targets %}
+    {% for target in page_obj %}
 
-        <div class="card my-4">
+        <div class="card my-4" id="chirps-target-{{target.id}}">
             <div class="d-flex card-header">
                 <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{target.logo_url}}">
                 <h5 class="my-auto ml-0 mr-auto">{{ target.name }}</h5>
             </div>
             <!-- <h5 class="card-header"><img width=48 class="rounded float-end" src="{{target.logo_url}}">{{ target.name }}</h5>   -->
+
             <div class="card-body">
                 <p class="card-text">
 
@@ -55,4 +56,7 @@
 
     {% endfor %}
 </div>
+
+{% include 'pagination.html' with page_obj=page_obj %}
+
 {% endblock %}

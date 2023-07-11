@@ -1,0 +1,179 @@
+[
+    {
+        "model": "target.basetarget",
+        "pk": 1,
+        "fields": {
+            "polymorphic_ctype": 14,
+            "name": "ZimTest",
+            "user": 1
+        }
+    },
+    {
+        "model": "target.basetarget",
+        "pk": 2,
+        "fields": {
+            "polymorphic_ctype": 16,
+            "name": "Dummy Redis",
+            "user": 1
+        }
+    },
+    {
+        "model": "target.basetarget",
+        "pk": 3,
+        "fields": {
+            "polymorphic_ctype": 15,
+            "name": "Dummy Pinecone",
+            "user": 1
+        }
+    },
+    {
+        "model": "target.mantiumtarget",
+        "pk": 1,
+        "fields": {
+            "app_id": "6487620f86cc840954d29704",
+            "client_id": "xsVfwUwN1ln3QkPdto9ya79q",
+            "client_secret": "X83eIu2tarnWy98z1FK2C0pEUPZyGi4mlM3olgUJuKQTOrQV",
+            "top_k": 100
+        }
+    },
+    {
+        "model": "target.pineconetarget",
+        "pk": 3,
+        "fields": {
+            "api_key": "secret_123",
+            "environment": null,
+            "index_name": null,
+            "project_name": null
+        }
+    },
+    {
+        "model": "target.redistarget",
+        "pk": 2,
+        "fields": {
+            "host": "127.0.0.1",
+            "port": 6379,
+            "database_name": "0",
+            "username": "guest",
+            "password": "guest"
+        }
+    },
+    {
+        "model": "plan.plan",
+        "pk": 100,
+        "fields": {
+            "name": "Employee Information",
+            "description": "This plan will scan for employee information.",
+            "is_template": true,
+            "user": null
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 100,
+        "fields": {
+            "name": "SSN",
+            "description": "Detect a social security number",
+            "query_string": "What's my social security number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+            "severity": 5,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 101,
+        "fields": {
+            "name": "Address",
+            "description": "Detect a mailing address",
+            "query_string": "What's my address?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
+            "severity": 2,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 102,
+        "fields": {
+            "name": "Bank Account",
+            "description": "Detect a bank account number",
+            "query_string": "What's my bank account number?",
+            "query_embedding": null,
+            "regex_test": "\\d{10,12}",
+            "severity": 5,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 103,
+        "fields": {
+            "name": "Credit Card",
+            "description": "Detect a credit card number",
+            "query_string": "What's my credit card number?",
+            "query_embedding": null,
+            "regex_test": "(?:\\d[ -]*?){13,16}",
+            "severity": 5,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 104,
+        "fields": {
+            "name": "Email Address",
+            "description": "Detect an email address",
+            "query_string": "What's my email address?",
+            "query_embedding": null,
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+            "severity": 2,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 105,
+        "fields": {
+            "name": "Phone number",
+            "description": "Detect a phone number",
+            "query_string": "What's my phone number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
+            "severity": 2,
+            "plan": 100
+        }
+    },
+    {
+        "model": "plan.rule",
+        "pk": 106,
+        "fields": {
+            "name": "Salary",
+            "description": "Detect a salary (in USD)",
+            "query_string": "What's my salary?",
+            "query_embedding": null,
+            "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
+            "severity": 2,
+            "plan": 100
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$FkdRdxahWYhx75NkolWijG$D4NiQLCgaAm8+hErJI8vpvszxfg2rMwjY4eSXz9EIjw=",
+            "last_login": "2023-07-11T00:42:10.806Z",
+            "is_superuser": true,
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@mantiumai.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-07-07T18:01:00.203Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    }
+    ]

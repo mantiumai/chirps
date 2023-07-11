@@ -1,0 +1,26 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<!-- Only display the pagination if there is more than one page. -->
+<nav aria-label="Page navigation example", id="chirps-pagination-widget">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} </a></li>
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
