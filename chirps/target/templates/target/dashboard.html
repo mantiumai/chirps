@@ -63,45 +63,45 @@
 {% endfor %}
 </div>
 
-<!-- Toast notification -->  
-<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 0; right: 0; z-index: 1000; min-height: 200px; min-width: 500px;">  
-    <div class="toast" id="toast-notification" style="position: absolute; top: 10px; right: 10px;" data-bs-autohide="true" data-bs-delay="5000">  
-      <div class="toast-header">  
-        <strong class="me-auto">Notification</strong>  
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>  
-      </div>  
-      <div class="toast-body">  
-        <!-- Toast message will be added here -->  
-      </div>  
-    </div>  
-  </div>  
-  <!-- End of Toast notification -->  
+<!-- Toast notification -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 0; right: 0; z-index: 1000; min-height: 200px; min-width: 500px;">
+    <div class="toast" id="toast-notification" style="position: absolute; top: 10px; right: 10px;" data-bs-autohide="true" data-bs-delay="5000">
+      <div class="toast-header">
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <!-- Toast message will be added here -->
+      </div>
+    </div>
+  </div>
+  <!-- End of Toast notification -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {  
-    const pingButtons = document.querySelectorAll('.ping-btn');  
-    pingButtons.forEach(btn => {  
-        btn.addEventListener('click', async function () {  
-            const targetId = btn.getAttribute('data-target-id');  
-            const response = await fetch(`/target/ping/${targetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });  
-            if (response.status === 200) {  
-                showToast('Success: Connection established', 'success');  
-            } else {  
-                showToast('Ping failed: Failed to establish connection', 'danger');  
-            }  
-        });  
-    });  
-});  
-  
-function showToast(message, type) {  
-    const toastElement = document.getElementById("toast-notification");  
-    toastElement.querySelector(".toast-body").innerHTML = message;  
-    toastElement.classList.remove("bg-success", "bg-danger");  
-    toastElement.classList.add("bg-" + type);  
-  
-    const toast = new bootstrap.Toast(toastElement);  
-    toast.show();  
-}  
+    document.addEventListener('DOMContentLoaded', function () {
+    const pingButtons = document.querySelectorAll('.ping-btn');
+    pingButtons.forEach(btn => {
+        btn.addEventListener('click', async function () {
+            const targetId = btn.getAttribute('data-target-id');
+            const response = await fetch(`/target/ping/${targetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (response.status === 200) {
+                showToast('Success: Connection established', 'success');
+            } else {
+                showToast('Ping failed: Failed to establish connection', 'danger');
+            }
+        });
+    });
+});
+
+function showToast(message, type) {
+    const toastElement = document.getElementById("toast-notification");
+    toastElement.querySelector(".toast-body").innerHTML = message;
+    toastElement.classList.remove("bg-success", "bg-danger");
+    toastElement.classList.add("bg-" + type);
+
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
 </script>
 
 {% include 'pagination.html' with page_obj=page_obj %}

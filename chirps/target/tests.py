@@ -1,14 +1,14 @@
 """Test cases for the target application."""
 from unittest import mock
+
+import fakeredis
+import pytest
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
-import fakeredis
-import pytest
+from redis.exceptions import ConnectionError
 from target.providers.mantium import MantiumTarget
 from target.providers.redis import RedisTarget
-
-from redis.exceptions import ConnectionError
 
 
 class TargetTests(TestCase):
@@ -119,6 +119,7 @@ class RedisTargetTests(TestCase):
     """Test the RedisTarget"""
 
     def setUp(self):
+        """Set up the RedisTarget tests"""
         # Login the user before performing any tests
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
         self.server = fakeredis.FakeServer()
@@ -127,7 +128,7 @@ class RedisTargetTests(TestCase):
     def test_ping__success(self):
         """Test that connectivity check works"""
         self.server.connected = True
-        
+
         with mock.patch('target.providers.redis.Redis', return_value=self.redis):
             target = RedisTarget(host='localhost', port=12000)
             assert target.test_connection()
@@ -135,7 +136,7 @@ class RedisTargetTests(TestCase):
     def test_ping__failure(self):
         """Test that ping raises ConnectionError if the server is not connected"""
         self.server.connected = False
-        
+
         with mock.patch('target.providers.redis.Redis', return_value=self.redis):
             target = RedisTarget(host='localhost', port=12000)
             with pytest.raises(ConnectionError):
