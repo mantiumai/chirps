@@ -1,8 +1,14 @@
 """Test cases for the target application."""
+from unittest import mock
+
+import fakeredis
+import pytest
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
+from redis import exceptions
 from target.providers.mantium import MantiumTarget
+from target.providers.redis import RedisTarget
 
 
 class TargetTests(TestCase):
@@ -107,3 +113,31 @@ class TargetPaginationTests(TestCase):
         response = self.client.get(reverse('target_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-target-3', status_code=200)
+
+
+class RedisTargetTests(TestCase):
+    """Test the RedisTarget"""
+
+    def setUp(self):
+        """Set up the RedisTarget tests"""
+        # Login the user before performing any tests
+        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+        self.server = fakeredis.FakeServer()
+        self.redis = fakeredis.FakeStrictRedis(server=self.server)
+
+    def test_ping__success(self):
+        """Test that connectivity check works"""
+        self.server.connected = True
+
+        with mock.patch('target.providers.redis.Redis', return_value=self.redis):
+            target = RedisTarget(host='localhost', port=12000)
+            assert target.test_connection()
+
+    def test_ping__failure(self):
+        """Test that ping raises ConnectionError if the server is not connected"""
+        self.server.connected = False
+
+        with mock.patch('target.providers.redis.Redis', return_value=self.redis):
+            target = RedisTarget(host='localhost', port=12000)
+            with pytest.raises(exceptions.ConnectionError):
+                assert target.test_connection()

@@ -7,4 +7,6 @@ mantium-client
 redis==4.5.5
 requests==2.31.0
 pinecone-client
+pytest
 python-dotenv
+fakeredis==2.16.0
