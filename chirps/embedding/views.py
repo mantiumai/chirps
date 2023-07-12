@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404
 
 from .forms import CreateEmbeddingForm
 from .models import Embedding
-from .providers.base import BaseEmbeddingProvider, EmbeddingError
+from .providers.base import EmbeddingError
+from .utils import create_embedding
 
 
 @login_required
@@ -19,35 +20,16 @@ def create(request):
     if not form.is_valid():
         return HttpResponseBadRequest(json.dumps(form.errors), status=400)
 
-    # Search for the text to see if an embedding already exists
+    # Use the specified service to generate embeddings with the specified model
     try:
-        embedding = Embedding.objects.get(
+        embedding: Embedding = create_embedding(
             text=form.cleaned_data['text'],
             model=form.cleaned_data['model'],
             service=form.cleaned_data['service'],
             user=request.user,
         )
-    except Embedding.DoesNotExist:  # Oh noes! We need to generate a new embedding.
-        # Fetch the required provider class from the name of the service requested by the user. The service name
-        # should be one of the enum values found in Embedding.Service.
-        service: BaseEmbeddingProvider = Embedding.Service.get_provider_from_service_name(form.cleaned_data['service'])
-
-        # Use the specified service to generate embeddings with the specified model
-        try:
-            embed_result = service.embed(
-                user=request.user, model=form.cleaned_data['model'], text=form.cleaned_data['text']
-            )
-        except EmbeddingError as err:
-            return HttpResponseBadRequest(json.dumps({'error': str(err)}), status=400)
-
-        # Save the embedding result to the database
-        embedding = Embedding.objects.create(
-            model=form.cleaned_data['model'],
-            service=form.cleaned_data['service'],
-            text=form.cleaned_data['text'],
-            vectors=embed_result,
-            user=request.user,
-        )
+    except EmbeddingError as err:
+        return HttpResponseBadRequest(json.dumps({'error': str(err)}), status=400)
 
     # Return the vectors and it's siesta time.
     return JsonResponse({'embedding': embedding.vectors})
