@@ -1,3 +1,4 @@
+"""Utility functions for the embedding app."""
 from django.contrib.auth.models import User
 
 from .models import Embedding
