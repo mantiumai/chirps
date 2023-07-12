@@ -1,9 +1,13 @@
 """Celery tasks for the scan application."""
+import json
 import re
 from logging import getLogger
 
 from celery import shared_task
 from django.utils import timezone
+from embedding.utils import create_embedding
+from target.providers.pinecone import PineconeTarget
+from target.providers.redis import RedisTarget
 from target.models import BaseTarget
 
 from .models import Finding, Result, Scan
@@ -27,13 +31,20 @@ def scan_task(scan_id):
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
+    embed_query = isinstance(target, (RedisTarget, PineconeTarget))
 
     # Now that we have the derrived class, call its implementation of search()
     total_rules = scan.plan.rules.all().count()
     rules_run = 0
     for rule in scan.plan.rules.all():
+        if embed_query:
+            embedding = create_embedding(rule.query_string, 'text-embedding-ada-002', 'OA', scan.user)
+            print(f'vectors: {embedding.vectors}')
+            query = embedding.vectors
+        else:
+            query = rule.query_string
         logger.info('Starting rule evaluation', extra={'id': rule.id})
-        results = target.search(query=rule.query_string, max_results=100)
+        results = target.search(query, max_results=100)
 
         for text in results:
 
