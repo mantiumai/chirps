@@ -28,6 +28,9 @@ class TestEmbedding(TestCase):
             reverse('signup'), {'username': username, 'email': email, 'password1': password, 'password2': password}
         )
 
+        # Set a dummy OpenAI key
+        self.client.post(reverse('profile'), {'openai_key': 'test_openai_key'})
+
     def test_create_invalid(self):
         """Test creating an embedding with invalid URL parameters."""
         # Missing text field should yield a 400 response
