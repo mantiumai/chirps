@@ -1,18 +1,17 @@
-{  
-  "name": "Python 3",  
-  "dockerComposeFile": "docker-compose.yml",  
-  "service": "app",  
-  "workspaceFolder": "/workspace",  
-  "shutdownAction": "stopCompose",  
-  "features": {  
-    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {  
-      "version": "latest",  
-      "erlangVersion": "latest"  
-    },  
-    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {  
-      "version": "latest"  
-    }  
+{
+  "name": "Python 3",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {
+      "version": "latest",
+      "erlangVersion": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {
+      "version": "latest"
+    }
   },
   "postCreateCommand": "sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose"
-//   "remoteUser": "vscode"  
-}  
+}

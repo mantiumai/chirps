@@ -15,12 +15,11 @@ class Command(BaseCommand):
         parser.add_argument('--stop', action='store_true', help='Stop redis server')
         parser.add_argument('--status', action='store_true', help='Check redis server status')
 
-    def handle(self, *args, **options):  
-        """Handle redis command"""  
-        if options['start']:  
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml up -d redis')  
-        elif options['stop']:  
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml down')  
-        elif options['status']:  
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml ps')  
-
+    def handle(self, *args, **options):
+        """Handle redis command"""
+        if options['start']:
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml up -d redis')
+        elif options['stop']:
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml down')
+        elif options['status']:
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml ps')
