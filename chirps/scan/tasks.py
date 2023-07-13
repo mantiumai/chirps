@@ -6,8 +6,6 @@ from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
 from target.models import BaseTarget
-from target.providers.pinecone import PineconeTarget
-from target.providers.redis import RedisTarget
 
 from .models import Finding, Result, Scan
 
