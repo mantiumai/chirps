@@ -53,7 +53,7 @@ class RedisTarget(BaseTarget):
             params: dict[str, float] = {vector_param: embedding}
             results = index.search(search_query, query_params=params)
 
-            docs = [doc[f'{self.text_field}'] for doc in results.docs]
+            docs = [doc[self.text_field] for doc in results.docs]
             return docs
         finally:
             client.close()
