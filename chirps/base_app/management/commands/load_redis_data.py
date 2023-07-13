@@ -26,7 +26,7 @@ class Command(BaseCommand):
     def write_docs(pipe: redis.client.Pipeline, documents: list[dict], vector_field_name: str) -> None:
         """Write the documents to the redis database."""
         for doc in documents:
-            embedding = np.array(doc['embedding'], dtype=np.float32).tobytes()
+            embedding = np.array(doc['embeddings'], dtype=np.float32).tobytes()
             metadata = {vector_field_name: embedding}
             pipe.hset(doc['id'], mapping=metadata)  # type: ignore
 
