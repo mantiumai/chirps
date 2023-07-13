@@ -1,3 +1,4 @@
+"""Load redis dummy data"""
 import json
 import os
 
@@ -79,8 +80,8 @@ class Command(BaseCommand):
             print(f'Creating new RediSearch index: {index_name}')
             index.create_index(fields=schema, definition=definition)
 
-        with open(file_path, 'r') as f:
-            data = json.load(f)
+        with open(file_path, 'r', encoding='utf-8') as file_:
+            data = json.load(file_)
 
         with r.pipeline(transaction=False) as pipe:
             self.write_docs(pipe, data, vector_field_name)

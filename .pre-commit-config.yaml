@@ -57,7 +57,7 @@ repos:
         types: [python]
         args:
           - --max-line-length=120
-          - --extend-ignore=E203
+          - --extend-ignore=E203, W0511
 
   # mypy validates the python typing as per PEP 484
   # See https://jaredkhan.com/blog/mypy-pre-commit for the source of this

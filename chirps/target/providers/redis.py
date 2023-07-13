@@ -28,7 +28,7 @@ class RedisTarget(BaseTarget):
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 
-    def search(self, vectors: list, max_results: int) -> str:
+    def search(self, query: list, max_results: int) -> str:
         """Search the Redis target with the specified query."""
         client = Redis(
             host=self.host,
@@ -46,7 +46,7 @@ class RedisTarget(BaseTarget):
         return_fields = [self.embedding_field, self.text_field, score_field]
 
         query = Query(vss_query).sort_by(score_field).paging(0, max_results).return_fields(*return_fields).dialect(2)
-        embedding = np.array(vectors, dtype=np.float32).tostring()    # type: ignore
+        embedding = np.array(query, dtype=np.float32).tostring()    # type: ignore
         params: dict[str, float] = {vector_param: embedding}
         results = index.search(query, query_params=params)
 
