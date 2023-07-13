@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         """Add command arguments"""
         parser.add_argument('file_path', type=str, help='Path to the fixtures JSON file')
-        parser.add_argument('index_name', type=str, help='Index name to use as a prefix for Redis keys')
+        parser.add_argument('--index', default='test', type=str, help='Index name to use as a prefix for Redis keys')
         parser.add_argument('--host', default='127.0.0.1', help='Redis host (default: 127.0.0.1)')
         parser.add_argument('--port', default=6379, type=int, help='Redis port (default: 6379)')
         parser.add_argument('--db', default=0, type=int, help='Redis database number (default: 0)')
@@ -27,15 +27,16 @@ class Command(BaseCommand):
         """Write the documents to the redis database."""
         for doc in documents:
             embedding = np.array(doc['embeddings'], dtype=np.float32).tobytes()
-            metadata = {vector_field_name: embedding}
-            pipe.hset(doc['id'], mapping=metadata)  # type: ignore
+            metadata = {vector_field_name: embedding, 'content': doc['content']}
+            id_ = doc['id']
+            pipe.hset(f'test:{id_}', mapping=metadata)  # type: ignore
 
         pipe.execute()
 
     def handle(self, *args, **options):
         """Handle command"""
         file_path = options['file_path']
-        index_name = options['index_name']
+        index_name = options['index']
         vector_field_name = 'embeddings'
         host = options['host']
         port = options['port']
@@ -81,7 +82,7 @@ class Command(BaseCommand):
         with open(file_path, 'r') as f:
             data = json.load(f)
 
-        pipe = r.pipeline()
-        self.write_docs(pipe, data, vector_field_name)
+        with r.pipeline(transaction=False) as pipe:
+            self.write_docs(pipe, data, vector_field_name)
 
         self.stdout.write(self.style.SUCCESS(f'Data loaded into Redis from "{file_path}".'))

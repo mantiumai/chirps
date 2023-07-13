@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "text": "the social security number is 123-45-6789",
+        "content": "the social security number is 123-45-6789",
         "embeddings": [
             -0.007694062776863575,
             0.011030426248908043,
