@@ -62,8 +62,8 @@ class Command(BaseCommand):
                 'FLAT',
                 {
                     'TYPE': 'FLOAT32',
-                    'DIM': 1536,  # TODO: (alexn) should be stored on Embedding
-                    'DISTANCE_METRIC': 'cosine',  # TODO: (alexn) allow user to specify
+                    'DIM': 1536,
+                    'DISTANCE_METRIC': 'cosine',
                 },
             ),
             TextField('content'),
@@ -80,8 +80,8 @@ class Command(BaseCommand):
             print(f'Creating new RediSearch index: {index_name}')
             index.create_index(fields=schema, definition=definition)
 
-        with open(file_path, 'r', encoding='utf-8') as file_:
-            data = json.load(file_)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
 
         with r.pipeline(transaction=False) as pipe:
             self.write_docs(pipe, data, vector_field_name)
