@@ -15,6 +15,7 @@ class BaseTarget(PolymorphicModel):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     html_logo = None
+    REQUIRES_EMBEDDINGS = False
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Perform a query against the specified target, returning the max_results number of matches."""

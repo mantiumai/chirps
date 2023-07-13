@@ -37,7 +37,7 @@ def scan_task(scan_id):
     for rule in scan.plan.rules.all():
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
-        if isinstance(target, (RedisTarget, PineconeTarget)):
+        if target.REQUIRES_EMBEDDINGS:
             embedding = create_embedding(rule.query_string, 'text-embedding-ada-002', 'OA', scan.user)
             query = embedding.vectors
         else:

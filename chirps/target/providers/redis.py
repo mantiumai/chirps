@@ -28,6 +28,8 @@ class RedisTarget(BaseTarget):
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 
+    REQUIRES_EMBEDDINGS = True
+
     def search(self, query: list, max_results: int) -> str:
         """Search the Redis target with the specified query."""
         client = Redis(
