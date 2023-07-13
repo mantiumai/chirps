@@ -18,8 +18,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Handle redis command"""
         if options['start']:
-            os.system('redis-server --daemonize yes')
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml up -d redis')
         elif options['stop']:
-            os.system('redis-cli shutdown')
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml down')
         elif options['status']:
-            os.system('redis-cli ping')
+            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml ps')

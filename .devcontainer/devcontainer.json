@@ -1,20 +1,15 @@
 {
-	"name": "Python 3",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
-	"workspaceFolder": "/workspace",
-	"shutdownAction": "stopCompose",
-	"features": {
-		"ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {
-			"version": "latest",
-			"erlangVersion": "latest"
-		},
-		"ghcr.io/devcontainers-contrib/features/vault-asdf:2": {
-			"version": "latest"
-		}
-	},
-	"settings": {
-		"terminal.integrated.defaultProfile.linux": "/usr/bin/fish"
-	},
-	"remoteUser": "vscode"
+  "name": "Python 3",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {},
+	"ghcr.io/devcontainers-contrib/features/vault-asdf:2": {},
+	"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [4369, 5672, 6379, 8000],
+  "postCreateCommand": "docker-compose up -d",
+  "runServices": ["redis", "celery", "rabbitmq", "vault"]
 }
