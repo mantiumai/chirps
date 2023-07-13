@@ -1,18 +1,18 @@
-{  
-  "name": "Python 3",  
-  "dockerComposeFile": "docker-compose.yml",  
-  "service": "app",  
-  "workspaceFolder": "/workspace",  
-  "shutdownAction": "stopCompose",  
-  "features": {  
-    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {  
-      "version": "latest",  
-      "erlangVersion": "latest"  
-    },  
-    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {  
-      "version": "latest"  
+{
+  "name": "Python 3",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {
+      "version": "latest",
+      "erlangVersion": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {
+      "version": "latest"
     }
   },
-  "forwardPorts": [4369, 5672, 6379, 8000],  
+  "forwardPorts": [4369, 5672, 6379, 8000],
   "postCreateCommand": "docker-compose up -d"
-}  
+}
