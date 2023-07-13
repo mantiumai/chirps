@@ -45,10 +45,10 @@ class RedisTarget(BaseTarget):
         vss_query = f'*=>[KNN {max_results} @{self.embedding_field} ${vector_param} AS {score_field}]'
         return_fields = [self.embedding_field, self.text_field, score_field]
 
-        query = Query(vss_query).sort_by(score_field).paging(0, max_results).return_fields(*return_fields).dialect(2)
+        search_query = Query(vss_query).sort_by(score_field).paging(0, max_results).return_fields(*return_fields).dialect(2)
         embedding = np.array(query, dtype=np.float32).tostring()    # type: ignore
         params: dict[str, float] = {vector_param: embedding}
-        results = index.search(query, query_params=params)
+        results = index.search(search_query, query_params=params)
 
         print(f'results: {results.docs}')
 
