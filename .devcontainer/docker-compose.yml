@@ -1,24 +1,64 @@
-version: '3.8'
-
-services:
-  app:
-    image: mcr.microsoft.com/devcontainers/python:0-3.11
-    volumes:
-      - ..:/workspace:cached
-    command: sleep infinity
-    networks:
-      default:
-        aliases:
-          - localhost
-
-  redis:
-    image: redis/redis-stack:latest
-    ports:
-      - 6379:6379
-    networks:
-      default:
-        aliases:
-          - localhost
-
-networks:
-  default:
+version: '3.8'  
+  
+services:  
+  app:  
+    image: mcr.microsoft.com/devcontainers/python:0-3.11  
+    volumes:  
+      - ..:/workspace:cached  
+    command: sleep infinity  
+    depends_on:  
+      - redis  
+      - celery  
+      - rabbitmq  
+      - vault  
+    networks:  
+      default:  
+        aliases:  
+          - localhost  
+  
+  celery:  
+    build:  
+      context: .  
+      dockerfile: Dockerfile.celery  
+    volumes:  
+      - .:/workspace:cached  
+    depends_on:  
+      - rabbitmq  
+    networks:  
+      default:  
+        aliases:  
+          - localhost  
+  
+  redis:  
+    image: redis/redis-stack:latest  
+    ports:  
+      - 6379:6379  
+    networks:  
+      default:  
+        aliases:  
+          - localhost  
+  
+  rabbitmq:  
+    image: rabbitmq:latest
+    ports:  
+      - 5672:5672  
+      - 15672:15672  
+    networks:  
+      default:  
+        aliases:  
+          - localhost  
+  
+  vault:  
+    image: hashicorp/vault:latest
+    ports:  
+      - 8200:8200  
+    environment:  
+      VAULT_DEV_ROOT_TOKEN_ID: myroot  
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200  
+    networks:  
+      default:  
+        aliases:  
+          - localhost  
+  
+networks:  
+  default:  

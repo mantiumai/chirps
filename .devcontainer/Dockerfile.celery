@@ -1,0 +1,8 @@
+# Dockerfile.celery  
+FROM mcr.microsoft.com/devcontainers/python:0-3.11  
+  
+# Install Celery and any other dependencies  
+RUN pip install --no-cache-dir celery  
+  
+# Set the command for the Celery worker  
+CMD ["celery", "-A", "chirps", "worker", "--loglevel=info"]  
