@@ -115,6 +115,9 @@ class TargetPaginationTests(TestCase):
         self.assertContains(response, 'chirps-target-3', status_code=200)
 
 
+fixture_path = Path(__file__).parent.resolve() / Path('./fixtures/target')
+
+
 class RedisTargetTests(TestCase):
     """Test the RedisTarget"""
 
@@ -124,6 +127,10 @@ class RedisTargetTests(TestCase):
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
         self.server = fakeredis.FakeServer()
         self.redis = fakeredis.FakeStrictRedis(server=self.server)
+
+        data = json.loads(open(f'{fixture_path}/redis_dummy_data.json', encoding='utf-8').read())
+        pipe = self.redis.pipeline()
+        write_docs(pipe, data, 'embeddings')
 
     def test_ping__success(self):
         """Test that connectivity check works"""
@@ -141,3 +148,7 @@ class RedisTargetTests(TestCase):
             target = RedisTarget(host='localhost', port=12000)
             with pytest.raises(exceptions.ConnectionError):
                 assert target.test_connection()
+
+    def test_search(self):
+        pass
+        

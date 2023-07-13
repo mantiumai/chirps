@@ -42,6 +42,7 @@ def scan_task(scan_id):
             query = embedding.vectors
         else:
             query = rule.query_string
+            
         results = target.search(query, max_results=100)
 
         for text in results:

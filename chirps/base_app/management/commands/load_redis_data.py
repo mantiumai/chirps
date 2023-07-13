@@ -8,6 +8,16 @@ from redis.commands.search.field import TextField, VectorField  # type: ignore
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType  # type: ignore
 
 
+def write_docs(pipe: redis.client.Pipeline, documents: list[dict], vector_field_name: str) -> None:
+    """Write the documents to the redis database."""
+    for doc in documents:
+        embedding = np.array(doc['embeddings'], dtype=np.float32).tobytes()
+        metadata = {vector_field_name: embedding}
+        pipe.hset(doc['id'], mapping=metadata)  # type: ignore
+
+    pipe.execute()
+
+
 class Command(BaseCommand):
     """Command to load data into redis"""
 
@@ -21,16 +31,6 @@ class Command(BaseCommand):
         parser.add_argument('--port', default=6379, type=int, help='Redis port (default: 6379)')
         parser.add_argument('--db', default=0, type=int, help='Redis database number (default: 0)')
         parser.add_argument('--flushdb', action='store_true', help='Flush the Redis database before loading data')
-
-    @staticmethod
-    def write_docs(pipe: redis.client.Pipeline, documents: list[dict], vector_field_name: str) -> None:
-        """Write the documents to the redis database."""
-        for doc in documents:
-            embedding = np.array(doc['embedding'], dtype=np.float32).tobytes()
-            metadata = {vector_field_name: embedding}
-            pipe.hset(doc['id'], mapping=metadata)  # type: ignore
-
-        pipe.execute()
 
     def handle(self, *args, **options):
         """Handle command"""
@@ -82,6 +82,6 @@ class Command(BaseCommand):
             data = json.load(f)
 
         pipe = r.pipeline()
-        self.write_docs(pipe, data, vector_field_name)
+        write_docs(pipe, data, vector_field_name)
 
         self.stdout.write(self.style.SUCCESS(f'Data loaded into Redis from "{file_path}".'))

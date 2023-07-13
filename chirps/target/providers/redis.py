@@ -48,6 +48,7 @@ class RedisTarget(BaseTarget):
         query = Query(vss_query).sort_by(score_field).paging(0, max_results).return_fields(*return_fields).dialect(2)
         embedding = np.array(vectors, dtype=np.float32).tostring()    # type: ignore
         params: dict[str, float] = {vector_param: embedding}
+        print(f'query: {query}')
         results = index.search(query, query_params=params)
 
         print(f'results: {results.docs}')
