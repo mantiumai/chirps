@@ -5,9 +5,9 @@ from logging import getLogger
 from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
+from target.models import BaseTarget
 from target.providers.pinecone import PineconeTarget
 from target.providers.redis import RedisTarget
-from target.models import BaseTarget
 
 from .models import Finding, Result, Scan
 
@@ -36,7 +36,7 @@ def scan_task(scan_id):
     rules_run = 0
     for rule in scan.plan.rules.all():
         logger.info('Starting rule evaluation', extra={'id': rule.id})
-        
+
         if isinstance(target, (RedisTarget, PineconeTarget)):
             embedding = create_embedding(rule.query_string, 'text-embedding-ada-002', 'OA', scan.user)
             query = embedding.vectors

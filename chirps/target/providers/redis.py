@@ -1,7 +1,7 @@
 """Logic for interfacing with a Redis target."""
-import numpy as np
 from logging import getLogger
 
+import numpy as np
 from django.db import models
 from redis import Redis
 from redis.commands.search.query import Query
