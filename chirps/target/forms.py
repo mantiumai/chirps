@@ -14,7 +14,17 @@ class RedisTargetForm(ModelForm):
         """Django Meta options for the RedisTargetForm."""
 
         model = RedisTarget
-        fields = ['name', 'host', 'port', 'database_name', 'username', 'password']
+        fields = [
+            'name',
+            'host',
+            'port',
+            'database_name',
+            'username',
+            'password',
+            'index_name',
+            'text_field',
+            'embedding_field',
+        ]
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
@@ -23,6 +33,15 @@ class RedisTargetForm(ModelForm):
             'database_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Database name'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'guest'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'index_name': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'The name of the index in which documents are stored'}
+            ),
+            'text_field': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'The document field in which text is stored'}
+            ),
+            'embedding_field': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'The document field in which embeddings are stored'}
+            ),
         }
 
 

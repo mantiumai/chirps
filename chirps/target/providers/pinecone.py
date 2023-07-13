@@ -22,6 +22,8 @@ class PineconeTarget(BaseTarget):
     html_name = 'Pinecone'
     html_description = 'Pinecone Vector Database'
 
+    REQUIRES_EMBEDDINGS = True
+
     @property
     def decrypted_api_key(self):
         """Return the decrypted API key."""

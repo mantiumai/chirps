@@ -6,5 +6,5 @@ max-line-length=120
 ignore-patterns=\d{4}_.*?.py
 
 [MESSAGES CONTROL]
-disable=duplicate-code,too-few-public-methods,imported-auth-user
+disable=duplicate-code,too-few-public-methods,imported-auth-user,too-many-locals,invalid-name
 ignored-modules=pinecone
