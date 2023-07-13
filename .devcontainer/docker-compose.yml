@@ -1,0 +1,13 @@
+version: '3.8'  
+  
+services:  
+  app:  
+    image: mcr.microsoft.com/devcontainers/python:0-3.11  
+    volumes:  
+      - ..:/workspace:cached  
+    command: sleep infinity  
+  
+  redis:  
+    image: redis-stack:latest  
+    ports:  
+      - 6379:6379  
