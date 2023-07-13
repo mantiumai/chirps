@@ -52,7 +52,8 @@ class RedisTarget(BaseTarget):
 
         print(f'results: {results.docs}')
 
-        return results.docs
+        docs = [doc.content for doc in results.docs]
+        return docs
 
     def test_connection(self) -> bool:
         """Ensure that the Redis target can be connected to."""
