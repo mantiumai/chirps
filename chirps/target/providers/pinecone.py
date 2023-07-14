@@ -41,7 +41,7 @@ class PineconeTarget(BaseTarget):
         pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
         # Perform search on the Pinecone index
-        index = pinecone_lib.Index('chirps-test')
+        index = pinecone_lib.Index(self.index_name)
         search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
 
         metadata_text_field = self.metadata_text_field if self.metadata_text_field else 'content'
