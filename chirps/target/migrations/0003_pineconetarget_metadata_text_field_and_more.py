@@ -5,18 +5,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("target", "0002_redistarget_embedding_field_redistarget_index_name_and_more"),
+        ('target', '0002_redistarget_embedding_field_redistarget_index_name_and_more'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="pineconetarget",
-            name="metadata_text_field",
+            model_name='pineconetarget',
+            name='metadata_text_field',
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AlterField(
-            model_name="redistarget",
-            name="port",
+            model_name='redistarget',
+            name='port',
             field=models.PositiveIntegerField(),
         ),
     ]

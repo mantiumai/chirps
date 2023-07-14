@@ -43,7 +43,7 @@ class PineconeTarget(BaseTarget):
         # Perform search on the Pinecone index
         index = pinecone_lib.Index('chirps-test')
         search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
-        
+
         metadata_text_field = self.metadata_text_field if self.metadata_text_field else 'content'
         result_content = [r['metadata'][metadata_text_field] for r in search_results['matches']]
 
