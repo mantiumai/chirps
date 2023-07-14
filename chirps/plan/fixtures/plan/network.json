@@ -5,15 +5,24 @@
       "fields": {
         "name": "Network Security",
         "description": "This plan will scan for sensitive network information.",
-        "is_template": true
+        "is_template": true,
+        "current_version": 100
       }
+    },
+    {
+      "fields": {
+        "number": 1,
+        "plan": 300,
+        "created_at": "2016-01-01T00:00:00Z"
+      },
+      "model": "plan.PlanVersion",
+      "pk": 300
     },
     {
         "model": "plan.Rule",
         "pk": 300,
         "fields": {
           "name": "Open Ports",
-          "description": "Find documented open ports",
           "query_string": "Which ports are open on my network?",
           "regex_test": "^\\d{1,5}$",
           "severity": 3,
@@ -25,7 +34,6 @@
         "pk": 301,
         "fields": {
           "name": "Firewall Configuration",
-          "description": "Find documented firewall ports",
           "query_string": "What are the firewall rules in place?",
           "regex_test": "",
           "severity": 2,
@@ -37,7 +45,6 @@
         "pk": 302,
         "fields": {
           "name": "Network Encryption",
-          "description": "How is network traffic encrypted?",
           "query_string": "How is network traffic encrypted?",
           "regex_test": "^(none|WEP|WPA|WPA2|WPA3)$",
           "severity": 3,
@@ -49,7 +56,6 @@
         "pk": 303,
         "fields": {
           "name": "Network Authentication",
-          "description": "What authentication protocols are used on the network?",
           "query_string": "What authentication protocols are used on the network?",
           "regex_test": "^(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)$",
           "severity": 3,

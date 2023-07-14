@@ -3,55 +3,41 @@
 
 {% block content %}
 
-<h1 class="text-success">Plans</h1>
-<!-- <a class="btn btn-primary" href="{% url 'plan_create' %}">New Plan</a> -->
+<div class="d-flex">
+    <h1 class="my-auto ml-0 mr-auto text-success">Plans</h1>
+    <a class="btn btn-primary my-auto ml-auto mr-0" href="{% url 'plan_create' %}">New Plan</a>
+</div>
 <hr>
 
-<div class="accordion" id="plan_templates">
-    {% for template in page_obj %}
-    <div class="accordion-item", id="chirps-plan-{{template.id}}">
-        <div class="accordion-header">
-        <button class="accordion-button collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-target="#collapse-{{template.id}}"
-                aria-expanded="false" aria-controls="collapse-{{template.id}}">
-            <div class="d-flex">
-                <h5 class="ml-0 mr-3 my-auto">{{template.name}}</h5>
-                <small class="ml-0 mr-auto my-auto">{{template.description}}</small>
-            </div>
-        </button>
-        </div>
-        <div id="collapse-{{template.id}}" class="accordion-collapse collapse">
-        <div class="accordion-body">
-            <h5>Rules</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Query</th>
-                        <th scope="col">Test</th>
-                        <th scope="col">Severity</th>
-                    </tr>
-                </thead>
+<!-- tab navs -->
+<ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="tab-1" data-bs-toggle="tab" href="#tabs-1" role="tab" aria-controls="tabs-1" aria-selected="true">Custom</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tab-2" data-bs-toggle="tab" href="#tabs-2" role="tab" aria-controls="tabs-2" aria-selected="false">Templates</a>
+    </li>
+</ul>
+<!-- tab navs -->
 
-                <tbody>
-                {% for rule in template.rules.all %}
-                <tr>
-                    <td>{{rule.name}}</td>
-                    <td>{{rule.description}}</td>
-                    <td>{{rule.query_string}}</td>
-                    <td>{{rule.regex_test}}</td>
-                    <td>{{rule.severity}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="tab-content" id="panel-content">
+
+    <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
+        <div class="accordion" id="custom-panel-accordion">
+            {% include 'plan/dashboard_plan_list.html' with plan_list=user_plans %}
         </div>
     </div>
-    {% endfor %}
+
+    <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
+        <div class="accordion" id="template-panel-accordion">
+            {% include 'plan/dashboard_plan_list.html' with plan_list=templates %}
+        </div>
+    </div>
 </div>
 
-{% include 'pagination.html' with page_obj=page_obj %}
-
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+</script>
 {% endblock %}

@@ -67,7 +67,17 @@
             "name": "Employee Information",
             "description": "This plan will scan for employee information.",
             "is_template": true,
+            "current_version": 100,
             "user": null
+        }
+    },
+    {
+        "model": "plan.planversion",
+        "pk": 100,
+        "fields": {
+            "number": 1,
+            "plan": 100,
+            "created_at": "2016-01-01T00:00:00Z"
         }
     },
     {
@@ -75,7 +85,6 @@
         "pk": 100,
         "fields": {
             "name": "SSN",
-            "description": "Detect a social security number",
             "query_string": "What's my social security number?",
             "query_embedding": null,
             "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
@@ -88,7 +97,6 @@
         "pk": 101,
         "fields": {
             "name": "Address",
-            "description": "Detect a mailing address",
             "query_string": "What's my address?",
             "query_embedding": null,
             "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
@@ -101,7 +109,6 @@
         "pk": 102,
         "fields": {
             "name": "Bank Account",
-            "description": "Detect a bank account number",
             "query_string": "What's my bank account number?",
             "query_embedding": null,
             "regex_test": "\\d{10,12}",
@@ -114,7 +121,6 @@
         "pk": 103,
         "fields": {
             "name": "Credit Card",
-            "description": "Detect a credit card number",
             "query_string": "What's my credit card number?",
             "query_embedding": null,
             "regex_test": "(?:\\d[ -]*?){13,16}",
@@ -127,7 +133,6 @@
         "pk": 104,
         "fields": {
             "name": "Email Address",
-            "description": "Detect an email address",
             "query_string": "What's my email address?",
             "query_embedding": null,
             "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
@@ -140,7 +145,6 @@
         "pk": 105,
         "fields": {
             "name": "Phone number",
-            "description": "Detect a phone number",
             "query_string": "What's my phone number?",
             "query_embedding": null,
             "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
@@ -153,7 +157,6 @@
         "pk": 106,
         "fields": {
             "name": "Salary",
-            "description": "Detect a salary (in USD)",
             "query_string": "What's my salary?",
             "query_embedding": null,
             "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",

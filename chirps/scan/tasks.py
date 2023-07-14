@@ -27,11 +27,12 @@ def scan_task(scan_id):
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
+    current_plan_version = scan.plan.current_version
 
     # Now that we have the derrived class, call its implementation of search()
-    total_rules = scan.plan.rules.all().count()
+    total_rules = current_plan_version.rules.all().count()
     rules_run = 0
-    for rule in scan.plan.rules.all():
+    for rule in current_plan_version.rules.all():
         logger.info('Starting rule evaluation', extra={'id': rule.id})
         results = target.search(query=rule.query_string, max_results=100)
 

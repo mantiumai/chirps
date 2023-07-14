@@ -1,9 +1,14 @@
 """Tests for the plan application."""
 
+from unittest import skip
+
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import PlanForm
 
+
+@skip('Disabling until pagination is re-added to the plan application.')
 class PlanPaginationTests(TestCase):
     """Test the plan application pagination."""
 
@@ -11,7 +16,10 @@ class PlanPaginationTests(TestCase):
 
     def setUp(self):
         """Login the user before performing any tests."""
-        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+        self.client.post(
+            reverse('signup'),
+            {'username': 'admin', 'email': 'admin@mantiumai.com', 'password1': 'admin', 'password2': 'admin'},
+        )
 
     def test_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
@@ -47,3 +55,32 @@ class PlanPaginationTests(TestCase):
         response = self.client.get(reverse('plan_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-plan-300', status_code=200)
+
+
+class PlanCreateForm(TestCase):
+    """Test the custom logic in the plan create form."""
+
+    def test_single_rule(self):
+        """Verify that a single rule is parsed correctly."""
+        rule_data = {
+            'rule_name': 'Test Rule',
+            'rule_query_string': 'Test Query String',
+            'rule_regex': 'Test Regex',
+            'rule_severity': 'Test Severity',
+        }
+
+        form = PlanForm(
+            data={
+                'name': 'Test Plan',
+                'description': 'Test Description',
+                'rule_name_0': 'Test Rule',
+                'rule_query_string_0': 'Test Query String',
+                'rule_regex_0': 'Test Regex',
+                'rule_severity_0': 'Test Severity',
+            }
+        )
+
+        form.full_clean()
+        self.assertTrue(form.is_valid())
+        self.assertEqual(len(form.cleaned_data['rules']), 1)
+        self.assertEqual(form.cleaned_data['rules'][0], rule_data)
