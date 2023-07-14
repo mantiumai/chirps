@@ -16,6 +16,7 @@ class PineconeTarget(BaseTarget):
     environment = models.CharField(max_length=256, blank=True, null=True)
     index_name = models.CharField(max_length=256, blank=True, null=True)
     project_name = models.CharField(max_length=256, blank=True, null=True)
+    metadata_text_field = models.CharField(max_length=256, blank=False, null=True)
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/pinecone-logo.png'
@@ -42,9 +43,9 @@ class PineconeTarget(BaseTarget):
         # Perform search on the Pinecone index
         index = pinecone_lib.Index('chirps-test')
         search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
-        result_content = [r['metadata']['content'] for r in search_results['matches']]
-
-        print(result_content)
+        
+        metadata_text_field = 'content'
+        result_content = [r['metadata'][metadata_text_field] for r in search_results['matches']]
 
         return result_content
 
