@@ -54,5 +54,6 @@ class PlanForm(forms.Form):
             data[f'rule_query_string_{index}'] = rule.query_string
             data[f'rule_regex_{index}'] = rule.regex_test
             data[f'rule_severity_{index}'] = rule.severity
+            index += 1
 
         return PlanForm(data=data)
