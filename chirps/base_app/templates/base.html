@@ -9,6 +9,7 @@
         <title>{% block title %}chirps{% endblock %}</title>
         <link rel="shortcut icon" type="image/png" href="{% static 'account/chirps_logo.png' %}"/>
         <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static '/css/bootstrap-select-1.14.0-beta2.min.css' %}">
         <script src="{% static '/js/jquery-3.7.0.min.js' %}"></script>
     </head>
 
@@ -20,9 +21,12 @@
             </div>
             {% include 'footer.html' %}
         </div>
+        <!-- Latest compiled and minified JavaScript -->
+
         <script src="{% static '/js/htmx-1.9.2.min.js' %}"></script>
         <script src="{% static '/js/fa/all.min.js' %}"></script>
         <script src="{% static '/js/popper.min.js' %}"></script>
         <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static '/js/bootstrap-select-1.14.0-beta2.min.js' %}"></script>
     </body>
 </html>

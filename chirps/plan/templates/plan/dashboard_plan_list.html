@@ -1,0 +1,58 @@
+{% for plan in plan_list %}
+<div class="accordion-item plan-row", id="chirps-plan-{{plan.id}}" hx-target="closest .plan-row" hx-swap="outerHTML">
+    <div class="accordion-header">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapse-{{plan.id}}"
+                aria-expanded="false" aria-controls="collapse-{{plan.id}}">
+            <div class="d-flex">
+                <h5 class="ml-0 mr-3 my-auto">{{plan.name}}</h5>
+                <small class="ml-0 mr-auto my-auto">{{plan.description}}</small>
+            </div>
+        </button>
+
+
+    </div>
+    <div id="collapse-{{plan.id}}" class="accordion-collapse collapse">
+        <div class="accordion-body">
+            <h5>Rules</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Query</th>
+                        <th scope="col">Test</th>
+                        <th scope="col">Severity</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for rule in plan.current_version.rules.all %}
+                <tr>
+                    <td>{{rule.name}}</td>
+                    <td>{{rule.description}}</td>
+                    <td>{{rule.query_string}}</td>
+                    <td>{{rule.regex_test}}</td>
+                    <td>{{rule.severity}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if plan.is_template == False %}
+        <div class="row">
+            <div class="col">
+                <a class="btn btn-outline-primary m-3" href="{% url 'plan_edit' plan.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                <button type="button" class="btn btn-outline-danger m-3" hx-delete="{% url 'plan_archive' plan.id %}"><i class="fa-solid fa-trash"></i> Archive</button>
+            </div>
+            <div class="col align-self-end">
+                <p class="text-right m-3">version: {{plan.current_version.number}}</p>
+            </div>
+        </div>
+        {% else %}
+            <a class="btn btn-outline-primary m-3" href="{% url 'plan_clone' plan.id %}"><i class="fa-solid fa-clone"></i> Clone</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}

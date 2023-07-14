@@ -3,14 +3,23 @@
     "fields": {
       "description": "This plan will scan for employee information.",
       "is_template": true,
-      "name": "Employee Information"
+      "name": "Employee Information",
+      "current_version": 100
     },
     "model": "plan.Plan",
     "pk": 100
   },
   {
     "fields": {
-      "description": "Detect a social security number",
+      "number": 1,
+      "plan": 100,
+      "created_at": "2016-01-01T00:00:00Z"
+    },
+    "model": "plan.PlanVersion",
+    "pk": 100
+  },
+  {
+    "fields": {
       "name": "SSN",
       "plan": 100,
       "query_string": "What's my social security number?",
@@ -22,7 +31,6 @@
   },
   {
     "fields": {
-      "description": "Detect a mailing address",
       "name": "Address",
       "plan": 100,
       "query_string": "What's my address?",
@@ -34,7 +42,6 @@
   },
   {
     "fields": {
-      "description": "Detect a bank account number",
       "name": "Bank Account",
       "plan": 100,
       "query_string": "What's my bank account number?",
@@ -46,7 +53,6 @@
   },
   {
     "fields": {
-      "description": "Detect a credit card number",
       "name": "Credit Card",
       "plan": 100,
       "query_string": "What's my credit card number?",
@@ -58,7 +64,6 @@
   },
   {
     "fields": {
-      "description": "Detect an email address",
       "name": "Email Address",
       "plan": 100,
       "query_string": "What's my email address?",
@@ -70,7 +75,6 @@
   },
   {
     "fields": {
-      "description": "Detect a phone number",
       "name": "Phone number",
       "plan": 100,
       "query_string": "What's my phone number?",
@@ -82,7 +86,6 @@
   },
   {
     "fields": {
-      "description": "Detect a salary (in USD)",
       "name": "Salary",
       "plan": 100,
       "query_string": "What's my salary?",
