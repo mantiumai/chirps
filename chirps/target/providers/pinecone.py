@@ -16,6 +16,7 @@ class PineconeTarget(BaseTarget):
     environment = models.CharField(max_length=256, blank=True, null=True)
     index_name = models.CharField(max_length=256, blank=True, null=True)
     project_name = models.CharField(max_length=256, blank=True, null=True)
+    metadata_text_field = models.CharField(max_length=256, blank=False, null=True)
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/pinecone-logo.png'
@@ -35,19 +36,18 @@ class PineconeTarget(BaseTarget):
                 return 'Error: Decryption failed'
         return None
 
-    def search(self, query: str, max_results: int) -> list[str]:
+    def search(self, query: list, max_results: int) -> list[str]:
         """Search the Pinecone target with the specified query."""
-        # pinecone_lib.init(api_key=self.api_key, environment=self.environment)
+        pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
-        # # Assuming the query is converted to a vector of the same dimension as the index. We should re-visit this.
-        # query_vector = convert_query_to_vector(query)   # pylint: disable=undefined-variable
+        # Perform search on the Pinecone index
+        index = pinecone_lib.Index(self.index_name)
+        search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
 
-        # # Perform search on the Pinecone index
-        # search_results = pinecone_lib.fetch(index_name=self.index_name, query_vector=query_vector, top_k=max_results)
-        # pinecone_lib.deinit()
-        # return search_results
-        logger.error('PineconeTarget search not implemented')
-        raise NotImplementedError()
+        metadata_text_field = self.metadata_text_field if self.metadata_text_field else 'content'
+        result_content = [r['metadata'][metadata_text_field] for r in search_results['matches']]
+
+        return result_content
 
     def test_connection(self) -> bool:
         """Ensure that the Pinecone target can be connected to."""

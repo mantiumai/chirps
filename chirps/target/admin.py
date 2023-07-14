@@ -35,3 +35,4 @@ class RedisTargetAdmin(PolymorphicChildModelAdmin):
 
 admin.site.register(RedisTarget)
 admin.site.register(MantiumTarget)
+admin.site.register(PineconeTarget)

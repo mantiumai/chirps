@@ -80,6 +80,7 @@ class PineconeTargetForm(ModelForm):
             'environment',
             'index_name',
             'project_name',
+            'metadata_text_field',
         ]
 
         widgets = {
@@ -88,6 +89,9 @@ class PineconeTargetForm(ModelForm):
             'environment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Environment (optional)'}),
             'index_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Index Name (optional)'}),
             'project_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}),
+            'metadata_text_field': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Metadata field in which text is stored'}
+            ),
         }
 
 
