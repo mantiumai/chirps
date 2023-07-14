@@ -1,3 +1,4 @@
+"""Forms for the Plan app."""
 from django import forms
 
 from .models import Plan
