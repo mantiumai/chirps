@@ -10,7 +10,22 @@ class Command(BaseCommand):
     """Initialize the app by running multiple management commands."""
 
     help = 'Initialize the app by running multiple management commands'
-
+  
+    def load_data_from_plans_directory(self):  
+        plans_directory = '/workspace/chirps/plan/fixtures/plan'  
+        
+        # Iterate over each file in the plans directory  
+        for filename in os.listdir(plans_directory): 
+            if filename.endswith('__init__.py'):
+                continue
+             
+            file_path = os.path.join(plans_directory, filename)  
+            
+            # Check if the current item is a file  
+            if os.path.isfile(file_path):  
+                print(f"Loading data from file: {file_path}")  
+                call_command('loaddata', file_path)  
+    
     def handle(self, *args, **options):
         """Handle the command"""
         # Run the 'redis --start' command
@@ -51,11 +66,12 @@ class Command(BaseCommand):
 
         # Run the 'loaddata' command
         self.stdout.write(self.style.WARNING('Loading data from fixtures...'))
-        call_command('loaddata', 'plan/fixtures/plan/employee.json')
+        self.load_data_from_plans_directory()  
         self.stdout.write(self.style.SUCCESS('Data loaded from fixtures'))
 
         # Run the 'runserver' command
         self.stdout.write(self.style.WARNING('Starting the development server...'))
+        # Call the function to start loading data from files  
         call_command('runserver')
         self.stdout.write(self.style.SUCCESS('Development server started'))
 
