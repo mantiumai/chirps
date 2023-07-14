@@ -40,9 +40,13 @@ class PineconeTarget(BaseTarget):
         pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
         # Perform search on the Pinecone index
-        search_results = pinecone_lib.fetch(index_name=self.index_name, query_vector=query, top_k=max_results)
-        pinecone_lib.deinit()
-        return search_results
+        index = pinecone_lib.Index('chirps-test')
+        search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
+        result_content = [r['metadata']['content'] for r in search_results['matches']]
+
+        print(result_content)
+
+        return result_content
 
     def test_connection(self) -> bool:
         """Ensure that the Pinecone target can be connected to."""
