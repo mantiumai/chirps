@@ -1,6 +1,7 @@
 """Management command to initialize the app by running multiple management commands in succession."""
 import os
 
+from chirps.settings import BASE_DIR
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -13,11 +14,11 @@ class Command(BaseCommand):
 
     def load_data_from_plans_directory(self):
         """Iterate over plans in directory and load their data"""
-        plans_directory = '/workspace/chirps/plan/fixtures/plan'
+        plans_directory = BASE_DIR.as_posix() + '/plan/fixtures/plan'
 
         # Iterate over each file in the plans directory
         for filename in os.listdir(plans_directory):
-            if filename.endswith('__init__.py'):
+            if filename.startswith('__'):
                 continue
 
             file_path = os.path.join(plans_directory, filename)
