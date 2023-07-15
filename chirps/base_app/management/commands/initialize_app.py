@@ -1,10 +1,11 @@
 """Management command to initialize the app by running multiple management commands in succession."""
 import os
 
-from chirps.settings import BASE_DIR
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+
+from chirps.settings import BASE_DIR
 
 
 class Command(BaseCommand):
