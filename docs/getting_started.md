@@ -55,4 +55,4 @@ Chirps ships with a few stock plans. If you'd like to customize them, or create 
 With a target and plan ready, it's time to execute a scan. Navigate to the scan dashboard by clicking the `scan` button in the top navbar. From the scan dashboad, click the `new` button. On the new scan page, select the plan to run, and the target to execute the plan against. Click `create` to start the scan.
 
 ## Debugging Failed Tasks
-Task logs are written to `/var/log/celery/`. View the worker log file (`w1-1.log`) to uncover any issues. 
+Task logs are written to `/var/log/celery/`. View the worker log file (`w1-1.log`) to uncover any issues.
