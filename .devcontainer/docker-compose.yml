@@ -48,6 +48,10 @@ services:
         aliases:
           - localhost
 
+  ruby:
+    build: .
+    command: gem install jekyll bundler
+
   vault:
     image: hashicorp/vault:latest
     ports:
