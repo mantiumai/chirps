@@ -31,25 +31,14 @@
   },
   {
     "fields": {
-      "name": "Address",
-      "plan": 100,
-      "query_string": "What's my address?",
-      "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
-      "severity": 2
-    },
-    "model": "plan.Rule",
-    "pk": 101
-  },
-  {
-    "fields": {
       "name": "Bank Account",
       "plan": 100,
       "query_string": "What's my bank account number?",
-      "regex_test": "\\d{10,12}",
+      "regex_test": "^(\\d{3})-(\\d{4})-(\\d{7})$",
       "severity": 5
     },
     "model": "plan.Rule",
-    "pk": 102
+    "pk": 101
   },
   {
     "fields": {
@@ -60,7 +49,7 @@
       "severity": 5
     },
     "model": "plan.Rule",
-    "pk": 103
+    "pk": 102
   },
   {
     "fields": {
@@ -71,7 +60,7 @@
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 104
+    "pk": 103
   },
   {
     "fields": {
@@ -82,7 +71,7 @@
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 105
+    "pk": 104
   },
   {
     "fields": {
@@ -93,6 +82,6 @@
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 106
+    "pk": 105
   }
 ]
