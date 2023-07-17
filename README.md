@@ -6,6 +6,8 @@ Chirps is a Django-based Python web application that allows users to search and 
 ## Quick Start
 
 - `pip install -r requirements.txt`
+- create a .env file in /chirps with `FERNET_KEY`=
+- Enter in a Fernet key - must be 32 url-safe base64-encoded bytes. You can use the python script in `/chirps/chirps/key_script.py` to generate one.
 - Navigate to /chirps and run `./manage.py initialize_app` to start the application and necessary services
 
 ## Support
