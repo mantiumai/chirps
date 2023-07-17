@@ -31,6 +31,17 @@
   },
   {
     "fields": {
+      "name": "Address",
+      "plan": 100,
+      "query_string": "What's my address?",
+      "regex_test": "\\d{1,} [a-zA-Z0-9\\s]+(\\,)? (?:[a-zA-Z]+ ){0,2}[a-zA-Z]+(\\,)? [A-Z]{2} [0-9]{5,6}",
+      "severity": 2
+    },
+    "model": "plan.Rule",
+    "pk": 101
+  },
+  {
+    "fields": {
       "name": "Bank Account",
       "plan": 100,
       "query_string": "What's my bank account number?",
@@ -38,7 +49,7 @@
       "severity": 5
     },
     "model": "plan.Rule",
-    "pk": 101
+    "pk": 102
   },
   {
     "fields": {
@@ -49,7 +60,7 @@
       "severity": 5
     },
     "model": "plan.Rule",
-    "pk": 102
+    "pk": 103
   },
   {
     "fields": {
@@ -60,18 +71,18 @@
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 103
+    "pk": 104
   },
   {
     "fields": {
       "name": "Phone number",
       "plan": 100,
       "query_string": "What's my phone number?",
-      "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
+      "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 104
+    "pk": 105
   },
   {
     "fields": {
@@ -82,6 +93,6 @@
       "severity": 2
     },
     "model": "plan.Rule",
-    "pk": 105
+    "pk": 106
   }
 ]

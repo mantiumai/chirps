@@ -23,58 +23,85 @@ class EmployeeRegexTests(TestCase):
         current_plan_version = employee_information_plan.current_version  
         
         # Get all the rules associated with the current PlanVersion  
-        self.rules = Rule.objects.filter(plan=current_plan_version)  
-        
-        # Print the retrieved rules  
-        for rule in self.rules:  
-            print(rule)  
-  
+        self.rules = Rule.objects.filter(plan=current_plan_version)
     
-    def test_social_security_number(self):  
+    def test_ssn_pattern(self):  
         rule = self.rules.get(name='SSN')  
         pattern = re.compile(rule.regex_test)  
     
-        example = 'this is a test. the number is 123-45-6789. the end!'  
-        self.assertIsNotNone(pattern.search(example))  
-
-    # def test_address(self):
-    #     rule = self.rules.get(name='Address')
-    #     pattern = re.compile(rule.regex_test)
-
-    #     valid_addresses = [  
-    #         # "123 Main St, CA 90210",  
-    #         "456 Elm St, New York, NY 10001",  
-    #         "789 Oak St, Los Angeles, CA 90001-1234",  
-    #     ]  
-  
-    #     invalid_addresses = [  
-    #         "12345 67890, NY 10001",  
-    #         "Main St, CA 90210",  
-    #         "123 Main St, California 90210",  
-    #     ]  
+        valid_ssn_numbers = [  
+            "123-45-6789",  
+            "987-65-4321",  
+            "001-23-4567",  
+        ]  
     
-    #     for address in valid_addresses:  
-    #         self.assertIsNotNone(pattern.search(address), address)  
+        for ssn_number in valid_ssn_numbers:  
+            self.assertIsNotNone(pattern.match(ssn_number), ssn_number)  
     
-    #     for address in invalid_addresses:  
-    #         self.assertIsNone(pattern.search(address), address)  
-
-        
-    #     example = "The address is 123 Main Street, Springfield, OH. That's the spot."
-    #     self.assertIsNotNone(pattern.search(example))
-
-    def test_bank_account_number(self):
-        rule = self.rules.get(name='Bank Account')
-        pattern = re.compile(rule.regex_test)
-
-        valid_account_numbers = [  
-            "123-4567-8901234",  
-            "987-1234-5678901",  
-            "001-0001-0000000",  
-        ]
-
-        for account_number in valid_account_numbers:  
-            self.assertIsNotNone(pattern.match(account_number), account_number)
+    def test_address_pattern(self):  
+        rule = self.rules.get(name='Address')  
+        pattern = re.compile(rule.regex_test)  
+    
+        valid_addresses = [  
+            "123 Main Street, Los Angeles, CA 90001",  
+            "987 Elm Avenue, New York, NY 10001",  
+            "001 Oak Court, San Francisco, CA 94102",  
+        ]  
+    
+        for address in valid_addresses:  
+            self.assertIsNotNone(pattern.match(address), address)  
+    
+    def test_credit_card_pattern(self):  
+        rule = self.rules.get(name='Credit Card')  
+        pattern = re.compile(rule.regex_test)  
+    
+        valid_credit_cards = [  
+            "1234 5678 9012 3456",  
+            "9876 5432 1098 7654",  
+            "0011 2233 4455 6677",  
+        ]  
+    
+        for credit_card in valid_credit_cards:  
+            self.assertIsNotNone(pattern.match(credit_card), credit_card)  
+    
+    def test_email_address_pattern(self):  
+        rule = self.rules.get(name='Email Address')  
+        pattern = re.compile(rule.regex_test)  
+    
+        valid_email_addresses = [  
+            "example@example.com",  
+            "test.user@domain.co.uk",  
+            "user+tag@example.org",  
+        ]  
+    
+        for email_address in valid_email_addresses:  
+            self.assertIsNotNone(pattern.match(email_address), email_address)  
+    
+    def test_phone_number_pattern(self):  
+        rule = self.rules.get(name='Phone number')  
+        pattern = re.compile(rule.regex_test)  
+    
+        valid_phone_numbers = [  
+            "123-456-7890",  
+            "123.456.7890",  
+            "(123) 456-7890",  
+        ]  
+    
+        for phone_number in valid_phone_numbers:  
+            self.assertIsNotNone(pattern.match(phone_number), phone_number)  
+    
+    def test_salary_pattern(self):  
+        rule = self.rules.get(name='Salary')  
+        pattern = re.compile(rule.regex_test)  
+    
+        valid_salaries = [  
+            "$1,000.00",  
+            "$100,000",  
+            "$1,234,567.89",  
+        ]  
+    
+        for salary in valid_salaries:  
+            self.assertIsNotNone(pattern.match(salary), salary)  
 
 
 @skip('Disabling until pagination is re-added to the plan application.')
