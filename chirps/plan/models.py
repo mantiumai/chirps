@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class Plan(models.Model):
+class Policy(models.Model):
     """Model for what to do when scanning a target."""
 
     # True to hide this plan from the user
@@ -53,8 +53,8 @@ class Rule(models.Model):
     # If the regex test finds results in the response documents, how severe of a problem is it?
     severity = models.IntegerField()
 
-    # Foreign Key to the plan this rule belongs to
-    plan = models.ForeignKey(PlanVersion, on_delete=models.CASCADE, related_name='rules')
+    # Foreign Key to the policy this rule belongs to
+    policy = models.ForeignKey(Policy, on_delete=models.CASCADE, related_name='rules')
 
     def __str__(self):
         """Stringify the name"""

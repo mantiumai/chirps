@@ -1,23 +1,31 @@
-"""Forms for rendering scan application models."""
-from django import forms
-from django.forms import ModelForm
-
-from .models import Scan
-
-
-class ScanForm(ModelForm):
-    """Form for the main scan model."""
-
-    class Meta:
-        """Django Meta options for the ScanForm."""
-
-        model = Scan
-        fields = ['description', 'target', 'plan']
-
-        widgets = {
-            'description': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
-            ),
-            'target': forms.Select(attrs={'class': 'form-control'}),
-            'plan': forms.Select(attrs={'class': 'form-control'}),
-        }
+from django import forms  
+from django.forms import ModelForm  
+from .models import Scan  
+from plan.models import Policy  
+  
+class ScanForm(ModelForm):  
+    """Form for the main scan model."""  
+  
+    # Add a MultipleChoiceField for policies  
+    policies = forms.ModelMultipleChoiceField(  
+        queryset=Policy.objects.all(),  
+        widget=forms.CheckboxSelectMultiple,  
+        required=True,  
+    )  
+  
+    class Meta:  
+        """Django Meta options for the ScanForm."""  
+  
+        model = Scan  
+        fields = ['description', 'target']  
+  
+        widgets = {  
+            'description': forms.TextInput(  
+                attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}  
+            ),  
+            'target': forms.Select(attrs={'class': 'form-control'}),  
+        }  
+  
+    def __init__(self, *args, **kwargs):  
+        super(ScanForm, self).__init__(*args, **kwargs)  
+        self.fields['policies'].label = "Policies"  
