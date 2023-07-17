@@ -7,6 +7,18 @@ Chirps is a Django-based Python web application that allows users to search and 
 - `pip install -r requirements.txt`
 - Navigate to /chirps and run `./manage.py initialize_app` to start the application and necessary services
 
+## Support
+
+For any questions on the usage of `chirps` please visit us on [Discord](https://discord.gg/wUsVGHFq). If you found a software issue, please [create an issue](https://github.com/mantiumai/chirps/issues) on GitHub.
+
+## Maintainer
+
+This project is maintained by [Mantium](https://www.mantiumai.com)
+
+## Contributing
+
+We appreciate any contributions you can make! Please [create a pull request](https://github.com/mantiumai/chirps/pulls) on GitHub. Bigger changes need to be discussed with the development team via the [issues section at GitHub](https://github.com/mantiumai/chirps/issues) first.
+
 ## Development - Getting Started
 
 Install required Python modules with `pip install -r requirements.txt`.
@@ -72,3 +84,7 @@ The `Plan` application manages scanning plans and rules for the Scan application
 The authentication system in this Django-based Python web application manages user authentication and account features. Users can sign up, log in, and update their profiles, including an optional OpenAI API key, which is hashed before saving.
 
 The `Profile` model extends Django's built-in User model with a one-to-one relationship and includes an `openai_key` field. Forms such as `ProfileForm`, `LoginForm`, and `SignupForm` handle user profile updates, logins, and registrations, with custom methods like `clean_openai_key()` for hashing the OpenAI API key.
+
+## License
+
+This software is licensed under the [GNU General Public LIcense v3.0](https://github.com/mantiumai/chirps/blob/main/LICENSE). If you need a different license, please reach out to Mantium(https://www.mantiumai.com)
