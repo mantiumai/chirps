@@ -70,6 +70,23 @@ class MantiumTargetForm(ModelForm):
 class PineconeTargetForm(ModelForm):
     """Form for the PineconeTarget model."""
 
+    ENV_CHOICES = [
+        ('us-west4-gcp-free', 'us-west4-gcp-free'),
+        ('us-west1-gcp-free', 'us-west1-gcp-free'),
+        ('asia-southeast1-gcp-free', 'asia-southeast1-gcp-free'),
+        ('eu-west4-gcp', 'eu-west4-gcp'),
+        ('northamerica-northeast1-gcp', 'northamerica-northeast1-gcp'),
+        ('asia-northeast1-gcp', 'asia-northeast1-gcp'),
+        ('asia-southeast1-gcp', 'asia-southeast1-gcp'),
+        ('us-east4-gcp', 'us-east4-gcp'),
+        ('us-west4-gcp', 'us-west4-gcp'),
+        ('us-central1-gcp', 'us-central1-gcp'),
+        ('us-west1-gcp', 'us-west1-gcp'),
+        ('us-east1-gcp', 'us-east1-gcp'),
+        ('eu-west1-gcp', 'eu-west1-gcp'),
+        ('us-east-1-aws', 'us-east-1-aws'),
+    ]
+
     class Meta:
         """Django Meta options for the PineconeTargetForm."""
 
@@ -83,16 +100,22 @@ class PineconeTargetForm(ModelForm):
             'metadata_text_field',
         ]
 
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
-            'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
-            'environment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Environment (optional)'}),
-            'index_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Index Name (optional)'}),
-            'project_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}),
-            'metadata_text_field': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Metadata field in which text is stored'}
-            ),
-        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
+        )
+        self.fields['api_key'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'})
+        self.fields['environment'].widget = forms.Select(choices=self.ENV_CHOICES, attrs={'class': 'form-control'})
+        self.fields['index_name'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Index Name', 'required': True}
+        )
+        self.fields['project_name'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Project Name (optional)'}
+        )
+        self.fields['metadata_text_field'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Metadata field in which text is stored'}
+        )
 
 
 targets = [
