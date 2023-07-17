@@ -1,87 +1,87 @@
 [
-    {
-      "model": "plan.Plan",
-      "pk": 200,
-      "fields": {
-        "name": "Sensitive Data",
-        "description": "This plan will scan for sensitive information.",
-        "is_template": true,
-        "current_version": 100
-      }
+  {
+    "model": "plan.Plan",
+    "pk": 200,
+    "fields": {
+      "name": "Sensitive Data",
+      "description": "This plan will scan for sensitive information.",
+      "is_template": true,
+      "current_version": 1
+    }
+  },
+  {
+    "fields": {
+      "number": 1,
+      "plan": 200,
+      "created_at": "2016-01-01T00:00:00Z"
     },
-    {
-      "fields": {
-        "number": 1,
-        "plan": 200,
-        "created_at": "2016-01-01T00:00:00Z"
-      },
-      "model": "plan.PlanVersion",
-      "pk": 200
-    },
-    {
-        "model": "plan.Rule",
-        "pk": 200,
-        "fields": {
-          "name": "Credit Card Numbers",
-          "query_string": "credit card number",
-          "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
-          "severity": 5,
-          "plan": 200
-        }
-      },
-      {
-        "model": "plan.Rule",
-        "pk": 201,
-        "fields": {
-          "name": "Social Security Numbers",
-          "query_string": "credit card number",
-          "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
-          "severity": 5,
-          "plan": 200
-        }
-      },
-      {
-        "model": "plan.Rule",
-        "pk": 202,
-        "fields": {
-          "name": "Bank Account Numbers",
-          "query_string": "bank account number",
-          "regex_test": "\\b\\d{10,12}\\b",
-          "severity": 4,
-          "plan": 200
-        }
-      },
-      {
-        "model": "plan.Rule",
-        "pk": 203,
-        "fields": {
-          "name": "Email Addresses",
-          "query_string": "List all email addresses",
-          "regex_test": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b",
-          "severity": 3,
-          "plan": 200
-        }
-      },
-      {
-        "model": "plan.Rule",
-        "pk": 204,
-        "fields": {
-          "name": "Phone Numbers",
-          "query_string": "Find phone numbers",
-          "regex_test": "\\b\\d{3}-\\d{3}-\\d{4}\\b",
-          "severity": 3,
-          "plan": 200
-        }
-      },
-      {
-        "model": "plan.Rule",
-        "pk": 205,
-        "fields": {
-          "name": "Passwords",
-          "query_string": "Find passwords",
-          "regex_test": "\\b[A-Za-z0-9!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?]+\\b",
-          "severity": 4,
-          "plan": 200
-        }
-      }
+    "model": "plan.PlanVersion",
+    "pk": 1
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 200,
+    "fields": {
+      "name": "Credit Card Numbers",
+      "query_string": "credit card number",
+      "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
+      "severity": 5,
+      "plan": 1
+    }
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 201,
+    "fields": {
+      "name": "Social Security Numbers",
+      "query_string": "social security number",
+      "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
+      "severity": 5,
+      "plan": 1
+    }
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 202,
+    "fields": {
+      "name": "Bank Account Numbers",
+      "query_string": "bank account number",
+      "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
+      "severity": 4,
+      "plan": 1
+    }
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 203,
+    "fields": {
+      "name": "Email Addresses",
+      "query_string": "List all email addresses",
+      "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+      "severity": 3,
+      "plan": 1
+    }
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 204,
+    "fields": {
+      "name": "Phone Numbers",
+      "query_string": "Find phone numbers",
+      "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
+      "severity": 3,
+      "plan": 1
+    }
+  },
+  {
+    "model": "plan.Rule",
+    "pk": 205,
+    "fields": {
+      "name": "Passwords",
+      "query_string": "Find passwords",
+      "regex_test": "\\b(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?])[A-Za-z0-9!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?]+\\b",
+      "severity": 4,
+      "plan": 1
+    }
+  }
 ]
