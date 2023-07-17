@@ -13,7 +13,7 @@ Install required Python modules with `pip install -r requirements.txt`.
 
 ### `manage.py`
 
-All of the functionality you need is handled with Django's `manage.py` interface. It's executable, and can be found in the `chirps` subdirectory. Always run `manage.py` from within the chirps subdirectory. Okay.
+All of the functionality you need is handled with Django's `manage.py` interface. It's executable, and can be found in the `chirps` subdirectory. Always run `manage.py` from within the chirps subdirectory.
 
 ### Database Schema
 
