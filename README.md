@@ -3,7 +3,6 @@
 Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against a target using a selected plan, and view the results of the scan, including any findings.
 
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
-
 ## Quick Start
 
 - `pip install -r requirements.txt`
