@@ -88,6 +88,36 @@ class EmployeeRegexTests(TestCase):
             test_string = self.test_string.format(address)
             self.assertIsNone(pattern.search(test_string), address)
 
+    def test_bank_account_pattern(self):  
+        """Verify that the Bank Account regex pattern matches valid bank account numbers."""  
+        rule = self.rules.get(name='Bank Account')  
+        pattern = re.compile(rule.regex_test)  
+  
+        valid_bank_account_numbers = [  
+            '123-4567-8901234',  
+            '987-1234-5678901',  
+            '001-2345-6789012',  
+        ]  
+  
+        for bank_account_number in valid_bank_account_numbers:  
+            test_string = self.test_string.format(bank_account_number)  
+            self.assertIsNotNone(pattern.search(test_string), bank_account_number)  
+  
+    def test_bank_account_pattern_invalid(self):  
+        """Verify that the Bank Account regex pattern does not match invalid bank account numbers."""  
+        rule = self.rules.get(name='Bank Account')  
+        pattern = re.compile(rule.regex_test)  
+  
+        invalid_bank_account_numbers = [  
+            '123-456-78901234',  
+            '987-1234-56789A1',  
+            '001-2345-6789 012',  
+        ]  
+  
+        for bank_account_number in invalid_bank_account_numbers:  
+            test_string = self.test_string.format(bank_account_number)  
+            self.assertIsNone(pattern.search(test_string), bank_account_number) 
+    
     def test_credit_card_pattern(self):
         """Verify that the Credit Card regex pattern matches valid credit card numbers."""
         rule = self.rules.get(name='Credit Card')
@@ -426,25 +456,25 @@ class SensitiveDataRegexTests(TestCase):
         rule = self.rules.get(name='Bank Account Numbers')
         pattern = re.compile(rule.regex_test)
 
-        valid_bank_account_numbers = [
-            '1234567890',
-            '987654321098',
-            '001234567891',
-        ]
-
-        for bank_account_number in valid_bank_account_numbers:
-            test_string = self.test_string.format(bank_account_number)
-            self.assertIsNotNone(pattern.search(test_string), bank_account_number)
-
-    def test_bank_account_pattern_invalid(self):
-        """Verify that the Bank Account Numbers regex pattern does not match invalid bank account numbers."""
-        rule = self.rules.get(name='Bank Account Numbers')
-        pattern = re.compile(rule.regex_test)
-
-        invalid_bank_account_numbers = [
-            '123456789',
-            '9876543210987',
-            '00123456789A',
+        valid_bank_account_numbers = [  
+            '123-4567-8901234',  
+            '987-1234-5678901',  
+            '001-2345-6789012',  
+        ]  
+  
+        for bank_account_number in valid_bank_account_numbers:  
+            test_string = self.test_string.format(bank_account_number)  
+            self.assertIsNotNone(pattern.search(test_string), bank_account_number)  
+  
+    def test_bank_account_pattern_invalid(self):  
+        """Verify that the Bank Account regex pattern does not match invalid bank account numbers."""  
+        rule = self.rules.get(name='Bank Account Numbers')  
+        pattern = re.compile(rule.regex_test)  
+  
+        invalid_bank_account_numbers = [  
+            '123-456-78901234',  
+            '987-1234-56789A1',  
+            '001-2345-6789 012',  
         ]
 
         for bank_account_number in invalid_bank_account_numbers:

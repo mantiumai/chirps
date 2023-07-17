@@ -34,7 +34,7 @@
     "pk": 201,
     "fields": {
       "name": "Social Security Numbers",
-      "query_string": "credit card number",
+      "query_string": "social security number",
       "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
       "severity": 5,
       "plan": 1
@@ -46,7 +46,7 @@
     "fields": {
       "name": "Bank Account Numbers",
       "query_string": "bank account number",
-      "regex_test": "\\b\\d{10,12}\\b",
+      "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
       "severity": 4,
       "plan": 1
     }

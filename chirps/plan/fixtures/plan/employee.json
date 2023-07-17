@@ -23,7 +23,7 @@
       "name": "SSN",
       "plan": 100,
       "query_string": "What's my social security number?",
-      "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+      "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
       "severity": 5
     },
     "model": "plan.Rule",
@@ -56,7 +56,7 @@
       "name": "Credit Card",
       "plan": 100,
       "query_string": "What's my credit card number?",
-      "regex_test": "(?:\\d[ -]*?){13,16}",
+      "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
       "severity": 5
     },
     "model": "plan.Rule",
