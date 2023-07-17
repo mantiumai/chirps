@@ -5,9 +5,23 @@
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
   "features": {
-    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {},
-	"ghcr.io/devcontainers-contrib/features/vault-asdf:2": {},
-	"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers-contrib/features/rabbitmq-asdf:1": {
+		"version": "latest",
+		"erlangVersion": "latest"
+	},
+	"ghcr.io/devcontainers-contrib/features/vault-asdf:2": {
+		"version": "latest"
+	},
+	"ghcr.io/devcontainers/features/docker-in-docker:2": {
+		"moby": true,
+		"azureDnsAutoDetection": true,
+		"installDockerBuildx": true,
+		"version": "latest",
+		"dockerDashComposeVersion": "v1"
+	},
+	"ghcr.io/devcontainers/features/ruby:1": {
+		"version": "latest"
+	}
   },
   "forwardPorts": [4369, 5672, 6379, 8000],
   "postCreateCommand": "docker-compose up -d",

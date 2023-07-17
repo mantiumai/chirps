@@ -1,0 +1,49 @@
+<header>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+      <a class="navbar-brand" href="#">
+        <img src='{{ "/assets/images/chirps_logo.png" | relative_url }}' width="30" alt="Chirps logo">
+        Chirps
+      </a>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href='{{"/" | relative_url }}'>Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href='{{"/getting-started/" | relative_url }}'>Getting Started</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Documentation
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href='{{"/getting-started/" | relative_url }}'>Getting Started</a>
+            <a class="dropdown-item" href='{{"/end-user-guides/" | relative_url }}'>End-User Guides</a>
+            <a class="dropdown-item" href='{{"/add-a-target/" | relative_url }}'>Adding A Target</a>
+            <a class="dropdown-item" href='{{"/development/" | relative_url }}'>Development</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Code is Beautiful🌻</a>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav ms-auto">
+
+        <li class="nav-item m-2">
+          <a href="https://discord.com/invite/SscDru7dFB" target="_blank">
+            <img src='{{ "/assets/images/discord/discord-mark-white.png" | relative_url }}' width=32 alt="Discord logo">
+          </a>
+        </li>
+
+        <li class="nav-item m-2">
+          <a href="https://github.com/mantiumai/chirps/" target="_blank">
+            <img src='{{ "/assets/images/github/GitHub-Mark-Light-32px.png" | relative_url }} 'alt="GitHub logo">
+          </a>
+        </li>
+      </ul>
+
+
+    </nav>
+  </header>
