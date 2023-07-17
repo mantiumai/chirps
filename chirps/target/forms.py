@@ -101,7 +101,7 @@ class PineconeTargetForm(ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        super(PineconeTargetForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
         )
