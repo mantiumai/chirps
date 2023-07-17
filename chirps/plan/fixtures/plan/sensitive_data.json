@@ -57,7 +57,7 @@
     "fields": {
       "name": "Email Addresses",
       "query_string": "List all email addresses",
-      "regex_test": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b",
+      "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
       "severity": 3,
       "plan": 1
     }
@@ -68,7 +68,7 @@
     "fields": {
       "name": "Phone Numbers",
       "query_string": "Find phone numbers",
-      "regex_test": "\\b\\d{3}-\\d{3}-\\d{4}\\b",
+      "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
       "severity": 3,
       "plan": 1
     }
