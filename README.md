@@ -87,4 +87,4 @@ The `Profile` model extends Django's built-in User model with a one-to-one relat
 
 ## License
 
-This software is licensed under the [GNU General Public LIcense v3.0](https://github.com/mantiumai/chirps/blob/main/LICENSE). If you need a different license, please reach out to Mantium(https://www.mantiumai.com)
+This software is licensed under the [GNU General Public LIcense v3.0](https://github.com/mantiumai/chirps/blob/main/LICENSE). If you need a different license, please reach out to [Mantium](https://www.mantiumai.com)
