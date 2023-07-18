@@ -1,6 +1,7 @@
 """Management command to initialize the app by running multiple management commands in succession."""
 import os
 
+from account.models import Profile
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -58,14 +59,12 @@ class Command(BaseCommand):
         call_command('migrate')
         self.stdout.write(self.style.SUCCESS('migrate completed'))
 
-        # Check if a superuser already exists
-        if not User.objects.filter(is_superuser=True).exists():
-            # Run the 'createsuperuser' command
-            self.stdout.write(self.style.WARNING('Creating superuser...'))
-            call_command('createsuperuser')
-            self.stdout.write(self.style.SUCCESS('Superuser created'))
-        else:
-            self.stdout.write(self.style.WARNING('Superuser already exists. Skipping superuser creation.'))
+        # Verify all the superusers have profiles
+        for user in User.objects.filter(is_superuser=True):
+
+            if Profile.objects.filter(user=user).exists() is False:
+                Profile.objects.create(user=user)
+                self.stdout.write(self.style.SUCCESS('Profile created for superuser'))
 
         # Run the 'loaddata' command
         self.stdout.write(self.style.WARNING('Loading data from fixtures...'))
