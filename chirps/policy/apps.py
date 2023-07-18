@@ -1,9 +1,9 @@
-"""Configuration options for the plan application."""
+"""Configuration options for the policy application."""
 from django.apps import AppConfig
 
 
-class PlanConfig(AppConfig):
-    """Configuration options for the plan application."""
+class PolicyConfig(AppConfig):
+    """Configuration options for the policy application."""
 
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'policy'
