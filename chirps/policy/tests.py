@@ -586,7 +586,7 @@ class PlanPaginationTests(TestCase):
 
     def test_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
-        response = self.client.get(reverse('plan_dashboard'))
+        response = self.client.get(reverse('policy_dashboard'))
 
         # No pagination widget should be present
         # Ensure the element ID is not found
@@ -599,23 +599,23 @@ class PlanPaginationTests(TestCase):
     def test_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""
         # First page
-        response = self.client.get(reverse('plan_dashboard'), {'item_count': 1})
+        response = self.client.get(reverse('policy_dashboard'), {'item_count': 1})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-plan-100', status_code=200)
 
         # Second page
-        response = self.client.get(reverse('plan_dashboard'), {'item_count': 1, 'page': 2})
+        response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 2})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-plan-200', status_code=200)
 
         # Third page
-        response = self.client.get(reverse('plan_dashboard'), {'item_count': 1, 'page': 3})
+        response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 3})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-plan-300', status_code=200)
 
     def test_dashboard_last_page(self):
         """If the page number exceeds the number of pages, verify that the last page is returned"""
-        response = self.client.get(reverse('plan_dashboard'), {'item_count': 1, 'page': 100})
+        response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-plan-300', status_code=200)
 

@@ -25,50 +25,51 @@ def result_detail(request, result_id):
     return render(request, 'scan/result_detail.html', {'result': result})
 
 
-@login_required  
-def create(request):  
-    """Render the scan creation page and handle POST requests."""  
-    if request.method == 'POST':  
-        scan_form = ScanForm(request.POST)  
-        if scan_form.is_valid():  
-  
-            # Convert the scan form into a scan model  
-            scan = scan_form.save(commit=False)  
-  
-            # Assign the scan to a user  
-            scan.user = request.user  
-  
-            # Persist the scan to the database without committing the many-to-many relationship  
-            scan.save()  
-  
-            # Add the selected policies to the scan  
-            selected_policies = scan_form.cleaned_data['policies']  
-            for policy in selected_policies:  
-                scan.policies.add(policy)  
-  
-            # Kick off the scan task  
-            result = scan_task.delay(scan.id)  
-  
-            # Save off the Celery task ID on the Scan object  
-            scan.celery_task_id = result.id  
-            scan.save()  
-  
-            # Redirect the user back to the dashboard  
-            return redirect('scan_dashboard')  
-  
-    else:  
-        scan_form = ScanForm()  
-  
-    # Fetch the list of template and custom policies  
-    templates = Policy.objects.filter(is_template=True).order_by('id')  
-    user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')  
-    targets = BaseTarget.objects.filter(user=request.user)  
-  
-    return render(  
-        request,  
-        'scan/create.html',  
-        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'targets': targets},  
-    )  
+@login_required    
+def create(request):    
+    """Render the scan creation page and handle POST requests."""    
+    if request.method == 'POST':    
+        scan_form = ScanForm(request.POST)    
+        if scan_form.is_valid():    
+    
+            # Convert the scan form into a scan model    
+            scan = scan_form.save(commit=False)    
+    
+            # Assign the scan to a user    
+            scan.user = request.user    
+    
+            # Persist the scan to the database without committing the many-to-many relationship    
+            scan.save()
+
+            scan_form.save_m2m()    
+    
+            # Set the selected policies to the scan    
+            selected_policies = scan_form.cleaned_data['policies']    
+            scan.policies.set(selected_policies)    
+    
+            # Kick off the scan task    
+            result = scan_task.delay(scan.id)    
+    
+            # Save off the Celery task ID on the Scan object    
+            scan.celery_task_id = result.id    
+            scan.save()    
+    
+            # Redirect the user back to the dashboard    
+            return redirect('scan_dashboard')    
+    
+    else:    
+        scan_form = ScanForm()    
+    
+    # Fetch the list of template and custom policies    
+    templates = Policy.objects.filter(is_template=True).order_by('id')    
+    user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')    
+    targets = BaseTarget.objects.filter(user=request.user)    
+    
+    return render(    
+        request,    
+        'scan/create.html',    
+        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'targets': targets},    
+    )    
 
 
 @login_required

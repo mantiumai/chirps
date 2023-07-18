@@ -7,7 +7,8 @@ from django.views.decorators.http import require_http_methods
 from .forms import PolicyForm  
 from .models import Policy, PolicyVersion, Rule  
   
-
+# Update all instances of 'plan' to 'policy' in view function names and docstrings  
+  
 @login_required  
 def dashboard(request):  
     templates = Policy.objects.filter(is_template=True).order_by('id')  

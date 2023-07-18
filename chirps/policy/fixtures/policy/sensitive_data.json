@@ -1,22 +1,22 @@
 [
   {
     "model": "policy.Policy",
-    "pk": 200,
+    "pk": 300,
     "fields": {
       "name": "Sensitive Data",
       "description": "This policy will scan for sensitive information.",
       "is_template": true,
-      "current_version": 1
+      "current_version": 300
     }
   },
   {
     "fields": {
       "number": 1,
-      "policy": 200,
+      "policy": 300,
       "created_at": "2016-01-01T00:00:00Z"
     },
     "model": "policy.PolicyVersion",
-    "pk": 1
+    "pk": 300
   },
   {
     "model": "policy.Rule",
@@ -26,7 +26,7 @@
       "query_string": "credit card number",
       "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
       "severity": 5,
-      "policy": 200
+      "policy": 300
     }
   },
   {
@@ -37,7 +37,7 @@
       "query_string": "social security number",
       "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
       "severity": 5,
-      "policy": 200
+      "policy": 300
     }
   },
   {
@@ -48,7 +48,7 @@
       "query_string": "bank account number",
       "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
       "severity": 4,
-      "policy": 200
+      "policy": 300
     }
   },
   {
@@ -59,7 +59,7 @@
       "query_string": "List all email addresses",
       "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
       "severity": 3,
-      "policy": 200
+      "policy": 300
     }
   },
   {
@@ -70,7 +70,7 @@
       "query_string": "Find phone numbers",
       "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
       "severity": 3,
-      "policy": 200
+      "policy": 300
     }
   },
   {
@@ -81,7 +81,7 @@
       "query_string": "Find passwords",
       "regex_test": "\\b(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?])[A-Za-z0-9!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?]+\\b",
       "severity": 4,
-      "policy": 200
+      "policy": 300
     }
   }
 ]
