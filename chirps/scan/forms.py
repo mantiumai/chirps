@@ -1,7 +1,7 @@
 from django import forms  
 from django.forms import ModelForm  
 from .models import Scan  
-from plan.models import Policy  
+from policy.models import Policy  
   
 class ScanForm(ModelForm):  
     """Form for the main scan model."""  

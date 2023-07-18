@@ -6,17 +6,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('plan', '0001_initial'),
+        ('policy', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='plan',
+            model_name='policy',
             name='archived',
             field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
-            name='PlanVersion',
+            name='PolicyVersion',
             fields=[
                 (
                     'id',
@@ -31,29 +31,29 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 (
-                    'plan',
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='plan.plan'),
+                    'policy',
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='policy.policy'),
                 ),
             ],
         ),
         migrations.AddField(
-            model_name='plan',
+            model_name='policy',
             name='current_version',
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name='current_version',
-                to='plan.planversion',
+                to='policy.policyversion',
             ),
         ),
         migrations.AlterField(
             model_name='rule',
-            name='plan',
+            name='policy',
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name='rules',
-                to='plan.planversion',
+                to='policy.policyversion',
             ),
         ),
     ]

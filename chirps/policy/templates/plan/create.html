@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}New Plan{% endblock %}
+{% block title %}New Policy{% endblock %}
 
 {% block content %}
 
 <div>
-    <h1 class="text-success">New Plan</h1>
+    <h1 class="text-success">New Policy</h1>
     <hr>
     <div class="card my-4">
     <div class="card-body cardbody-color p-4">
         <div class="form-group">
-            <form method="POST" action="{% url 'plan_create' %}">
+            <form method="POST" action="{% url 'policy_create' %}">
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -22,17 +22,17 @@
                     <input class="form-control" type="text" name="description" id="description" placeholder="Description" required></input>
                 </div>
 
-                <div id="plan_rule_list">
+                <div id="policy_rule_list">
 
                     <div id="rule_replace_me">
-                        <button class='btn btn-primary ml-2 mr-0' hx-get="{% url 'plan_create_rule' %}"
+                        <button class='btn btn-primary ml-2 mr-0' hx-get="{% url 'policy_create_rule' %}"
                                                                   hx-target="#rule_replace_me"
                                                                   hx-swap="outerHTML">Add Rule</button>
                     </div>
                 </div>
 
                 <div class="d-flex mt-3">
-                    <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'plan_dashboard' %}">Cancel</a>
+                    <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'policy_dashboard' %}">Cancel</a>
                     <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
                 </div>
             </form>

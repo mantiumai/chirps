@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('target', '0001_initial'),
-        ('plan', '0001_initial'),
+        ('policy', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('scan', '0001_initial'),
     ]
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='result',
             name='rule',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='plan.rule'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='policy.rule'),
         ),
         migrations.AddField(
             model_name='result',

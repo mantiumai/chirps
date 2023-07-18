@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Plan',
+            name='Policy',
             fields=[
                 (
                     'id',
@@ -58,11 +58,11 @@ class Migration(migrations.Migration):
                 ('regex_test', models.TextField()),
                 ('severity', models.IntegerField()),
                 (
-                    'plan',
+                    'policy',
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name='rules',
-                        to='plan.plan',
+                        to='policy.policy',
                     ),
                 ),
             ],

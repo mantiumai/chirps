@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('plan', '0001_initial'),
+        ('policy', '0001_initial'),
     ]
 
     operations = [
@@ -61,8 +61,8 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('celery_task_id', models.CharField(max_length=256, null=True)),
                 (
-                    'plan',
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='plan.plan'),
+                    'policy',
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='policy.policy'),
                 ),
             ],
         ),

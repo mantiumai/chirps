@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods  
   
 from .forms import PolicyForm  
-from .models import Policy, PlanVersion, Rule  
+from .models import Policy, PolicyVersion, Rule  
   
 # Update all instances of 'plan' to 'policy' in view function names and docstrings  
   
@@ -26,7 +26,7 @@ def create(request):
             name=form.cleaned_data['name'], description=form.cleaned_data['description'], user=request.user  
         )  
   
-        plan_version = PlanVersion.objects.create(number=1, policy=policy)  
+        plan_version = PolicyVersion.objects.create(number=1, policy=policy)  
         policy.current_version = plan_version  
         policy.save()  
   
@@ -52,7 +52,7 @@ def clone(request, policy_id):
         user=request.user,  
     )  
   
-    plan_version = PlanVersion.objects.create(number=1, policy=cloned_policy)  
+    plan_version = PolicyVersion.objects.create(number=1, policy=cloned_policy)  
     cloned_policy.current_version = plan_version  
     cloned_policy.save()  
   
@@ -77,7 +77,7 @@ def edit(request, policy_id):
         form.full_clean()  
         policy.save()  
   
-        new_policy_version = PlanVersion.objects.create(number=policy.current_version.number + 1, policy=policy)  
+        new_policy_version = PolicyVersion.objects.create(number=policy.current_version.number + 1, policy=policy)  
   
         for rule in form.cleaned_data['rules']:  
             Rule.objects.create(  

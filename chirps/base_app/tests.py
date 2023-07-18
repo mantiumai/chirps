@@ -1,6 +1,6 @@
 """Tests for the base application."""
 from django.test import TestCase
-from plan.models import Plan
+from policy.models import Plan
 
 from .management.commands.initialize_app import Command
 

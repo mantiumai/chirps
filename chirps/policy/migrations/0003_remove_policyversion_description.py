@@ -5,12 +5,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('plan', '0002_plan_archived_planversion_plan_current_version_and_more'),
+        ('policy', '0002_policy_archived_policyversion_policy_current_version_and_more'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='planversion',
+            model_name='policyversion',
             name='description',
         ),
     ]

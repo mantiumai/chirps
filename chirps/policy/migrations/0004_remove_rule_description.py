@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('plan', '0003_remove_planversion_description'),
+        ('policy', '0003_remove_policyversion_description'),
     ]
 
     operations = [
