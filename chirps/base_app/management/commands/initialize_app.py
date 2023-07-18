@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def load_data_from_plans_directory(self):
         """Iterate over plans in directory and load their data"""
-        plans_directory = BASE_DIR.as_posix() + '/plan/fixtures/plan'
+        plans_directory = BASE_DIR.as_posix() + '/policy/fixtures/policy'
 
         # Iterate over each file in the plans directory
         for filename in os.listdir(plans_directory):
