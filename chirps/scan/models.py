@@ -7,8 +7,10 @@ from fernet_fields import EncryptedTextField
 from policy.models import Rule
 
 
-class ScanPolicy(models.Model):  
-    scan = models.ForeignKey('Scan', on_delete=models.CASCADE)  
+class ScanPolicy(models.Model):
+    """Intermediary model between Scan and Policy"""
+
+    scan = models.ForeignKey('Scan', on_delete=models.CASCADE)
     policy = models.ForeignKey('policy.Policy', on_delete=models.CASCADE)
 
 
@@ -18,7 +20,7 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     description = models.TextField()
-    # Use the `through` parameter to specify the custom intermediary model  
+    # Use the `through` parameter to specify the custom intermediary model
     policies = models.ManyToManyField('policy.Policy', through='ScanPolicy')
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)

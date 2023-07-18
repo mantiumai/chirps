@@ -1,51 +1,51 @@
-{% extends 'base.html' %}  
-{% block title %}New Scan{% endblock %}  
-  
-{% block content %}  
-  
-<div>  
-  <h1 class="text-success">New Scan</h1>  
-  <hr>  
-  <div class="card my-4">  
-    <div class="card-body cardbody-color p-4">  
-        <div class="form-group">  
-            <form method="POST" action="{% url 'scan_create' %}">  
-                {% csrf_token %}  
-  
-                <label for="{{form.description.id_for_label}}" class="form-label">Description</label>  
-                <input class="form-control" type="text" name="{{form.description.html_name}}" id="{{form.description.id_for_label}}" placeholder="Description" required>  
-  
-                <div class="row">  
-                  <div class="col-6">  
-                    <label for="{{form.policies.id_for_label}}" class="form-label">Policies</label>  
-                    {% for policy in form.policies %}  
-                      <div class="form-check">  
-                        {{ policy.tag }}  
-                        <label class="form-check-label" for="{{ policy.id_for_label }}">  
-                          {{ policy.choice_label }}  
-                        </label>  
-                      </div>  
-                    {% endfor %}  
-                  </div>  
-  
-                  <div class="col-6">  
-                    <label for="{{form.target.id_for_label}}" class="form-label">Target</label>  
-                    <select class="selectpicker form-control" id="{{form.target.id_for_label}}" name="{{form.target.html_name}}">  
-                      {% for target in targets %}  
-                        <option value="{{ target.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{target.logo_url}}'> {{ target.name }}">{{ target.name }}</option>  
-                      {% endfor %}  
-                    </select>  
-                  </div>  
-                </div>  
-  
-                <div class="d-flex mt-3">  
-                  <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>  
-                  <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>  
-                </div>  
-            </form>  
-        </div>  
-    </div>  
-  </div>  
-</div>  
-  
-{% endblock %}  
+{% extends 'base.html' %}
+{% block title %}New Scan{% endblock %}
+
+{% block content %}
+
+<div>
+  <h1 class="text-success">New Scan</h1>
+  <hr>
+  <div class="card my-4">
+    <div class="card-body cardbody-color p-4">
+        <div class="form-group">
+            <form method="POST" action="{% url 'scan_create' %}">
+                {% csrf_token %}
+
+                <label for="{{form.description.id_for_label}}" class="form-label">Description</label>
+                <input class="form-control" type="text" name="{{form.description.html_name}}" id="{{form.description.id_for_label}}" placeholder="Description" required>
+
+                <div class="row">
+                  <div class="col-6">
+                    <label for="{{form.policies.id_for_label}}" class="form-label">Policies</label>
+                    {% for policy in form.policies %}
+                      <div class="form-check">
+                        {{ policy.tag }}
+                        <label class="form-check-label" for="{{ policy.id_for_label }}">
+                          {{ policy.choice_label }}
+                        </label>
+                      </div>
+                    {% endfor %}
+                  </div>
+
+                  <div class="col-6">
+                    <label for="{{form.target.id_for_label}}" class="form-label">Target</label>
+                    <select class="selectpicker form-control" id="{{form.target.id_for_label}}" name="{{form.target.html_name}}">
+                      {% for target in targets %}
+                        <option value="{{ target.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{target.logo_url}}'> {{ target.name }}">{{ target.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex mt-3">
+                  <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
+                  <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
