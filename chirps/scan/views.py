@@ -82,21 +82,23 @@ def dashboard(request):
     page_obj = paginator.get_page(page_number)
 
     # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
-    for scan in page_obj:
-
-        scan.rules = {}
-
-        for result in scan.result_set.all():
-            if result.rule.name not in scan.rules:
-                scan.rules[result.rule.name] = {
-                    'id': result.id,
-                    'rule': result.rule,
-                    'findings': Finding.objects.filter(result=result).count(),
-                }
-
-        # Convert the dictionary into a list that the template can iterate on
-        scan.rules = scan.rules.values()
-
+    for scan in page_obj:  
+        scan.policy_results = {}  
+  
+        for result in scan.result_set.all():  
+            policy = result.rule.policy  
+            if policy not in scan.policy_results:  
+                scan.policy_results[policy] = {}  
+  
+            if result.rule not in scan.policy_results[policy]:  
+                scan.policy_results[policy][result.rule] = {  
+                    'id': result.id,  
+                    'rule': result.rule,  
+                    'findings': 0,  
+                }  
+  
+            scan.policy_results[policy][result.rule]['findings'] += result.finding_set.count()  
+  
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
 

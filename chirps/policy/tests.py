@@ -1,4 +1,4 @@
-"""Tests for the plan application."""
+"""Tests for the policy application."""
 
 import re
 from unittest import skip
@@ -6,25 +6,25 @@ from unittest import skip
 from django.test import TestCase
 from django.urls import reverse
 
-from .forms import PlanForm
-from .models import Plan, Rule
+from .forms import PolicyForm
+from .models import Policy, Rule
 
 
 class EmployeeRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['plan/employee.json']
+    fixtures = ['policy/employee.json']
 
     def setUp(self):
         """Set up tests"""
-        # Query the Plan with the name "Employee Information"
-        employee_information_plan = Plan.objects.get(name='Employee Information')
+        # Query the Policy with the name "Employee Information"
+        employee_information_policy = Policy.objects.get(name='Employee Information')
 
-        # Get the current PlanVersion associated with the retrieved plan
-        current_plan_version = employee_information_plan.current_version
+        # Get the current PolicyVersion associated with the retrieved policy
+        current_policy_version = employee_information_policy.current_version
 
-        # Get all the rules associated with the current PlanVersion
-        self.rules = Rule.objects.filter(plan=current_plan_version)
+        # Get all the rules associated with the current PolicyVersion
+        self.rules = Rule.objects.filter(policy=current_policy_version)
 
         self.test_string = 'Here is some employee information. The following {} is sensitive.'
 
@@ -242,13 +242,13 @@ class EmployeeRegexTests(TestCase):
 class NetworkSecurityRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['plan/network.json']
+    fixtures = ['policy/network.json']
 
     def setUp(self):
         """Set up tests"""
-        network_security_plan = Plan.objects.get(name='Network Security')
-        current_plan_version = network_security_plan.current_version
-        self.rules = Rule.objects.filter(plan=current_plan_version)
+        network_security_policy = Policy.objects.get(name='Network Security')
+        current_policy_version = network_security_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some network security information. The following {} is sensitive.'
 
     def test_open_ports_pattern(self):
@@ -382,13 +382,13 @@ class NetworkSecurityRegexTests(TestCase):
 class SensitiveDataRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['plan/sensitive_data.json']
+    fixtures = ['policy/sensitive_data.json']
 
     def setUp(self):
         """Set up tests"""
-        sensitive_data_plan = Plan.objects.get(name='Sensitive Data')
-        current_plan_version = sensitive_data_plan.current_version
-        self.rules = Rule.objects.filter(plan=current_plan_version)
+        sensitive_data_policy = Policy.objects.get(name='Sensitive Data')
+        current_policy_version = sensitive_data_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some information. The following {} is sensitive.'
 
     def test_credit_card_pattern(self):
@@ -571,11 +571,11 @@ class SensitiveDataRegexTests(TestCase):
             self.assertIsNone(pattern.search(test_string), password)
 
 
-@skip('Disabling until pagination is re-added to the plan application.')
-class PlanPaginationTests(TestCase):
-    """Test the plan application pagination."""
+@skip('Disabling until pagination is re-added to the policy application.')
+class PolicyPaginationTests(TestCase):
+    """Test the policy application pagination."""
 
-    fixtures = ['plan/employee.json', 'plan/network.json', 'plan/sensitive_data.json']
+    fixtures = ['policy/employee.json', 'policy/network.json', 'policy/sensitive_data.json']
 
     def setUp(self):
         """Login the user before performing any tests."""
@@ -594,34 +594,34 @@ class PlanPaginationTests(TestCase):
 
         # All 3 scans should be present (look for the element IDs)
         for scan_id in ['100', '200', '300']:
-            self.assertContains(response, f'chirps-plan-{scan_id}', status_code=200)
+            self.assertContains(response, f'chirps-policy-{scan_id}', status_code=200)
 
     def test_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""
         # First page
         response = self.client.get(reverse('policy_dashboard'), {'item_count': 1})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-plan-100', status_code=200)
+        self.assertContains(response, 'chirps-policy-100', status_code=200)
 
         # Second page
         response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 2})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-plan-200', status_code=200)
+        self.assertContains(response, 'chirps-policy-200', status_code=200)
 
         # Third page
         response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 3})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-plan-300', status_code=200)
+        self.assertContains(response, 'chirps-policy-300', status_code=200)
 
     def test_dashboard_last_page(self):
         """If the page number exceeds the number of pages, verify that the last page is returned"""
         response = self.client.get(reverse('policy_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-plan-300', status_code=200)
+        self.assertContains(response, 'chirps-policy-300', status_code=200)
 
 
-class PlanCreateForm(TestCase):
-    """Test the custom logic in the plan create form."""
+class PolicyCreateForm(TestCase):
+    """Test the custom logic in the policy create form."""
 
     def test_single_rule(self):
         """Verify that a single rule is parsed correctly."""
@@ -632,9 +632,9 @@ class PlanCreateForm(TestCase):
             'rule_severity': 'Test Severity',
         }
 
-        form = PlanForm(
+        form = PolicyForm(
             data={
-                'name': 'Test Plan',
+                'name': 'Test Policy',
                 'description': 'Test Description',
                 'rule_name_0': 'Test Rule',
                 'rule_query_string_0': 'Test Query String',

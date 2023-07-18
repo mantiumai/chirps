@@ -54,7 +54,7 @@ class Rule(models.Model):
     severity = models.IntegerField()
 
     # Foreign Key to the policy this rule belongs to
-    policy = models.ForeignKey(Policy, on_delete=models.CASCADE, related_name='rules')
+    policy = models.ForeignKey(PolicyVersion, on_delete=models.CASCADE, related_name='rules')
 
     def __str__(self):
         """Stringify the name"""
