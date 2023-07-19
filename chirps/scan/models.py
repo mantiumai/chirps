@@ -13,7 +13,7 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     description = models.TextField()
-    policy = models.ForeignKey('policy.Policy', on_delete=models.CASCADE)
+    policies = models.ManyToManyField('policy.Policy')
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)

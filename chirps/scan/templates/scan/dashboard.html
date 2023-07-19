@@ -27,7 +27,9 @@
       <td>{{ scan.finished_at }}</td>
       <td>{{ scan.description }}</td>
       <td>{{ scan.target }}</td>
-      <td><div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div></td>
+      <td>
+        <div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div>
+      </td>
       <td>
         <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan.id}}"
           aria-expanded="false" aria-controls="collapse{{scan.id}}"> View Details </button>
@@ -37,6 +39,8 @@
       <td colspan="7">
         <div class="collapse" id="collapse{{scan.id}}">
           <div class="card card-body">
+            {% for policy, results in scan.policy_results.items %}
+            <h4>{{ policy.name }}</h4>
             <table class="table">
               <thead>
                 <tr>
@@ -46,10 +50,10 @@
                 </tr>
               </thead>
               <tbody>
-                {% for result in scan.rules %}
+                {% for rule, result in results.items %}
                 <tr>
-                  <td>{{ result.rule.name }}</td>
-                  <td>{{ result.rule.severity }}</td>
+                  <td>{{ rule.name }}</td>
+                  <td>{{ rule.severity }}</td>
                   <td>
                     {% if result.findings > 0 %}
                     <a href="{% url 'result_detail' result.id %}" class="btn btn-primary">view ({{result.findings}})</a>
@@ -59,6 +63,7 @@
                 {% endfor %}
               </tbody>
             </table>
+            {% endfor %}
           </div>
         </div>
       </td>

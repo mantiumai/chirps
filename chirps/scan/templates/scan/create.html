@@ -17,20 +17,15 @@
 
                 <div class="row">
                   <div class="col-6">
-                    <label for="{{form.policy.id_for_label}}" class="form-label">Policy</label>
-                    <select class="form-control" name="{{form.policy.html_name}}" id="{{form.policy.id_for_label}}">
-                      <optgroup label="Templated Policies">
-                        {% for template_policy in templates %}
-                          <option value="{{ template_policy.id }}">{{ template_policy.name }}</option>
-                        {% endfor %}
-                      </optgroup>
-
-                      <optgroup label="Custom Policies">
-                        {% for custom_policy in user_policies %}
-                          <option value="{{ custom_policy.id }}">{{ custom_policy.name }}</option>
-                        {% endfor %}
-                      </optgroup>
-                    </select>
+                    <label for="{{form.policies.id_for_label}}" class="form-label">Policies</label>
+                    {% for policy in form.policies %}
+                      <div class="form-check">
+                        {{ policy.tag }}
+                        <label class="form-check-label" for="{{ policy.id_for_label }}">
+                          {{ policy.choice_label }}
+                        </label>
+                      </div>
+                    {% endfor %}
                   </div>
 
                   <div class="col-6">
@@ -43,7 +38,6 @@
                   </div>
                 </div>
 
-
                 <div class="d-flex mt-3">
                   <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
                   <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
@@ -53,7 +47,5 @@
     </div>
   </div>
 </div>
-
-
 
 {% endblock %}

@@ -38,8 +38,14 @@ def create(request):
             # Assign the scan to a user
             scan.user = request.user
 
-            # Persist the scan to the database
+            # Persist the scan to the database without committing the many-to-many relationship
             scan.save()
+
+            scan_form.save_m2m()
+
+            # Set the selected policies to the scan
+            selected_policies = scan_form.cleaned_data['policies']
+            scan.policies.set(selected_policies)
 
             # Kick off the scan task
             result = scan_task.delay(scan.id)
@@ -66,32 +72,25 @@ def create(request):
     )
 
 
-@login_required
-def dashboard(request):
-    """Render the scan dashboard."""
-    # Paginate the number of items returned to the user, defaulting to 25 per page
-    user_scans = Scan.objects.filter(user=request.user).order_by('started_at')
-    paginator = Paginator(user_scans, request.GET.get('item_count', 25))
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
-    for scan in page_obj:
-
-        scan.rules = {}
-
-        for result in scan.result_set.all():
-            if result.rule.name not in scan.rules:
-                scan.rules[result.rule.name] = {
-                    'id': result.id,
-                    'rule': result.rule,
-                    'findings': Finding.objects.filter(result=result).count(),
-                }
-
-        # Convert the dictionary into a list that the template can iterate on
-        scan.rules = scan.rules.values()
-
-    return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
+@login_required  
+def dashboard(request):  
+    """Render the scan dashboard."""  
+    # Paginate the number of items returned to the user, defaulting to 25 per page  
+    user_scans = Scan.objects.filter(user=request.user).order_by('started_at')  
+    paginator = Paginator(user_scans, request.GET.get('item_count', 25))  
+    page_number = request.GET.get('page')  
+    page_obj = paginator.get_page(page_number)  
+  
+    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())  
+    for scan in page_obj:  
+        scan.policy_results = {}  
+  
+        for policy in scan.policies.all():  
+            policy_rules = policy.current_version.rules.all()  
+            results = Result.objects.filter(scan=scan, rule__in=policy_rules)  
+            scan.policy_results[policy] = {result.rule: result for result in results}  
+  
+    return render(request, 'scan/dashboard.html', {'page_obj': page_obj})  
 
 
 @login_required

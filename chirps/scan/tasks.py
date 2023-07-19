@@ -28,12 +28,22 @@ def scan_task(scan_id):
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
-    current_policy_version = scan.policy.current_version
+    # Initialize an empty list to store the rules
+    policy_rules = []
 
-    # Now that we have the derrived class, call its implementation of search()
-    total_rules = current_policy_version.rules.all().count()
+    # Iterate through the selected policies and fetch their rules
+    for policy in scan.policies.all():
+        # Fetch the rules from the current_version of the policy  
+        rules = policy.current_version.rules.all()  
+        # Extend the policy_rules list with the fetched rules  
+        policy_rules.extend(rules)
+
+    logger.info(f'Selected policies: {scan.policies.all()}')  # Log the selected policies
+    logger.info(f'Fetched rules: {policy_rules}')  # Log the fetched rules
+
+    total_rules = len(policy_rules)
     rules_run = 0
-    for rule in current_policy_version.rules.all():
+    for rule in policy_rules:
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if target.REQUIRES_EMBEDDINGS:
