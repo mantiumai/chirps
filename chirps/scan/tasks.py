@@ -28,7 +28,7 @@ def scan_task(scan_id):
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
     target = BaseTarget.objects.get(id=scan.target.id)
-    
+
     # Iterate through the selected policies and fetch their rules
     policy_rules = [policy.current_version.rules.all() for policy in scan.policies.all()]
 

@@ -48,11 +48,10 @@ class ScanTest(TestCase):
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-scan-6', status_code=200)
 
-    def test_scan_dashboard_policies(self):  
-        """Verify that the dashboard displays the correct number of policies for each scan."""  
-        response = self.client.get(reverse('scan_dashboard'))  
-    
-        # Check if the policy names are present in the response  
+    def test_scan_dashboard_policies(self):
+        """Verify that the dashboard displays the correct number of policies for each scan."""
+        response = self.client.get(reverse('scan_dashboard'))
+
+        # Check if the policy names are present in the response
         self.assertContains(response, 'Employee Information', status_code=200)
         self.assertContains(response, 'Network Security', status_code=200)
-        
