@@ -6,7 +6,7 @@
         "name": "Network Security",
         "description": "This policy will scan for sensitive network information.",
         "is_template": true,
-        "current_version": 100
+        "current_version": 300
       }
     },
     {

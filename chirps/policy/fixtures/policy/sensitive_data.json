@@ -6,7 +6,7 @@
         "name": "Sensitive Data",
         "description": "This policy will scan for sensitive information.",
         "is_template": true,
-        "current_version": 100
+        "current_version": 200
       }
     },
     {
