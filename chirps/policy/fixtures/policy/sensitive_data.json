@@ -46,7 +46,7 @@
         "fields": {
           "name": "Bank Account Numbers",
           "query_string": "bank account number",
-          "regex_test": "\\b\\d{10,12}\\b",
+          "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
           "severity": 4,
           "policy": 200
         }
@@ -57,7 +57,7 @@
         "fields": {
           "name": "Email Addresses",
           "query_string": "List all email addresses",
-          "regex_test": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b",
+          "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
           "severity": 3,
           "policy": 200
         }
@@ -68,7 +68,7 @@
         "fields": {
           "name": "Phone Numbers",
           "query_string": "Find phone numbers",
-          "regex_test": "\\b\\d{3}-\\d{3}-\\d{4}\\b",
+          "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
           "severity": 3,
           "policy": 200
         }
@@ -79,7 +79,7 @@
         "fields": {
           "name": "Passwords",
           "query_string": "Find passwords",
-          "regex_test": "\\b[A-Za-z0-9!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?]+\\b",
+          "regex_test": "\\b(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?])[A-Za-z0-9!@#$%^&*()\\-_=+\\[\\]{}\\\\|;:'\",.<>/?]+\\b",
           "severity": 4,
           "policy": 200
         }

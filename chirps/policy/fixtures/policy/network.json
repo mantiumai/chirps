@@ -24,7 +24,7 @@
         "fields": {
           "name": "Open Ports",
           "query_string": "Which ports are open on my network?",
-          "regex_test": "^\\d{1,5}$",
+          "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
           "severity": 3,
           "policy": 300
         }
@@ -35,7 +35,7 @@
         "fields": {
           "name": "Firewall Configuration",
           "query_string": "What are the firewall rules in place?",
-          "regex_test": "",
+          "regex_test": "(allow|deny) from (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) to (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) port (\\d{1,5}|any)",
           "severity": 2,
           "policy": 300
         }
@@ -46,7 +46,7 @@
         "fields": {
           "name": "Network Encryption",
           "query_string": "How is network traffic encrypted?",
-          "regex_test": "^(none|WEP|WPA|WPA2|WPA3)$",
+          "regex_test": "\\b(none|WEP|WPA|WPA2|WPA3)\\b",
           "severity": 3,
           "policy": 300
         }
@@ -57,7 +57,7 @@
         "fields": {
           "name": "Network Authentication",
           "query_string": "What authentication protocols are used on the network?",
-          "regex_test": "^(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)$",
+          "regex_test": "(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)",
           "severity": 3,
           "policy": 300
         }
