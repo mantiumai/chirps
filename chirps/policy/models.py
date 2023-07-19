@@ -12,7 +12,7 @@ class Policy(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField()
 
-    # True if this policy is a template for other policys
+    # True if this policy is a template for other policies
     is_template = models.BooleanField(default=False)
 
     # Bind this policy to a user if it isn't a template
