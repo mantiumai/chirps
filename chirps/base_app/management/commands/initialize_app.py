@@ -14,16 +14,16 @@ class Command(BaseCommand):
 
     help = 'Initialize the app by running multiple management commands'
 
-    def load_data_from_plans_directory(self):
-        """Iterate over plans in directory and load their data"""
-        plans_directory = BASE_DIR.as_posix() + '/plan/fixtures/plan'
+    def load_data_from_policies_directory(self):
+        """Iterate over policies in directory and load their data"""
+        policies_directory = BASE_DIR.as_posix() + '/policy/fixtures/policy'
 
-        # Iterate over each file in the plans directory
-        for filename in os.listdir(plans_directory):
+        # Iterate over each file in the policies directory
+        for filename in os.listdir(policies_directory):
             if filename.startswith('__'):
                 continue
 
-            file_path = os.path.join(plans_directory, filename)
+            file_path = os.path.join(policies_directory, filename)
 
             # Check if the current item is a file
             if os.path.isfile(file_path):
@@ -68,7 +68,7 @@ class Command(BaseCommand):
 
         # Run the 'loaddata' command
         self.stdout.write(self.style.WARNING('Loading data from fixtures...'))
-        self.load_data_from_plans_directory()
+        self.load_data_from_policies_directory()
         self.stdout.write(self.style.SUCCESS('Data loaded from fixtures'))
 
         # Run the 'runserver' command

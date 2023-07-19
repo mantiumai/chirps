@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from plan.models import Plan
+from policy.models import Policy
 from target.models import BaseTarget
 
 from .forms import ScanForm
@@ -54,15 +54,15 @@ def create(request):
     else:
         scan_form = ScanForm()
 
-    # Fetch the list of template and custom plans
-    templates = Plan.objects.filter(is_template=True).order_by('id')
-    user_plans = Plan.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')
+    # Fetch the list of template and custom policies
+    templates = Policy.objects.filter(is_template=True).order_by('id')
+    user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')
     targets = BaseTarget.objects.filter(user=request.user)
 
     return render(
         request,
         'scan/create.html',
-        {'form': scan_form, 'user_plans': user_plans, 'templates': templates, 'targets': targets},
+        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'targets': targets},
     )
 
 

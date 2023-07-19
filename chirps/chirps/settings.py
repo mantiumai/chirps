@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'scan',
     'target',
     'account',
-    'plan',
+    'policy',
     'embedding',
 ]
 

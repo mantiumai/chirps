@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
-from plan.models import Rule
+from policy.models import Rule
 
 
 class Scan(models.Model):
@@ -13,7 +13,7 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     description = models.TextField()
-    plan = models.ForeignKey('plan.Plan', on_delete=models.CASCADE)
+    policy = models.ForeignKey('policy.Policy', on_delete=models.CASCADE)
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)

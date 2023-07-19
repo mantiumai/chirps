@@ -23,7 +23,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('admin/', admin.site.urls),
     path('embedding/', include('embedding.urls')),
-    path('plan/', include('plan.urls')),
+    path('policy/', include('policy.urls')),
     path('scan/', include('scan.urls')),
     path('target/', include('target.urls')),
 ]

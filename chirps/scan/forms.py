@@ -12,12 +12,12 @@ class ScanForm(ModelForm):
         """Django Meta options for the ScanForm."""
 
         model = Scan
-        fields = ['description', 'target', 'plan']
+        fields = ['description', 'target', 'policy']
 
         widgets = {
             'description': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
             ),
             'target': forms.Select(attrs={'class': 'form-control'}),
-            'plan': forms.Select(attrs={'class': 'form-control'}),
+            'policy': forms.Select(attrs={'class': 'form-control'}),
         }
