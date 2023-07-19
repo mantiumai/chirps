@@ -5,18 +5,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("policy", "0001_initial"),
-        ("scan", "0001_initial"),
+        ('policy', '0001_initial'),
+        ('scan', '0001_initial'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name="scan",
-            name="policy",
+            model_name='scan',
+            name='policy',
         ),
         migrations.AddField(
-            model_name="scan",
-            name="policies",
-            field=models.ManyToManyField(to="policy.policy"),
+            model_name='scan',
+            name='policies',
+            field=models.ManyToManyField(to='policy.policy'),
         ),
     ]

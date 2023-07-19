@@ -72,25 +72,25 @@ def create(request):
     )
 
 
-@login_required  
-def dashboard(request):  
-    """Render the scan dashboard."""  
-    # Paginate the number of items returned to the user, defaulting to 25 per page  
-    user_scans = Scan.objects.filter(user=request.user).order_by('started_at')  
-    paginator = Paginator(user_scans, request.GET.get('item_count', 25))  
-    page_number = request.GET.get('page')  
-    page_obj = paginator.get_page(page_number)  
-  
-    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())  
-    for scan in page_obj:  
-        scan.policy_results = {}  
-  
-        for policy in scan.policies.all():  
-            policy_rules = policy.current_version.rules.all()  
-            results = Result.objects.filter(scan=scan, rule__in=policy_rules)  
-            scan.policy_results[policy] = {result.rule: result for result in results}  
-  
-    return render(request, 'scan/dashboard.html', {'page_obj': page_obj})  
+@login_required
+def dashboard(request):
+    """Render the scan dashboard."""
+    # Paginate the number of items returned to the user, defaulting to 25 per page
+    user_scans = Scan.objects.filter(user=request.user).order_by('started_at')
+    paginator = Paginator(user_scans, request.GET.get('item_count', 25))
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
+    for scan in page_obj:
+        scan.policy_results = {}
+
+        for policy in scan.policies.all():
+            policy_rules = policy.current_version.rules.all()
+            results = Result.objects.filter(scan=scan, rule__in=policy_rules)
+            scan.policy_results[policy] = {result.rule: result for result in results}
+
+    return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
 
 @login_required
