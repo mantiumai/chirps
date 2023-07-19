@@ -1,6 +1,6 @@
 # Chirps
 
-Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against a target using a selected plan, and view the results of the scan, including any findings.
+Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning policies, execute scans against a target using a selected policy, and view the results of the scan, including any findings.
 
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
 ## Quick Start
@@ -36,7 +36,7 @@ Initialize your database (sqlite) by executing `./manage.py migrate`. This will 
 
 ### Database fixtures
 
-Pre-populate the database with some default data (plans) by executing `./manage.py loaddata <path/to/fixture>.json`
+Pre-populate the database with some default data (policies) by executing `./manage.py loaddata <path/to/fixture>.json`
 
 ### Start Services
 
@@ -68,7 +68,7 @@ The `/docs` folder contains documentation which is built via [Jekyll](https://je
 
 ## Project Layout
 
-At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Target`.
+At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Policy` to `Scan` a `Target`.
 
 ### `Target`
 
@@ -76,11 +76,11 @@ The `Target` application allows users to interact with Mantium applications and 
 
 ### `Scan`
 
-The `Scan` application manages scans and their results. Users can create, execute, and analyze scans using plans with defined rules. Users can also review scan findings.
+The `Scan` application manages scans and their results. Users can create, execute, and analyze scans using policies with defined rules. Users can also review scan findings.
 
-### `Plan`
+### `Policy`
 
-The `Plan` application manages scanning plans and rules for the Scan application. A Plan consists of a set of rules that define the steps executed when scanning a target. Users can create plans or use preloaded templates.
+The `Policy` application manages scanning policies and rules for the Scan application. A Policy consists of a set of rules that define the steps executed when scanning a target. Users can create policies or use preloaded templates.
 
 ### `Authentication System`
 

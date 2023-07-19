@@ -10,32 +10,32 @@ permalink: /development/
 The Chirps application will execute scans against a taget.
 
 ## What is in a Scan?
-A scan executes a plan against a target. A plan is a list of rules. Each rule has a query which is executed against the target. The rule has a match regular expression that will be used to search the results of the query. If a match is found, it is flagged.
+A scan executes a policy against a target. A policy is a list of rules. Each rule has a query which is executed against the target. The rule has a match regular expression that will be used to search the results of the query. If a match is found, it is flagged.
 
-When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a plan, executing the queries against the scan target. Results are stored in the database via the `Result` and `Finding` models.
+When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a policy, executing the queries against the scan target. Results are stored in the database via the `Result` and `Finding` models.
 
 ## What are Targets?
 A target is a destination that rule queries are executed against. Target providers are responsible for executing the queries and handing back the results to the scan task.
 
 
-# Plan Application
+# Policy Application
 
-The Plan application provides functionality for managing scanning plans and rules. A Plan consists of a set of rules that define the steps to be executed when scanning a target. Plans can be created by users or preloaded as templates.
+The Policy application provides functionality for managing scanning policies and rules. A Policy consists of a set of rules that define the steps to be executed when scanning a target. Policies can be created by users or preloaded as templates.
 
 ## Models
 
-### Plan
+### Policy
 
-The `Plan` model represents a scanning plan. It contains the following fields:
+The `Policy` model represents a scanning policy. It contains the following fields:
 
 - `name`: A CharField with a maximum length of 256 characters.
-- `description`: A TextField for storing a detailed description of the plan.
-- `is_template`: A BooleanField indicating whether the plan is a template for other plans.
-- `user`: A ForeignKey to the User model, binding the plan to a specific user if it isn't a template. This field is nullable and can be left blank.
+- `description`: A TextField for storing a detailed description of the policy.
+- `is_template`: A BooleanField indicating whether the policy is a template for other policies.
+- `user`: A ForeignKey to the User model, binding the policy to a specific user if it isn't a template. This field is nullable and can be left blank.
 
 ### Rule
 
-The `Rule` model represents a step to be executed within a plan. It contains the following fields:
+The `Rule` model represents a step to be executed within a policy. It contains the following fields:
 
 - `name`: A CharField with a maximum length of 256 characters.
 - `description`: A TextField for storing a detailed description of the rule.
@@ -43,30 +43,30 @@ The `Rule` model represents a step to be executed within a plan. It contains the
 - `query_embedding`: A TextField for storing the embedding of the query string. This field is nullable and can be left blank.
 - `regex_test`: A TextField for storing the regular expression to be run against the response documents.
 - `severity`: An IntegerField indicating the severity of the problem if the regex test finds results in the response documents.
-- `plan`: A ForeignKey to the Plan model, indicating the plan this rule belongs to.
+- `policy`: A ForeignKey to the Policy model, indicating the policy this rule belongs to.
 
 ## Views
 
 ### dashboard
 
-The `dashboard` view renders the dashboard for the Plan application. It fetches a list of all available template plans and paginates the results, displaying a default of 25 plans per page.
+The `dashboard` view renders the dashboard for the Policy application. It fetches a list of all available template policies and paginates the results, displaying a default of 25 policies per page.
 
 ### create
 
-The `create` view renders the form for creating a new plan.
+The `create` view renders the form for creating a new policy.
 
-## Loading Plans from JSON Files
+## Loading Policies from JSON Files
 
-Plans can be loaded from JSON files stored in the `fixtures/plans` directory. All plans are automatically loaded when running the `./manage.py initialize_app` command. To load a new plan added to the fixtures directory, use the following command:
+Policies can be loaded from JSON files stored in the `fixtures/policies` directory. All policies are automatically loaded when running the `./manage.py initialize_app` command. To load a new policy added to the fixtures directory, use the following command:
 
-`./manage.py loaddata /plan/fixtures/plan/<new_plan>.json`
+`./manage.py loaddata /policy/fixtures/policy/<new_policy>.json`
 
 
 # Scan Application
 
 ## Overview
 
-The Scan application provides functionality for managing scans and their results. Scans are executed against a target using a selected plan, which consists of a set of rules. The results of the scan include the findings for each rule.
+The Scan application provides functionality for managing scans and their results. Scans are executed against a target using a selected policy, which consists of a set of rules. The results of the scan include the findings for each rule.
 
 ## Models
 
@@ -77,7 +77,7 @@ The `Scan` model represents a single scan run against a target. It contains the 
 - `started_at`: A DateTimeField indicating the start time of the scan.
 - `finished_at`: A DateTimeField indicating the completion time of the scan. This field is nullable.
 - `description`: A TextField for storing a description of the scan.
-- `plan`: A ForeignKey to the Plan model.
+- `policy`: A ForeignKey to the Policy model.
 - `target`: A ForeignKey to the BaseTarget model.
 - `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
 - `progress`: An IntegerField for storing the progress percentage of the scan.
@@ -103,7 +103,7 @@ The `Finding` model identifies the location of a finding within a result. It con
 
 ### scan_task
 
-The `scan_task` is a Celery task that performs the scan process. It iterates through the plan's rules and executes them against the target. The results and findings are then persisted in the database.
+The `scan_task` is a Celery task that performs the scan process. It iterates through the policy's rules and executes them against the target. The results and findings are then persisted in the database.
 
 ## Views
 
