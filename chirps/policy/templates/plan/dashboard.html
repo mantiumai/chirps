@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Plans{% endblock %}
+{% block title %}Policies{% endblock %}
 
 {% block content %}
 
 <div class="d-flex">
-    <h1 class="my-auto ml-0 mr-auto text-success">Plans</h1>
-    <a class="btn btn-primary my-auto ml-auto mr-0" href="{% url 'plan_create' %}">New Plan</a>
+    <h1 class="my-auto ml-0 mr-auto text-success">Policies</h1>
+    <a class="btn btn-primary my-auto ml-auto mr-0" href="{% url 'policy_create' %}">New Policy</a>
 </div>
 <hr>
 
@@ -24,13 +24,13 @@
 
     <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
         <div class="accordion" id="custom-panel-accordion">
-            {% include 'plan/dashboard_plan_list.html' with plan_list=user_plans %}
+            {% include 'policy/dashboard_policy_list.html' with policy_list=user_policys %}
         </div>
     </div>
 
     <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
         <div class="accordion" id="template-panel-accordion">
-            {% include 'plan/dashboard_plan_list.html' with plan_list=templates %}
+            {% include 'policy/dashboard_policy_list.html' with policy_list=templates %}
         </div>
     </div>
 </div>

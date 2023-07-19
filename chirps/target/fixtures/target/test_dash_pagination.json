@@ -58,27 +58,27 @@
         }
     },
     {
-        "model": "plan.plan",
+        "model": "policy.policy",
         "pk": 100,
         "fields": {
             "name": "Employee Information",
-            "description": "This plan will scan for employee information.",
+            "description": "This policy will scan for employee information.",
             "is_template": true,
             "current_version": 100,
             "user": null
         }
     },
     {
-        "model": "plan.planversion",
+        "model": "policy.policyversion",
         "pk": 100,
         "fields": {
             "number": 1,
             "created_at": "2016-01-01T00:00:00Z",
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 100,
         "fields": {
             "name": "SSN",
@@ -86,11 +86,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 101,
         "fields": {
             "name": "Address",
@@ -98,11 +98,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 102,
         "fields": {
             "name": "Bank Account",
@@ -110,11 +110,11 @@
             "query_embedding": null,
             "regex_test": "\\d{10,12}",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 103,
         "fields": {
             "name": "Credit Card",
@@ -122,11 +122,11 @@
             "query_embedding": null,
             "regex_test": "(?:\\d[ -]*?){13,16}",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 104,
         "fields": {
             "name": "Email Address",
@@ -134,11 +134,11 @@
             "query_embedding": null,
             "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 105,
         "fields": {
             "name": "Phone number",
@@ -146,11 +146,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 106,
         "fields": {
             "name": "Salary",
@@ -158,7 +158,7 @@
             "query_embedding": null,
             "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {

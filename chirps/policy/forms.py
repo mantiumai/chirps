@@ -1,14 +1,14 @@
-"""Forms for the Plan app."""
+"""Forms for the Policy app."""
 from django import forms
 
-from .models import Plan
+from .models import Policy
 
 
-class PlanForm(forms.Form):
-    """Form for creating a new plan."""
+class PolicyForm(forms.Form):
+    """Form for creating a new policy."""
 
-    name = forms.CharField(label='Plan Name', max_length=100)
-    description = forms.CharField(label='Plan Description', max_length=1000)
+    name = forms.CharField(label='Policy Name', max_length=100)
+    description = forms.CharField(label='Policy Description', max_length=1000)
 
     def clean(self):
         """Create the 'rules' cleaned data field."""
@@ -43,17 +43,17 @@ class PlanForm(forms.Form):
         return keys
 
     @classmethod
-    def from_plan(cls, plan: Plan) -> 'PlanForm':
+    def from_policy(cls, policy: Policy) -> 'PolicyForm':
         """Construct"""
         index = 0
-        data = {'name': plan.name, 'description': plan.description}
+        data = {'name': policy.name, 'description': policy.description}
 
-        # Push all of the rules from the current plan into the dictionary
-        for rule in plan.current_version.rules.all():
+        # Push all of the rules from the current policy into the dictionary
+        for rule in policy.current_version.rules.all():
             data[f'rule_name_{index}'] = rule.name
             data[f'rule_query_string_{index}'] = rule.query_string
             data[f'rule_regex_{index}'] = rule.regex_test
             data[f'rule_severity_{index}'] = rule.severity
             index += 1
 
-        return PlanForm(data=data)
+        return PolicyForm(data=data)

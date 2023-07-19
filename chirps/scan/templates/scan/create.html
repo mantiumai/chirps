@@ -17,17 +17,17 @@
 
                 <div class="row">
                   <div class="col-6">
-                    <label for="{{form.plan.id_for_label}}" class="form-label">Plan</label>
-                    <select class="form-control" name="{{form.plan.html_name}}" id="{{form.plan.id_for_label}}">
-                      <optgroup label="Templated Plans">
-                        {% for template_plan in templates %}
-                          <option value="{{ template_plan.id }}">{{ template_plan.name }}</option>
+                    <label for="{{form.policy.id_for_label}}" class="form-label">Policy</label>
+                    <select class="form-control" name="{{form.policy.html_name}}" id="{{form.policy.id_for_label}}">
+                      <optgroup label="Templated Policies">
+                        {% for template_policy in templates %}
+                          <option value="{{ template_policy.id }}">{{ template_policy.name }}</option>
                         {% endfor %}
                       </optgroup>
 
-                      <optgroup label="Custom Plans">
-                        {% for custom_plan in user_plans %}
-                          <option value="{{ custom_plan.id }}">{{ custom_plan.name }}</option>
+                      <optgroup label="Custom Policies">
+                        {% for custom_policy in user_policies %}
+                          <option value="{{ custom_policy.id }}">{{ custom_policy.name }}</option>
                         {% endfor %}
                       </optgroup>
                     </select>

@@ -1,26 +1,26 @@
-"""Models for the plan application."""
+"""Models for the policy application."""
 from django.contrib.auth.models import User
 from django.db import models
 
 
-class Plan(models.Model):
+class Policy(models.Model):
     """Model for what to do when scanning a target."""
 
-    # True to hide this plan from the user
+    # True to hide this policy from the user
     archived = models.BooleanField(default=False)
 
     name = models.CharField(max_length=256)
     description = models.TextField()
 
-    # True if this plan is a template for other plans
+    # True if this policy is a template for other policys
     is_template = models.BooleanField(default=False)
 
-    # Bind this plan to a user if it isn't a template
+    # Bind this policy to a user if it isn't a template
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-    # The current version of the plan
+    # The current version of the policy
     current_version = models.ForeignKey(
-        'PlanVersion', on_delete=models.CASCADE, related_name='current_version', null=True, blank=True
+        'PolicyVersion', on_delete=models.CASCADE, related_name='current_version', null=True, blank=True
     )
 
     def __str__(self):
@@ -28,16 +28,16 @@ class Plan(models.Model):
         return self.name
 
 
-class PlanVersion(models.Model):
-    """Model to track a revision of the plan."""
+class PolicyVersion(models.Model):
+    """Model to track a revision of the policy."""
 
     number = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+    policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
 
 
 class Rule(models.Model):
-    """A step to execute within a plan."""
+    """A step to execute within a policy."""
 
     name = models.CharField(max_length=256)
 
@@ -53,8 +53,8 @@ class Rule(models.Model):
     # If the regex test finds results in the response documents, how severe of a problem is it?
     severity = models.IntegerField()
 
-    # Foreign Key to the plan this rule belongs to
-    plan = models.ForeignKey(PlanVersion, on_delete=models.CASCADE, related_name='rules')
+    # Foreign Key to the policy this rule belongs to
+    policy = models.ForeignKey(PolicyVersion, on_delete=models.CASCADE, related_name='rules')
 
     def __str__(self):
         """Stringify the name"""

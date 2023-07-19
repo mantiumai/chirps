@@ -6,7 +6,7 @@
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "description": "Test",
-            "plan": 100,
+            "policy": 100,
             "target": 1,
             "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481",
             "progress": 100,
@@ -20,7 +20,7 @@
             "started_at": "2023-07-11T00:52:49.365Z",
             "finished_at": "2023-07-11T00:53:24.915Z",
             "description": "Second Scan",
-            "plan": 100,
+            "policy": 100,
             "target": 1,
             "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd",
             "progress": 100,
@@ -34,7 +34,7 @@
             "started_at": "2023-07-11T00:54:31.010Z",
             "finished_at": "2023-07-11T00:55:00.788Z",
             "description": "Third Scan",
-            "plan": 100,
+            "policy": 100,
             "target": 1,
             "celery_task_id": "09f9497d-a513-4aef-93c0-0daf309946c5",
             "progress": 100,
@@ -61,27 +61,27 @@
         }
     },
     {
-        "model": "plan.plan",
+        "model": "policy.policy",
         "pk": 100,
         "fields": {
             "name": "Employee Information",
-            "description": "This plan will scan for employee information.",
+            "description": "This policy will scan for employee information.",
             "is_template": true,
             "current_version": 100,
             "user": null
         }
     },
     {
-        "model": "plan.planversion",
+        "model": "policy.policyversion",
         "pk": 100,
         "fields": {
             "number": 1,
-            "plan": 100,
+            "policy": 100,
             "created_at": "2016-01-01T00:00:00Z"
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 100,
         "fields": {
             "name": "SSN",
@@ -89,11 +89,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 101,
         "fields": {
             "name": "Address",
@@ -101,11 +101,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 102,
         "fields": {
             "name": "Bank Account",
@@ -113,11 +113,11 @@
             "query_embedding": null,
             "regex_test": "\\d{10,12}",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 103,
         "fields": {
             "name": "Credit Card",
@@ -125,11 +125,11 @@
             "query_embedding": null,
             "regex_test": "(?:\\d[ -]*?){13,16}",
             "severity": 5,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 104,
         "fields": {
             "name": "Email Address",
@@ -137,11 +137,11 @@
             "query_embedding": null,
             "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 105,
         "fields": {
             "name": "Phone number",
@@ -149,11 +149,11 @@
             "query_embedding": null,
             "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
-        "model": "plan.rule",
+        "model": "policy.rule",
         "pk": 106,
         "fields": {
             "name": "Salary",
@@ -161,7 +161,7 @@
             "query_embedding": null,
             "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
             "severity": 2,
-            "plan": 100
+            "policy": 100
         }
     },
     {
