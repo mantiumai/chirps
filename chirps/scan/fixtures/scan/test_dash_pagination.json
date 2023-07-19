@@ -183,6 +183,58 @@
         }
     },
     {
+        "model": "policy.policy",
+        "pk": 101,
+        "fields": {
+            "name": "Network Security",
+            "description": "This policy will scan for network security information.",
+            "is_template": true,
+            "current_version": 101,
+            "user": null
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 101,
+        "fields": {
+            "number": 1,
+            "policy": 101,
+            "created_at": "2016-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 107,
+        "fields": {
+            "name": "Open Ports",
+            "query_string": "Which ports are open on my network?",
+            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
+            "severity": 3,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 4,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 5,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 6,
+            "policy": 101
+        }
+    },
+    {
         "model": "auth.user",
         "pk": 1,
         "fields": {
