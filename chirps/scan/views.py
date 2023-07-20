@@ -1,4 +1,6 @@
 """Views for the scan application."""
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -88,7 +90,17 @@ def dashboard(request):
         for policy in scan.policies.all():
             policy_rules = policy.current_version.rules.all()
             results = Result.objects.filter(scan=scan, rule__in=policy_rules)
-            scan.policy_results[policy] = {result.rule: result for result in results}
+
+            findings_count = defaultdict(int)
+            for result in results:
+                findings_count[result.rule.name] += result.findings_count
+
+            scan.policy_results[policy] = {
+                'results': {
+                    result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}
+                    for result in results
+                },
+            }
 
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 

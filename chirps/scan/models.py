@@ -54,6 +54,11 @@ class Result(models.Model):
     # The rule that was used to scan the text
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
 
+    @property
+    def findings_count(self):
+        """Convenience method for getting findings count"""
+        return len(self.finding_set.all())
+
     def __str__(self):
         """Stringify the rule name and scan ID"""
         return f'{self.rule.name} - {self.scan.id}'

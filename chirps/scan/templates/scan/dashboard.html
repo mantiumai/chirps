@@ -39,7 +39,7 @@
       <td colspan="7">
         <div class="collapse" id="collapse{{scan.id}}">
           <div class="card card-body">
-            {% for policy, results in scan.policy_results.items %}
+            {% for policy, policy_data in scan.policy_results.items %}
             <h4>{{ policy.name }}</h4>
             <table class="table">
               <thead>
@@ -50,13 +50,13 @@
                 </tr>
               </thead>
               <tbody>
-                {% for rule, result in results.items %}
+                {% for rule, result_data in policy_data.results.items %}
                 <tr>
-                  <td>{{ rule.name }}</td>
-                  <td>{{ rule.severity }}</td>
+                  <td>{{ rule }}</td>
+                  <td>{{ result_data.result.rule.severity }}</td>
                   <td>
-                    {% if result.findings > 0 %}
-                    <a href="{% url 'result_detail' result.id %}" class="btn btn-primary">view ({{result.findings}})</a>
+                    {% if result_data.findings_count > 0 %}
+                      <a href="{% url 'result_detail' result_data.result.id %}" class="btn btn-primary">view ({{result_data.findings_count}})</a>
                     {% endif %}
                   </td>
                 </tr>
