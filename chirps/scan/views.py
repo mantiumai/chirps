@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from policy.models import Policy
 from target.models import BaseTarget
@@ -21,10 +21,16 @@ def finding_detail(request, finding_id):
 
 
 @login_required
-def result_detail(request, result_id):
+def result_detail(request, scan_id, policy_id, rule_id):
     """Render the scan result detail page."""
-    result = get_object_or_404(Result, pk=result_id, scan__user=request.user)
-    return render(request, 'scan/result_detail.html', {'result': result})
+    scan = get_object_or_404(Scan, id=scan_id, user=request.user)
+    results = Result.objects.filter(scan=scan, rule__id=rule_id, rule__policy__id=policy_id)
+    if not results.exists():
+        raise Http404('Results not found')
+
+    findings = Finding.objects.filter(result__in=results)
+
+    return render(request, 'scan/result_detail.html', {'results': results, 'findings': findings})
 
 
 @login_required
@@ -95,6 +101,7 @@ def dashboard(request):
             for result in results:
                 findings_count[result.rule.name] += result.findings_count
 
+            # import pdb; pdb.set_trace()
             scan.policy_results[policy] = {
                 'results': {
                     result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}

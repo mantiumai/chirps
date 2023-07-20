@@ -50,13 +50,14 @@
                 </tr>
               </thead>
               <tbody>
-                {% for rule, result_data in policy_data.results.items %}
+                {% for rule_name, result_data in policy_data.results.items %}
                 <tr>
-                  <td>{{ rule }}</td>
+                  <td>{{ rule_name }}</td>
                   <td>{{ result_data.result.rule.severity }}</td>
                   <td>
                     {% if result_data.findings_count > 0 %}
-                      <a href="{% url 'result_detail' result_data.result.id %}" class="btn btn-primary">view ({{result_data.findings_count}})</a>
+                    <a href="{% url 'result_detail' scan.id policy.id result_data.result.rule.id %}"
+                      class="btn btn-primary">view ({{result_data.findings_count}})</a>
                     {% endif %}
                   </td>
                 </tr>
