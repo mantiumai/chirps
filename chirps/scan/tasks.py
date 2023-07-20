@@ -30,7 +30,7 @@ def scan_task(scan_id):
     target = BaseTarget.objects.get(id=scan.target.id)
 
     # Iterate through the selected policies and fetch their rules
-    policy_rules = [policy.current_version.rules.all() for policy in scan.policies.all()]
+    policy_rules = [rule for policy in scan.policies.all() for rule in policy.current_version.rules.all()]
 
     logger.info(f'Selected policies: {scan.policies.all()}')  # Log the selected policies
     logger.info(f'Fetched rules: {policy_rules}')  # Log the fetched rules
