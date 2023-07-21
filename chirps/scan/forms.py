@@ -12,7 +12,7 @@ class ScanForm(ModelForm):
     # Add a MultipleChoiceField for policies with CheckboxSelectMultiple widget
     policies = forms.ModelMultipleChoiceField(
         queryset=Policy.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'selectpicker'}),
         required=True,
     )
 

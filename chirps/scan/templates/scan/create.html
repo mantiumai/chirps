@@ -18,14 +18,11 @@
                 <div class="row">
                   <div class="col-6">
                     <label for="{{form.policies.id_for_label}}" class="form-label">Policies</label>
-                    {% for policy in form.policies %}
-                      <div class="form-check">
-                        {{ policy.tag }}
-                        <label class="form-check-label" for="{{ policy.id_for_label }}">
-                          {{ policy.choice_label }}
-                        </label>
-                      </div>
-                    {% endfor %}
+                    <select class="selectpicker form-control" name="{{form.policies.html_name}}" multiple data-live-search="true">
+                      {% for policy in form.policies %}
+                        <option value="{{ policy.choice_value }}">{{ policy.choice_label }}</option>
+                      {% endfor %}
+                    </select>
                   </div>
 
                   <div class="col-6">
@@ -48,4 +45,51 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(function () {
+    $('.selectpicker').selectpicker();
+
+    $('form').on('submit', async function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Check if the form is valid
+      if (this.checkValidity()) {
+        // If the form is valid, check if there are any selected policies
+        const selectedPolicies = $('.selectpicker[name="{{form.policies.html_name}}"]');
+        const selectedValues = selectedPolicies.val();
+        if (selectedValues.length > 0) {
+          // Create a FormData object to hold the form data
+          const formData = new FormData(this);
+
+          // Submit the form data using fetch
+          const response = await fetch("{% url 'scan_create' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+          });
+
+          // Check if the response is successful
+          if (response.status === 200 || response.status === 201) {
+            // Redirect to the scan dashboard
+            window.location.href = "{% url 'scan_dashboard' %}";
+          } else {
+            // Display an error message
+            alert('An error occurred while submitting the form. Please try again.');
+          }
+        } else {
+          // If there are no selected policies, display an error message
+          alert('Please select at least one policy.');
+        }
+      } else {
+        // If the form is not valid, display an error message
+        alert('Please fill out all required fields.');
+      }
+    });
+  });
+</script>
 {% endblock %}
