@@ -30,5 +30,5 @@ class ScanForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super()
+        super().__init__(*args, **kwargs)
         self.fields['policies'].label = 'Policies'
