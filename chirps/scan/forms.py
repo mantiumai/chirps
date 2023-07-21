@@ -2,6 +2,7 @@
 from django import forms
 from django.forms import ModelForm, ValidationError
 from policy.models import Policy
+from target.models import BaseTarget
 
 from .models import Scan
 
@@ -24,17 +25,16 @@ class ScanForm(ModelForm):
         """Django Meta options for the ScanForm."""
 
         model = Scan
-        fields = ['description', 'target']
+        fields = ['description']
 
         widgets = {
             'description': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
             ),
-            'target': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def clean(self):
-        """Create the 'policies' cleaned data field."""
+        """Create the 'policies' and 'targets' cleaned data fields."""
         super().clean()
         self.cleaned_data['policies'] = []
 
@@ -52,3 +52,18 @@ class ScanForm(ModelForm):
 
             except Policy.DoesNotExist as exc:
                 raise ValidationError('Invalid policies selected') from exc
+
+
+        self.cleaned_data['targets'] = []
+
+        # Targets were not passed in - bad!
+        if 'targets' not in self.data.keys():
+            raise ValidationError('No target(s) selected')
+
+        for target_id in self.data['targets']:
+            try:
+                target = BaseTarget.objects.get(id=target_id, user=self.user)
+                self.cleaned_data['targets'].append(target)
+            except BaseTarget.DoesNotExist:
+                raise ValidationError('Invalid target(s) selected')
+

@@ -7,27 +7,28 @@ from django.utils import timezone
 from embedding.utils import create_embedding
 from target.models import BaseTarget
 
-from .models import Finding, Result, Scan
+from .models import Finding, Result, ScanTarget
 
 logger = getLogger(__name__)
 
 
 @shared_task
-def scan_task(scan_id):
+def scan_task(scan_target_id):
     """Scan task."""
-    logger.info('Starting scan', extra={'id': scan_id})
+    logger.info('Starting scan', extra={'scan_target_id': scan_target_id})
 
     try:
-        scan = Scan.objects.get(pk=scan_id)
-    except Scan.DoesNotExist:
-        logger.error('Scan record not found', extra={'id': scan_id})
-
-        scan_task.update_state(state='FAILURE', meta={'error': f'Scan record not found ({scan_id})'})
+        scan_target = ScanTarget.objects.get(pk=scan_target_id)
+        scan = scan_target.scan
+    except ScanTarget.DoesNotExist:
+        logger.error('ScanTarget record not found', extra={'scan_target_id': scan_target_id})
+        scan_task.update_state(state='FAILURE', meta={'error': f'ScanTarget record not found ({scan_target_id})'})
         return
 
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
-    target = BaseTarget.objects.get(id=scan.target.id)
+    target = BaseTarget.objects.get(id=scan_target.target.id)
+    current_policy_version = scan.policy.current_version
 
     # Iterate through the selected policies and fetch their rules
     policy_rules = []
@@ -50,7 +51,7 @@ def scan_task(scan_id):
         for text in results:
 
             # Create the result. We'll flip the result flag to True if any findings are found
-            result = Result(rule=rule, text=text, scan=scan)
+            result = Result(rule=rule, text=text, scan_target=scan_target)
             result.save()
 
             # Run the regex against the text
@@ -62,10 +63,10 @@ def scan_task(scan_id):
 
         # Update the progress counter based on the number of rules that have been evaluated
         rules_run += 1
-        scan.progress = int(rules_run / total_rules * 100)
-        scan.save()
+        scan_target.progress = int(rules_run / total_rules * 100)
+        scan_target.save()
 
     # Persist the completion time of the scan
-    scan.finished_at = timezone.now()
-    scan.save()
-    logger.info('Scan complete', extra={'id': scan_id})
+    scan_target.finished_at = timezone.now()
+    scan_target.save()
+    logger.info('Scan complete', extra={'scan_target_id': scan_target.id})

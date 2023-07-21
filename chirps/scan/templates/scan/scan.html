@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Scans{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+  <h1 class="my-auto ml-0 mr-auto text-success">Scan Result</h1>
+</div>
+
+<div class="row">
+    <div class="col-8">
+
+        <!-- tab navs -->
+        <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab-1" data-bs-toggle="tab"
+                   href="#tabs-1" role="tab" aria-controls="tabs-1" aria-selected="true">
+                   Targets <span class="badge bg-primary text-white">{{scan.target_count}}</span>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-2" data-bs-toggle="tab"
+                   href="#tabs-2" role="tab" aria-controls="tabs-2" aria-selected="false">
+                   Profiles <span class="badge bg-primary text-white">{{scan.policy.count}}</span>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-3" data-bs-toggle="tab"
+                   href="#tabs-3" role="tab" aria-controls="tabs-3" aria-selected="false">
+                   Findings <span class="badge bg-danger text-white">{{finding_count}}</span>
+                </a>
+            </li>
+        </ul>
+        <!-- tab navs -->
+
+        <div class="tab-content" id="panel-content">
+
+            <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
+
+                {% for scan_target in scan.scan_targets.all %}
+                <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="card my-4" id="chirps-target-{{scan_target.target.id}}">
+                        <div class="d-flex card-header">
+                            <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{scan_target.target.logo_url}}">
+                            <h5 class="my-auto ml-0 mr-auto">{{ scan_target.target.name }}</h5>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
+                <div class="accordion" id="template-panel-accordion">
+
+                    {% include 'policy/dashboard_policy_list.html' with policy_list=scan.policies edit_mode=False %}
+
+
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tabs-3" role="tabpanel" aria-labelledby="tab-3">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Severity</th>
+                            <th scope="col">Policy : Rule</th>
+                            <th scope="col">Findings</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for rule in unique_rules %}
+                    <tr>
+                        <td>{{rule.severity}}</td>
+                        <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
+                        <td>{{rule.findings}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-4">
+        <h5 class="my-auto ml-0 mr-auto text-success">Details</h5>
+
+        <div class="row">
+            <div class="col-3">Description: </div>
+            <div class="col">{{scan.description}}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">Start: </div>
+            <div class="col">{{scan.started_at}}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">End: </div>
+            <div class="col">{{scan.finished_at}}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">Duration: </div>
+            <div class="col">{{scan.duration}}</div>
+        </div>
+
+        <hr/>
+
+        <h5 class="my-auto ml-0 mr-auto text-success">Findings by Severity</h5>
+        <canvas id="scan_findings_chart"></canvas>
+
+    </div>
+</div>
+
+<script src="{% static '/js/chart-4.3.0.min.js' %}"></script>
+
+<script>
+    const ctx = document.getElementById('scan_findings_chart');
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: {{severities}},
+        datasets: [{
+          label: '# of Votes',
+          data: {{severity_counts}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+
+      }
+    });
+</script>
+{% endblock %}

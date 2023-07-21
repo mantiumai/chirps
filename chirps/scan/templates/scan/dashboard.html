@@ -14,9 +14,10 @@
       <th scope="col">Start Time</th>
       <th scope="col">Finish Time</th>
       <th scope="col">Description</th>
-      <th scope="col">Target</th>
+      <th scope="col">Targets</th>
       <th scope="col">Status</th>
-      <th scope="col">Details</th>
+      <th scope="col">Findings</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
@@ -26,13 +27,11 @@
       <td>{{ scan.started_at }}</td>
       <td>{{ scan.finished_at }}</td>
       <td>{{ scan.description }}</td>
-      <td>{{ scan.target }}</td>
+      <td>{{ scan.target_count }}</td>
+      <td><div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div></td>
+      <td><span class="badge bg-danger text-white">{{ scan.findings_count }}</span></td>
       <td>
-        <div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div>
-      </td>
-      <td>
-        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{scan.id}}"
-          aria-expanded="false" aria-controls="collapse{{scan.id}}"> View Details </button>
+        <a class="btn btn-primary" href="{% url 'scan_view' scan.id %}"><i class="fa-solid fa-magnifying-glass"></i></a>
       </td>
     </tr>
     <tr>

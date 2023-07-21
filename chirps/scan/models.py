@@ -1,10 +1,12 @@
 """Models for the scan application."""
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
 from policy.models import Rule
+from target.models import BaseTarget
 
 
 class Scan(models.Model):
@@ -22,6 +24,51 @@ class Scan(models.Model):
     def __str__(self) -> str:
         """Stringify the description"""
         return self.description
+
+    def duration(self):
+        """Calculate the duration the scan has run."""
+        if self.finished_at and self.started_at:
+            return self.finished_at - self.started_at
+        elif self.started_at:
+            return timezone.now() - self.started_at
+        else:
+            return 'N/A'
+
+    def target_count(self):
+        """Fetch the number of scan targets associated with this scan."""
+        return ScanTarget.objects.filter(scan=self).count()
+
+    def findings_count(self):
+        """Fetch the number of findings associated with this scan."""
+        count = 0
+        scan_targets = ScanTarget.objects.filter(scan=self)
+        for scan_target in scan_targets:
+
+            # Iterate through the rule set
+            for result in scan_target.results.all():
+                count += result.findings_count()
+
+        return count
+
+    def policies(self):
+        """Return a list of policies associated with this scan."""
+        # TODO: Make this a variable length list
+        return [self.policy]
+
+
+class ScanTarget(models.Model):
+    """Model for a single target that was scanned."""
+
+    started_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True)
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_targets')
+    target = models.ForeignKey(BaseTarget, on_delete=models.CASCADE)
+    celery_task_id = models.CharField(max_length=256, null=True)
+    progress = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        """Stringify the target name"""
+        return self.target.name
 
     def celery_task_status(self) -> str:
         """Fetch the status of the Celery task associated with this scan."""
@@ -45,8 +92,8 @@ class Scan(models.Model):
 class Result(models.Model):
     """Model for a single result from a rule."""
 
-    # The scan that the result belongs to
-    scan = models.ForeignKey(Scan, on_delete=models.CASCADE)
+    # Scan target that the result belongs to
+    scan_target = models.ForeignKey(ScanTarget, on_delete=models.CASCADE, related_name='results')
 
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()
@@ -58,16 +105,28 @@ class Result(models.Model):
     def findings_count(self):
         """Convenience method for getting findings count"""
         return self.finding_set.all().count()
+    
+    def has_findings(self) -> bool:
+        """Return True if the result has findings, False otherwise."""
+        if self.findings_count():
+            return True
+
+        return False
+
+    def findings_count(self) -> int:
+        """Return the number of findings associated with this result."""
+        findings_query = Finding.objects.filter(result=self)
+        return findings_query.count()
 
     def __str__(self):
         """Stringify the rule name and scan ID"""
-        return f'{self.rule.name} - {self.scan.id}'
+        return f'{self.rule.name} - {self.scan_target.scan.id}'
 
 
 class Finding(models.Model):
     """Model to identify the location of a finding within a result."""
 
-    result = models.ForeignKey(Result, on_delete=models.CASCADE)
+    result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name='findings')
     offset = models.IntegerField()
     length = models.IntegerField()
 

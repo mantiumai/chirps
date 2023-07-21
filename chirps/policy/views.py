@@ -84,7 +84,6 @@ def clone(request, policy_id):
     for rule in policy.current_version.rules.all():
         Rule.objects.create(
             name=rule.name,
-            description=rule.description,
             query_string=rule.query_string,
             regex_test=rule.regex_test,
             severity=rule.severity,

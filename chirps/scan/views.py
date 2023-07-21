@@ -9,7 +9,7 @@ from policy.models import Policy
 from target.models import BaseTarget
 
 from .forms import ScanForm
-from .models import Finding, Result, Scan
+from .models import Finding, Result, Scan, ScanTarget
 from .tasks import scan_task
 
 
@@ -31,6 +31,63 @@ def result_detail(request, scan_id, policy_id, rule_id):
     findings = Finding.objects.filter(result__in=results)
 
     return render(request, 'scan/result_detail.html', {'results': results, 'findings': findings})
+
+
+@login_required
+def view_scan(request, scan_id):
+    """View details for a particular scan."""
+    scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
+
+    # Assemble a slit of all the results that had findings, across all targets
+    results = []
+    scan_targets = ScanTarget.objects.filter(scan=scan)
+
+    # Step 1: build a list of all the results (rules) with findings.
+    for scan_target in scan_targets:
+        # Iterate through the rule set
+        for result in scan_target.results.all():
+            if result.has_findings():
+                results.append(result)
+
+    # Step 2: aggregate results by rules with matching rule IDs
+    unique_rules = []
+
+    # First, build a list of all the unique rule IDs
+    for result in results:
+        if result.rule not in unique_rules:
+            unique_rules.append(result.rule)
+
+    # Next, walk through all of the results, aggregating the findings count for each unique rule ID
+    finding_count = 0
+    finding_severities = {}
+    for rule in unique_rules:
+        rule.findings = 0
+        for result in results:
+
+            # Increment the number of findings for this rule
+            if result.rule.id == rule.id:
+                count = result.findings_count()
+                rule.findings += count
+                finding_count += count
+
+                # While we're in this loop, store off the number of times each severity is encountered
+                # This will be used to render the pie-chart in the UI
+                if rule.severity not in finding_severities:
+                    finding_severities[rule.severity] = 0
+
+                finding_severities[rule.severity] += count
+
+    return render(
+        request,
+        'scan/scan.html',
+        {
+            'scan': scan,  # The scan object
+            'finding_count': finding_count,  # Total number of findings
+            'unique_rules': unique_rules,  # List of unique rules hit by findings
+            'severities': list(finding_severities.keys()),  # List of all the severities encountered
+            'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
+        },
+    )
 
 
 @login_required
@@ -58,9 +115,17 @@ def create(request):
             # Kick off the scan task
             result = scan_task.delay(scan.id)
 
-            # Save off the Celery task ID on the Scan object
-            scan.celery_task_id = result.id
-            scan.save()
+            # For every target that was selected, kick off a task
+            for target in scan_form.cleaned_data['targets']:
+
+                scan_target = ScanTarget.objects.create(scan=scan, target=target)
+
+                # Kick off the scan task
+                result = scan_task.delay(scan_target_id=scan_target.id)
+
+                # Save off the Celery task ID on the Scan object
+                scan_target.celery_task_id = result.id
+                scan_target.save()
 
             # Redirect the user back to the dashboard
             return redirect('scan_dashboard')
@@ -107,6 +172,7 @@ def dashboard(request):
                     for result in results
                 },
             }
+
 
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
