@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 @shared_task
 def scan_task(scan_target_id):
     """Scan task."""
-    logger.info('Starting scan', extra={'scan_target_id': scan_target_id})
+    logger.info('Starting scan task', extra={'scan_target_id': scan_target_id})
 
     try:
         scan_target = ScanTarget.objects.get(pk=scan_target_id)
@@ -75,7 +75,7 @@ def scan_task(scan_target_id):
     scan_target.finished_at = timezone.now()
     scan_target.save()
 
-    logger.info('Scan complete', extra={'scan_target_id': scan_target.id})
+    logger.info('Scan task complete', extra={'scan_target_id': scan_target.id})
 
     # If any of the scan targets are running, skip setting the main scan status to complete
     for scan_target in scan.scan_targets.all():
@@ -83,4 +83,7 @@ def scan_task(scan_target_id):
             return
 
     scan.status = 'Complete'
+    scan.finished_at = timezone.now()
     scan.save()
+
+    logger.info('Scan complete', extra={'scan_id': scan.id})

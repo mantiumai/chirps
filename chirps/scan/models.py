@@ -19,6 +19,7 @@ class Scan(models.Model):
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     status = models.CharField(
         max_length=32,
@@ -29,6 +30,17 @@ class Scan(models.Model):
     def __str__(self) -> str:
         """Stringify the description"""
         return self.description
+
+    def progress(self):
+        """Compute the progress of the scan."""
+        value_count = 0
+        value = 0
+
+        for scan_target in self.scan_targets.all():
+            value += scan_target.progress
+            value_count += 1
+
+        return int(value / value_count)
 
     def duration(self):
         """Calculate the duration the scan has run."""

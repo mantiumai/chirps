@@ -178,7 +178,6 @@ def dashboard(request):
                 },
             }
 
-
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
 
@@ -188,7 +187,37 @@ def status(request, scan_id):
     scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
 
     # Respond with the status of the celery task and the progress percentage of the scan
-    response = f'{scan.celery_task_status()} : {scan.progress} %'
+    response = f'{scan.status} : {scan.progress()} %'
+
+    if scan.finished_at is not None:
+        # HTMX will stop polling if we return a 286
+        return HttpResponse(content=response, status=286)
+
+    return HttpResponse(content=response, status=200)
+
+
+@login_required
+def target_status(request, scan_target_id):
+    """Fetch the status of a scan job."""
+    scan_target = get_object_or_404(ScanTarget, pk=scan_target_id, scan__user=request.user)
+
+    # Respond with the status of the celery task and the progress percentage of the scan
+    response = f'{scan_target.celery_task_status()} : {scan_target.progress} %'
+
+    if scan_target.finished_at is not None:
+        # HTMX will stop polling if we return a 286
+        return HttpResponse(content=response, status=286)
+
+    return HttpResponse(content=response, status=200)
+
+
+@login_required
+def findings_count(request, scan_id):
+    """Fetch the number of findings associated with a scan."""
+    scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
+
+    # Respond with the status of the celery task and the progress percentage of the scan
+    response = scan.findings_count()
 
     if scan.finished_at is not None:
         # HTMX will stop polling if we return a 286

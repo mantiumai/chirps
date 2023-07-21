@@ -27,7 +27,10 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="tab-3" data-bs-toggle="tab"
                    href="#tabs-3" role="tab" aria-controls="tabs-3" aria-selected="false">
-                   Findings <span class="badge bg-danger text-white">{{finding_count}}</span>
+                   Findings
+                   <span class="badge bg-danger text-white" hx-get="{% url 'scan_findings_count' scan.id %}" hx-trigger="every 1s">
+                        <i id="scan-findings-spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                   </span>
                 </a>
             </li>
         </ul>
@@ -44,6 +47,12 @@
                         <div class="d-flex card-header">
                             <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{scan_target.target.logo_url}}">
                             <h5 class="my-auto ml-0 mr-auto">{{ scan_target.target.name }}</h5>
+                            <h5 class="my-auto ml-0 text-right">
+                                <div hx-get="{% url 'scan_target_status' scan_target.id %}" hx-trigger="every 1s">
+                                    <i id="spinner-{{scan_target.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                                </div>
+
+                            </h5>
                         </div>
                     </div>
                 </div>
