@@ -60,7 +60,7 @@ class ScanForm(ModelForm):
         if 'targets' not in self.data.keys():
             raise ValidationError('No target(s) selected')
 
-        for target_id in self.data['targets']:
+        for target_id in self.data.getlist('targets'):
             try:
                 target = BaseTarget.objects.get(id=target_id, user=self.user)
                 self.cleaned_data['targets'].append(target)

@@ -28,7 +28,8 @@
       <td>{{ scan.finished_at }}</td>
       <td>{{ scan.description }}</td>
       <td>{{ scan.target_count }}</td>
-      <td><div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div></td>
+      <!-- <div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s"></div> -->
+      <td>{{scan.status}}</td>
       <td><span class="badge bg-danger text-white">{{ scan.findings_count }}</span></td>
       <td>
         <a class="btn btn-primary" href="{% url 'scan_view' scan.id %}"><i class="fa-solid fa-magnifying-glass"></i></a>

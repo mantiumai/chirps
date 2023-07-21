@@ -61,14 +61,17 @@ def view_scan(request, scan_id):
     finding_count = 0
     finding_severities = {}
     for rule in unique_rules:
-        rule.findings = 0
+        rule.finding_count = 0
+        rule.findings = []
         for result in results:
 
             # Increment the number of findings for this rule
             if result.rule.id == rule.id:
-                count = result.findings_count()
-                rule.findings += count
+                findings = result.findings.all()
+                count = findings.count()
+                rule.finding_count += count
                 finding_count += count
+                rule.findings.extend(list(findings))
 
                 # While we're in this loop, store off the number of times each severity is encountered
                 # This will be used to render the pie-chart in the UI
@@ -95,6 +98,8 @@ def create(request):
     """Render the scan creation page and handle POST requests."""
     if request.method == 'POST':
         scan_form = ScanForm(request.POST, user=request.user)
+        scan_form.full_clean()
+
         if scan_form.is_valid():
 
             # Convert the scan form into a scan model

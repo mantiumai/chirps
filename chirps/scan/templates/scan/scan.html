@@ -54,10 +54,7 @@
 
             <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
                 <div class="accordion" id="template-panel-accordion">
-
                     {% include 'policy/dashboard_policy_list.html' with policy_list=scan.policies edit_mode=False %}
-
-
                 </div>
             </div>
 
@@ -69,6 +66,7 @@
                             <th scope="col">Severity</th>
                             <th scope="col">Policy : Rule</th>
                             <th scope="col">Findings</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
 
@@ -77,8 +75,37 @@
                     <tr>
                         <td>{{rule.severity}}</td>
                         <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
-                        <td>{{rule.findings}}</td>
+                        <td>{{rule.finding_count}}</td>
+                        <td>
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{rule.id}}" aria-expanded="false"
+                                    aria-controls="collapse{{rule.id}}"> <i class="fa-solid fa-magnifying-glass"></i> </button>
+                        </td>
                     </tr>
+                    <tr>
+                        <td colspan="7">
+                          <div class="collapse" id="collapse{{rule.id}}">
+                            <div class="card card-body">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Finding</th>
+                                    <th scope="col">Target</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for finding in rule.findings %}
+                                  <tr>
+                                    <td>{{ finding.surrounding_text }}</td>
+                                    <td>{{ finding.result.scan_target.target.name }}</td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
                     {% endfor %}
                     </tbody>
                 </table>
@@ -133,9 +160,7 @@
           borderWidth: 1
         }]
       },
-      options: {
-
-      }
+      options: {}
     });
 </script>
 {% endblock %}

@@ -20,6 +20,11 @@ def scan_task(scan_target_id):
     try:
         scan_target = ScanTarget.objects.get(pk=scan_target_id)
         scan = scan_target.scan
+
+        # Update scan status
+        scan.status = 'Running'
+        scan.save()
+
     except ScanTarget.DoesNotExist:
         logger.error('ScanTarget record not found', extra={'scan_target_id': scan_target_id})
         scan_task.update_state(state='FAILURE', meta={'error': f'ScanTarget record not found ({scan_target_id})'})
@@ -69,4 +74,13 @@ def scan_task(scan_target_id):
     # Persist the completion time of the scan
     scan_target.finished_at = timezone.now()
     scan_target.save()
+
     logger.info('Scan complete', extra={'scan_target_id': scan_target.id})
+
+    # If any of the scan targets are running, skip setting the main scan status to complete
+    for scan_target in scan.scan_targets.all():
+        if scan_target.finished_at is None:
+            return
+
+    scan.status = 'Complete'
+    scan.save()

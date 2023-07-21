@@ -20,6 +20,11 @@ class Scan(models.Model):
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    status = models.CharField(
+        max_length=32,
+        default='Queued',
+        choices=[('Queued', 'Queued'), ('Running', 'Running'), ('Complete', 'Complete'), ('Failed', 'Failed')],
+    )
 
     def __str__(self) -> str:
         """Stringify the description"""
