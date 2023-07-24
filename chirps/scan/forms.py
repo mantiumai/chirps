@@ -42,9 +42,6 @@ class ScanForm(ModelForm):
             raise ValidationError('No policies selected')
 
         for policy_id in self.data.getlist('policies'):
-            import pdb
-
-            pdb.set_trace()
             try:
                 policy = Policy.objects.get(id=policy_id)
 
