@@ -11,7 +11,6 @@ class ScanForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        # self.fields['policies'].label = 'Policies'
         super().__init__(*args, **kwargs)
 
     # Add a MultipleChoiceField for policies with CheckboxSelectMultiple widget
