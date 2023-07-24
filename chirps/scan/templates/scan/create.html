@@ -18,7 +18,7 @@
                 <div class="row">
                   <div class="col-6">
                     <label for="policies" class="form-label">Policies</label>
-                    <select class="selectpicker form-control" id="{{ form.policies.auto_id }}" name="{{ form.policies.html_name }}" multiple data-live-search="true">
+                    <select class="selectpicker form-control" id="{{ form.policies.auto_id }}" name="{{ form.policies.html_name }}" multiple data-actions-box="true" data-live-search="true">
                       {% for policy in form.policies.field.queryset %}
                         <option value="{{ policy.id }}">{{ policy }}</option>
                       {% endfor %}
