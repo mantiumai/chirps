@@ -6,7 +6,6 @@
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "description": "Test",
-            "policy": 100,
             "target": 1,
             "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481",
             "progress": 100,
@@ -20,7 +19,6 @@
             "started_at": "2023-07-11T00:52:49.365Z",
             "finished_at": "2023-07-11T00:53:24.915Z",
             "description": "Second Scan",
-            "policy": 100,
             "target": 1,
             "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd",
             "progress": 100,
@@ -34,11 +32,31 @@
             "started_at": "2023-07-11T00:54:31.010Z",
             "finished_at": "2023-07-11T00:55:00.788Z",
             "description": "Third Scan",
-            "policy": 100,
             "target": 1,
             "celery_task_id": "09f9497d-a513-4aef-93c0-0daf309946c5",
             "progress": 100,
             "user": 1
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 4,
+            "policy": 100
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 5,
+            "policy": 100
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 6,
+            "policy": 100
         }
     },
     {
@@ -165,6 +183,58 @@
         }
     },
     {
+        "model": "policy.policy",
+        "pk": 101,
+        "fields": {
+            "name": "Network Security",
+            "description": "This policy will scan for network security information.",
+            "is_template": true,
+            "current_version": 101,
+            "user": null
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 101,
+        "fields": {
+            "number": 1,
+            "policy": 101,
+            "created_at": "2016-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 107,
+        "fields": {
+            "name": "Open Ports",
+            "query_string": "Which ports are open on my network?",
+            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
+            "severity": 3,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 4,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 5,
+            "policy": 101
+        }
+    },
+    {
+        "model": "scan.scan_policies",
+        "fields": {
+            "scan": 6,
+            "policy": 101
+        }
+    },
+    {
         "model": "auth.user",
         "pk": 1,
         "fields": {
@@ -182,4 +252,4 @@
             "user_permissions": []
         }
     }
-    ]
+]

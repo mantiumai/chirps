@@ -1,7 +1,9 @@
 """Views for the scan application."""
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from policy.models import Policy
 from target.models import BaseTarget
@@ -19,17 +21,23 @@ def finding_detail(request, finding_id):
 
 
 @login_required
-def result_detail(request, result_id):
+def result_detail(request, scan_id, policy_id, rule_id):
     """Render the scan result detail page."""
-    result = get_object_or_404(Result, pk=result_id, scan__user=request.user)
-    return render(request, 'scan/result_detail.html', {'result': result})
+    scan = get_object_or_404(Scan, id=scan_id, user=request.user)
+    results = Result.objects.filter(scan=scan, rule__id=rule_id, rule__policy__id=policy_id)
+    if not results.exists():
+        raise Http404('Results not found')
+
+    findings = Finding.objects.filter(result__in=results)
+
+    return render(request, 'scan/result_detail.html', {'results': results, 'findings': findings})
 
 
 @login_required
 def create(request):
     """Render the scan creation page and handle POST requests."""
     if request.method == 'POST':
-        scan_form = ScanForm(request.POST)
+        scan_form = ScanForm(request.POST, user=request.user)
         if scan_form.is_valid():
 
             # Convert the scan form into a scan model
@@ -38,8 +46,14 @@ def create(request):
             # Assign the scan to a user
             scan.user = request.user
 
-            # Persist the scan to the database
+            # Persist the scan to the database without committing the many-to-many relationship
             scan.save()
+
+            scan_form.save_m2m()
+
+            # Set the selected policies to the scan
+            selected_policies = scan_form.cleaned_data['policies']
+            scan.policies.set(selected_policies)
 
             # Kick off the scan task
             result = scan_task.delay(scan.id)
@@ -77,19 +91,22 @@ def dashboard(request):
 
     # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
     for scan in page_obj:
+        scan.policy_results = {}
 
-        scan.rules = {}
+        for policy in scan.policies.all():
+            policy_rules = policy.current_version.rules.all()
+            results = Result.objects.filter(scan=scan, rule__in=policy_rules)
 
-        for result in scan.result_set.all():
-            if result.rule.name not in scan.rules:
-                scan.rules[result.rule.name] = {
-                    'id': result.id,
-                    'rule': result.rule,
-                    'findings': Finding.objects.filter(result=result).count(),
-                }
+            findings_count = defaultdict(int)
+            for result in results:
+                findings_count[result.rule.name] += result.findings_count
 
-        # Convert the dictionary into a list that the template can iterate on
-        scan.rules = scan.rules.values()
+            scan.policy_results[policy] = {
+                'results': {
+                    result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}
+                    for result in results
+                },
+            }
 
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 

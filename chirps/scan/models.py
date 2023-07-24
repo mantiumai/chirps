@@ -13,7 +13,7 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     description = models.TextField()
-    policy = models.ForeignKey('policy.Policy', on_delete=models.CASCADE)
+    policies = models.ManyToManyField('policy.Policy')
     target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
@@ -53,6 +53,11 @@ class Result(models.Model):
 
     # The rule that was used to scan the text
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
+
+    @property
+    def findings_count(self):
+        """Convenience method for getting findings count"""
+        return self.finding_set.all().count()
 
     def __str__(self):
         """Stringify the rule name and scan ID"""
