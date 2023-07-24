@@ -45,5 +45,5 @@ class ScanForm(ModelForm):
             try:
                 policy = Policy.objects.get(id=policy_id, user=self.user)
                 self.cleaned_data['policies'].append(policy)
-            except Policy.DoesNotExist:
-                raise ValidationError('Invalid policies selected')
+            except Policy.DoesNotExist as exc:
+                raise ValidationError('Invalid policies selected') from exc
