@@ -32,9 +32,6 @@ def scan_task(scan_id):
     # Iterate through the selected policies and fetch their rules
     policy_rules = [rule for policy in scan.policies.all() for rule in policy.current_version.rules.all()]
 
-    logger.info('Policies selected', extra={'policies': scan.policies.all()})  # Log the selected policies
-    logger.info('Rules fetched', extra={'rules': policy_rules})  # Log the fetched rules
-
     total_rules = len(policy_rules)
     rules_run = 0
     for rule in policy_rules:

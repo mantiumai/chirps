@@ -101,7 +101,6 @@ def dashboard(request):
             for result in results:
                 findings_count[result.rule.name] += result.findings_count
 
-            # import pdb; pdb.set_trace()
             scan.policy_results[policy] = {
                 'results': {
                     result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}

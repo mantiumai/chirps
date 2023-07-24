@@ -24,7 +24,7 @@ class ScanForm(ModelForm):
         """Django Meta options for the ScanForm."""
 
         model = Scan
-        fields = ['target', 'description']
+        fields = ['description', 'target']
 
         widgets = {
             'description': forms.TextInput(
