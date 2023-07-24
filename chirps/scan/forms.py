@@ -38,7 +38,6 @@ class ScanForm(ModelForm):
         super().clean()
         self.cleaned_data['policies'] = []
 
-        # Policies were not passed in - bad!
         if 'policies' not in self.data.keys():
             raise ValidationError('No policies selected')
 
