@@ -25,7 +25,7 @@ class ScanForm(ModelForm):
         """Django Meta options for the ScanForm."""
 
         model = Scan
-        fields = ('target', 'description')
+        fields = ['target', 'description']
 
         widgets = {
             'description': forms.TextInput(
@@ -36,7 +36,6 @@ class ScanForm(ModelForm):
 
     def clean(self):
         """Create the 'policies' cleaned data field."""
-        # import pdb; pdb.set_trace()
         super().clean()
         self.cleaned_data['policies'] = []
 
