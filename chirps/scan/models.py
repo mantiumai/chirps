@@ -57,7 +57,7 @@ class Result(models.Model):
     @property
     def findings_count(self):
         """Convenience method for getting findings count"""
-        return len(self.finding_set.all())
+        return self.finding_set.all().count()
 
     def __str__(self):
         """Stringify the rule name and scan ID"""

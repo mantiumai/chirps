@@ -42,8 +42,16 @@ class ScanForm(ModelForm):
             raise ValidationError('No policies selected')
 
         for policy_id in self.data.getlist('policies'):
+            import pdb
+
+            pdb.set_trace()
             try:
-                policy = Policy.objects.get(id=policy_id, user=self.user)
-                self.cleaned_data['policies'].append(policy)
+                policy = Policy.objects.get(id=policy_id)
+
+                if policy.is_template or policy.user == self.user:
+                    self.cleaned_data['policies'].append(policy)
+                else:
+                    raise ValidationError('User does not have access to selected policy')
+
             except Policy.DoesNotExist as exc:
                 raise ValidationError('Invalid policies selected') from exc
