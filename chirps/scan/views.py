@@ -37,7 +37,7 @@ def result_detail(request, scan_id, policy_id, rule_id):
 def create(request):
     """Render the scan creation page and handle POST requests."""
     if request.method == 'POST':
-        scan_form = ScanForm(request.POST)
+        scan_form = ScanForm(request.POST, user=request.user)
         if scan_form.is_valid():
 
             # Convert the scan form into a scan model
