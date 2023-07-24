@@ -44,11 +44,8 @@ class ScanForm(ModelForm):
             raise ValidationError('No policies selected')
 
         for policy_id in self.data.getlist('policies'):
-            if policy_id:
-                try:
-                    policy = Policy.objects.get(id=policy_id, user=self.user)
-                    self.cleaned_data['policies'].append(policy)
-                except Policy.DoesNotExist:
-                    raise ValidationError('Invalid policies selected')
-            else:
-                print('no policies selected')
+            try:
+                policy = Policy.objects.get(id=policy_id, user=self.user)
+                self.cleaned_data['policies'].append(policy)
+            except Policy.DoesNotExist:
+                raise ValidationError('Invalid policies selected')
