@@ -756,6 +756,104 @@ class HealthRegexTests(TestCase):
         self.verify_pattern('HIPAA PHI National Drug Code', invalid_codes, False)
 
 
+class CredentialsRegexTests(TestCase):
+    """Test rule regex"""
+
+    fixtures = ['policy/credentials.json']
+
+    def setUp(self):
+        """Set up tests"""
+        credentials_policy = Policy.objects.get(name='Credentials')
+        current_policy_version = credentials_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.test_string = 'Here is some information. The following {} is sensitive.'
+
+    def verify_pattern(self, rule_name, test_values, expected):
+        """Verify test regex patterns."""
+        rule = self.rules.get(name=rule_name)
+        pattern = re.compile(rule.regex_test)
+
+        for value in test_values:
+            test_string = self.test_string.format(value)
+            if expected:
+                self.assertIsNotNone(pattern.search(test_string), value)
+            else:
+                self.assertIsNone(pattern.search(test_string), value)
+
+    def test_facebook_access_token_pattern(self):
+        """Verify that the Facebook regex pattern matches valid Facebook access tokens."""
+        valid_tokens = ['EAACEdEose0cBA123abcXYZ', 'EAACEdEose0cBA987defMNO']
+        self.verify_pattern('Facebook Access Token', valid_tokens, True)
+
+    def test_facebook_access_token_pattern_invalid(self):
+        """Verify that the Facebook regex pattern does not match invalid Facebook access tokens."""
+        invalid_tokens = ['EAAEdEose0cBA123abcXYZ', 'EAACEdEose0cBA_123abc']
+        self.verify_pattern('Facebook Access Token', invalid_tokens, False)
+
+    def test_google_youtube_api_key_pattern(self):
+        """Verify that the regex pattern matches valid Google Youtube API Keys."""
+        valid_keys = ['AIza12345abcdeFGHIJklmnoPQRSTUvwxyz12345', 'AIza98765ABCDEfghijKLMNOqrstuvwxyz98765']
+        self.verify_pattern('Google YouTube API Key', valid_keys, True)
+
+    def test_google_youtube_api_key_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid Google Youtube API Keys."""
+        invalid_keys = ['AIza_12345abcdeFGHIJklmnoPQRSTUvwxyz12', 'AIZa12345abcdeFGHIJklmnoPQRSTUvwxyz12345']
+        self.verify_pattern('Google YouTube API Key', invalid_keys, False)
+
+    def test_twitter_access_token_pattern(self):
+        """Verify that the regex pattern matches valid Twitter access tokens."""
+        valid_tokens = [
+            '12-1a2B3c4D5e6F7g8H9i0JkLmNoPQrStUvWxYzABCD1234567890',
+            '45-0a1B2c3D4e5F6g7H8i9JKLMnOpQRsTuVwXyZ2345678901AbCd',
+        ]
+        self.verify_pattern('Twitter Access Token', valid_tokens, True)
+
+    def test_twitter_access_token_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid Twitter access tokens."""
+        invalid_tokens = ['123-abcdefghijklmno', '9876-qrstuvwxyzabcde']
+        self.verify_pattern('Twitter Access Token', invalid_tokens, False)
+
+    def test_mailgun_api_key_pattern(self):
+        """Verify that the regex pattern matches valid MailGun API keys."""
+        valid_keys = ['key-12345abcdeFGHIJklmnoPQRSTUvwxyz123', 'key-98765ABCDEfghijKLMNOqrstuvwxyz987']
+        self.verify_pattern('MailGun API Key', valid_keys, True)
+
+    def test_mailgun_api_key_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid MailGun API keys."""
+        invalid_keys = ['key_12345abcdeFGHIJklmnoPQRSTUvwxyz123', 'key-12345abcdeFGHIJklmnoPQRSTU']
+        self.verify_pattern('MailGun API Key', invalid_keys, False)
+
+    def test_oauth_secret_pattern(self):
+        """Verify that the regex pattern matches valid OAuth secrets."""
+        valid_secrets = ['1a2b3c4d5e6F7G8H9I0JkLmN-OpQ_rStU', 'A1b2C3d4E5f6G7h8I9j0K_LmN-oPQrStU']
+        self.verify_pattern('OAuth Secret', valid_secrets, True)
+
+    def test_oauth_secret_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid OAuth secrets."""
+        invalid_secrets = ['123 abcXYZ-_456 defGHI', '123abcXYZ-_456defG']
+        self.verify_pattern('OAuth Secret', invalid_secrets, False)
+
+    def test_oauth_auth_code_pattern(self):
+        """Verify that the regex pattern matches valid OAuth auth codes."""
+        valid_codes = ['4/123abcXYZ-_', '4/987defMNO_-']
+        self.verify_pattern('OAuth Auth Code', valid_codes, True)
+
+    def test_oauth_auth_code_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid OAuth auth codes."""
+        invalid_codes = ['4_123abcXYZ-_', '4123 abcXYZ']
+        self.verify_pattern('OAuth Auth Code', invalid_codes, False)
+
+    def test_pgp_header_pattern(self):
+        """Verify that the regex pattern matches valid PGP headers."""
+        valid_headers = ['-----BEGIN PGP MESSAGE-----', '-----END PGP MESSAGE-----']
+        self.verify_pattern('PGP Header', valid_headers, True)
+
+    def test_pgp_header_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid PGP headers."""
+        valid_headers = ['----BEGIN PGP MESSAGE-----', '-----END PGP MESSAGE----']
+        self.verify_pattern('PGP Header', valid_headers, False)
+
+
 @skip('Disabling until pagination is re-added to the policy application.')
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
