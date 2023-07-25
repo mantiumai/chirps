@@ -1,7 +1,7 @@
 [
     {
         "fields": {
-            "description": "This policy will scan for employee information.",
+            "description": "This policy will scan for personally identifiable information.",
             "is_template": true,
             "name": "Standard PII",
             "current_version": 400

@@ -1,0 +1,32 @@
+[
+    {
+        "fields": {
+            "description": "This policy will scan for health information.",
+            "is_template": true,
+            "name": "Health",
+            "current_version": 600
+        },
+        "model": "policy.Policy",
+        "pk": 600
+    },
+    {
+        "fields": {
+            "number": 1,
+            "policy": 600,
+            "created_at": "2016-01-01T00:00:00Z"
+        },
+        "model": "policy.PolicyVersion",
+        "pk": 600
+    },
+    {
+        "fields": {
+            "name": "HIPAA PHI National Drug Code",
+            "policy": 600,
+            "query_string": "What's my drug code?",
+            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}",
+            "severity": 2
+        },
+        "model": "policy.Rule",
+        "pk": 600
+    }
+]

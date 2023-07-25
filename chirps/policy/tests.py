@@ -721,6 +721,41 @@ class FinanceRegexTests(TestCase):
         self.verify_pattern('Credit Card', invalid_credit_cards, False)
 
 
+class HealthRegexTests(TestCase):
+    """Test rule regex"""
+
+    fixtures = ['policy/health.json']
+
+    def setUp(self):
+        """Set up tests"""
+        health_policy = Policy.objects.get(name='Health')
+        current_policy_version = health_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.test_string = 'Here is some information. The following {} is sensitive.'
+
+    def verify_pattern(self, rule_name, test_values, expected):
+        """Verify test regex patterns."""
+        rule = self.rules.get(name=rule_name)
+        pattern = re.compile(rule.regex_test)
+
+        for value in test_values:
+            test_string = self.test_string.format(value)
+            if expected:
+                self.assertIsNotNone(pattern.search(test_string), value)
+            else:
+                self.assertIsNone(pattern.search(test_string), value)
+
+    def test_drug_code_pattern(self):
+        """Verify that the regex pattern matches valid HIPAA PHI National Drug Code numbers."""
+        valid_codes = ['1234-567-89', '12345-1234-12']
+        self.verify_pattern('HIPAA PHI National Drug Code', valid_codes, True)
+
+    def test_drug_code_pattern_invalid(self):
+        """Verify that the regex pattern does not match invalid HIPAA PHI National Drug Code numbers."""
+        invalid_codes = ['123-4567-89', '12345-12345-123']
+        self.verify_pattern('HIPAA PHI National Drug Code', invalid_codes, False)
+
+
 @skip('Disabling until pagination is re-added to the policy application.')
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
