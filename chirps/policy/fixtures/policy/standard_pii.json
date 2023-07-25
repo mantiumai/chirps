@@ -74,25 +74,36 @@
         "pk": 404
     },
     {
-      "model": "policy.Rule",
-      "pk": 405,
-      "fields": {
-        "name": "Email Addresses",
-        "query_string": "List all email addresses",
-        "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-        "severity": 3,
-        "policy": 400
-      }
+        "model": "policy.Rule",
+        "pk": 405,
+        "fields": {
+            "name": "Email Addresses",
+            "query_string": "List all email addresses",
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+            "severity": 3,
+            "policy": 400
+        }
     },
     {
-      "model": "policy.Rule",
-      "pk": 406,
-      "fields": {
-        "name": "Phone Numbers",
-        "query_string": "Find phone numbers",
-        "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
-        "severity": 3,
-        "policy": 400
-      }
+        "model": "policy.Rule",
+        "pk": 406,
+        "fields": {
+            "name": "Phone Numbers",
+            "query_string": "Find phone numbers",
+            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "fields": {
+            "name": "Address",
+            "policy": 400,
+            "query_string": "What's my address?",
+            "regex_test": "\\d{1,} [a-zA-Z0-9\\s]+(\\,)? (?:[a-zA-Z]+ ){0,2}[a-zA-Z]+(\\,)? [A-Z]{2} [0-9]{5,6}",
+            "severity": 2
+        },
+        "model": "policy.Rule",
+        "pk": 407
     }
 ]
