@@ -9,145 +9,92 @@ from django.urls import reverse
 from .forms import PolicyForm
 from .models import Policy, Rule
 
+cfixtures = ['policy/network.json']
 
-class NetworkRegexTests(TestCase):
-    """Test rule regex"""
 
-    fixtures = ['policy/network.json']
+def setUp(self):
+    """Set up tests"""
+    network_security_policy = Policy.objects.get(name='Network Security')
+    current_policy_version = network_security_policy.current_version
+    self.rules = Rule.objects.filter(policy=current_policy_version)
+    self.test_string = 'Here is some network security information. The following {} is sensitive.'
 
-    def setUp(self):
-        """Set up tests"""
-        network_security_policy = Policy.objects.get(name='Network Security')
-        current_policy_version = network_security_policy.current_version
-        self.rules = Rule.objects.filter(policy=current_policy_version)
-        self.test_string = 'Here is some network security information. The following {} is sensitive.'
 
-    def test_open_ports_pattern(self):
-        """Verify that the Open Ports regex pattern matches valid port numbers."""
-        rule = self.rules.get(name='Open Ports')
-        pattern = re.compile(rule.regex_test)
+def verify_pattern(self, rule_name, test_values, expected):
+    """Verify test regex patterns."""
+    rule = self.rules.get(name=rule_name)
+    pattern = re.compile(rule.regex_test)
 
-        valid_ports = [
-            '80',
-            '443',
-            '22',
-        ]
+    for value in test_values:
+        test_string = self.test_string.format(value)
+        if expected:
+            self.assertIsNotNone(pattern.search(test_string), value)
+        else:
+            self.assertIsNone(pattern.search(test_string), value)
 
-        for port in valid_ports:
-            test_string = self.test_string.format(port)
-            self.assertIsNotNone(pattern.search(test_string), port)
 
-    def test_open_ports_pattern_invalid(self):
-        """Verify that the Open Ports regex pattern does not match invalid port numbers."""
-        rule = self.rules.get(name='Open Ports')
-        pattern = re.compile(rule.regex_test)
+def test_open_ports_pattern(self):
+    """Verify that the Open Ports regex pattern matches valid port numbers."""
+    valid_ports = ['80', '443', '22']
+    self.verify_pattern('Open Ports', valid_ports, True)
 
-        invalid_ports = [
-            '65536',
-            'abcd',
-            '-1',
-        ]
 
-        for port in invalid_ports:
-            test_string = self.test_string.format(port)
-            self.assertIsNone(pattern.search(test_string), port)
+def test_open_ports_pattern_invalid(self):
+    """Verify that the Open Ports regex pattern does not match invalid port numbers."""
+    invalid_ports = ['65536', 'abcd', '-1']
+    self.verify_pattern('Open Ports', invalid_ports, False)
 
-    def test_firewall_configuration_pattern(self):
-        """Verify that the Firewall Configuration regex pattern matches valid firewall rules."""
-        rule = self.rules.get(name='Firewall Configuration')
-        pattern = re.compile(rule.regex_test)
 
-        valid_firewall_rules = [
-            'allow from 192.168.1.1 to 10.0.0.1 port 80',
-            'deny from any to 10.0.0.2 port any',
-            'allow from 192.168.0.0 to any port 443',
-        ]
+def test_firewall_configuration_pattern(self):
+    """Verify that the Firewall Configuration regex pattern matches valid firewall rules."""
+    valid_firewall_rules = [
+        'allow from 192.168.1.1 to 10.0.0.1 port 80',
+        'deny from any to 10.0.0.2 port any',
+        'allow from 192.168.0.0 to any port 443',
+    ]
+    self.verify_pattern('Firewall Configuration', valid_firewall_rules, True)
 
-        for firewall_rule in valid_firewall_rules:
-            test_string = self.test_string.format(firewall_rule)
-            self.assertIsNotNone(pattern.search(test_string), firewall_rule)
 
-    def test_firewall_configuration_pattern_invalid(self):
-        """Verify that the Firewall Configuration regex pattern does not match invalid firewall rules."""
-        rule = self.rules.get(name='Firewall Configuration')
-        pattern = re.compile(rule.regex_test)
+def test_firewall_configuration_pattern_invalid(self):
+    """Verify that the Firewall Configuration regex pattern does not match invalid firewall rules."""
+    invalid_firewall_rules = [
+        'allow from 192.168.1.1000 to 10.0.0.1 port 80',
+        'deny from any to 10.0.0.2',
+        'allow from 192.168.0.0 to any',
+    ]
+    self.verify_pattern('Firewall Configuration', invalid_firewall_rules, False)
 
-        invalid_firewall_rules = [
-            'allow from 192.168.1.1000 to 10.0.0.1 port 80',
-            'deny from any to 10.0.0.2',
-            'allow from 192.168.0.0 to any',
-        ]
 
-        for firewall_rule in invalid_firewall_rules:
-            test_string = self.test_string.format(firewall_rule)
-            self.assertIsNone(pattern.search(test_string), firewall_rule)
+def test_network_encryption_pattern(self):
+    """Verify that the Network Encryption regex pattern matches valid encryption types."""
+    valid_encryptions = ['none', 'WEP', 'WPA', 'WPA2', 'WPA3']
+    self.verify_pattern('Network Encryption', valid_encryptions, True)
 
-    def test_network_encryption_pattern(self):
-        """Verify that the Network Encryption regex pattern matches valid encryption types."""
-        rule = self.rules.get(name='Network Encryption')
-        pattern = re.compile(rule.regex_test)
 
-        valid_encryptions = [
-            'none',
-            'WEP',
-            'WPA',
-            'WPA2',
-            'WPA3',
-        ]
+def test_network_encryption_pattern_invalid(self):
+    """Verify that the Network Encryption regex pattern does not match invalid encryption types."""
+    invalid_encryptions = ['WPA4', 'ABC', '123']
+    self.verify_pattern('Network Encryption', invalid_encryptions, False)
 
-        for encryption in valid_encryptions:
-            test_string = self.test_string.format(encryption)
-            self.assertIsNotNone(pattern.search(test_string), encryption)
 
-    def test_network_encryption_pattern_invalid(self):
-        """Verify that the Network Encryption regex pattern does not match invalid encryption types."""
-        rule = self.rules.get(name='Network Encryption')
-        pattern = re.compile(rule.regex_test)
+def test_network_authentication_pattern(self):
+    """Verify that the Network Authentication regex pattern matches valid authentication types."""
+    valid_authentications = [
+        'WEP',
+        'WPA-PSK',
+        'WPA2-PSK',
+        'WPA3-PSK',
+        'WPA-Enterprise',
+        'WPA2-Enterprise',
+        'WPA3-Enterprise',
+    ]
+    self.verify_pattern('Network Authentication', valid_authentications, True)
 
-        invalid_encryptions = [
-            'WPA4',
-            'ABC',
-            '123',
-        ]
 
-        for encryption in invalid_encryptions:
-            test_string = self.test_string.format(encryption)
-            self.assertIsNone(pattern.search(test_string), encryption)
-
-    def test_network_authentication_pattern(self):
-        """Verify that the Network Authentication regex pattern matches valid authentication types."""
-        rule = self.rules.get(name='Network Authentication')
-        pattern = re.compile(rule.regex_test)
-
-        valid_authentications = [
-            'WEP',
-            'WPA-PSK',
-            'WPA2-PSK',
-            'WPA3-PSK',
-            'WPA-Enterprise',
-            'WPA2-Enterprise',
-            'WPA3-Enterprise',
-        ]
-
-        for authentication in valid_authentications:
-            test_string = self.test_string.format(authentication)
-            self.assertIsNotNone(pattern.search(test_string), authentication)
-
-    def test_network_authentication_pattern_invalid(self):
-        """Verify that the Network Authentication regex pattern does not match invalid authentication types."""
-        rule = self.rules.get(name='Network Authentication')
-        pattern = re.compile(rule.regex_test)
-
-        invalid_authentications = [
-            'WPA4-PSK',
-            'WPA1-Enterprise',
-            'ABC',
-            '123',
-        ]
-
-        for authentication in invalid_authentications:
-            test_string = self.test_string.format(authentication)
-            self.assertIsNone(pattern.search(test_string), authentication)
+def test_network_authentication_pattern_invalid(self):
+    """Verify that the Network Authentication regex pattern does not match invalid authentication types."""
+    invalid_authentications = ['WPA4-PSK', 'WPA1-Enterprise', 'ABC', '123']
+    self.verify_pattern('Network Authentication', invalid_authentications, False)
 
 
 class StandardPIIRegexTests(TestCase):
