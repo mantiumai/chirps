@@ -12,6 +12,10 @@
             <form method="POST" action="{% url 'scan_create' %}">
                 {% csrf_token %}
 
+                {% for error in form.non_field_errors %}
+                  <span class="text-danger">{{error}}</span><br/>
+                {% endfor %}
+
                 <label for="{{form.description.id_for_label}}" class="form-label">Description</label>
                 <input class="form-control" type="text" name="{{form.description.html_name}}" id="{{form.description.id_for_label}}" placeholder="Description" required>
 
@@ -26,8 +30,8 @@
                   </div>
 
                   <div class="col-6">
-                    <label for="{{form.target.id_for_label}}" class="form-label">Target</label>
-                    <select class="selectpicker form-control" id="{{form.target.id_for_label}}" name="{{form.target.html_name}}">
+                    <label for="targets" class="form-label">Target(s)</label>
+                    <select class="selectpicker form-control" id="targets" name="targets" multiple>
                       {% for target in targets %}
                         <option value="{{ target.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{target.logo_url}}'> {{ target.name }}">{{ target.name }}</option>
                       {% endfor %}

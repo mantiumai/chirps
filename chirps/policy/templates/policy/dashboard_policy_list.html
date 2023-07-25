@@ -40,6 +40,7 @@
             </table>
         </div>
 
+        {% if edit_mode %}
         {% if policy.is_template == False %}
         <div class="row">
             <div class="col">
@@ -52,6 +53,7 @@
         </div>
         {% else %}
             <a class="btn btn-outline-primary m-3" href="{% url 'policy_clone' policy.id %}"><i class="fa-solid fa-clone"></i> Clone</a>
+        {% endif %}
         {% endif %}
     </div>
 </div>

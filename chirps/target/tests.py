@@ -88,8 +88,8 @@ class TargetPaginationTests(TestCase):
         self.assertNotContains(response, 'chirps-pagination-widget', status_code=200)
 
         # All 3 scans should be present (look for the element IDs)
-        for scan_id in ['1', '2', '3']:
-            self.assertContains(response, f'chirps-target-{scan_id}', status_code=200)
+        for target_id in ['1', '2', '3']:
+            self.assertContains(response, f'chirps-target-{target_id}', status_code=200)
 
     def test_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""

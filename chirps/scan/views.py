@@ -9,7 +9,7 @@ from policy.models import Policy
 from target.models import BaseTarget
 
 from .forms import ScanForm
-from .models import Finding, Result, Scan
+from .models import Finding, Result, Scan, ScanTarget
 from .tasks import scan_task
 
 
@@ -34,10 +34,68 @@ def result_detail(request, scan_id, policy_id, rule_id):
 
 
 @login_required
+def view_scan(request, scan_id):
+    """View details for a particular scan."""
+    scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
+
+    # Assemble a slit of all the results that had findings, across all targets
+    results = []
+    scan_targets = ScanTarget.objects.filter(scan=scan)
+
+    # Step 1: build a list of all the results (rules) with findings.
+    for scan_target in scan_targets:
+        # Iterate through the rule set
+        for result in scan_target.results.all():
+            if result.has_findings():
+                results.append(result)
+
+    # Step 2: aggregate results by rules with matching rule IDs
+    unique_rules = {result.rule for result in results}
+
+    # Next, walk through all of the results, aggregating the findings count for each unique rule ID
+    finding_count = 0
+    finding_severities = defaultdict(int)
+
+    # Walk through each unique rule
+    for rule in unique_rules:
+        rule.finding_count = 0
+        rule.findings = []
+
+        # Iterate through each result that was hit for the rule
+        for result in results:
+
+            # Increment the number of findings for this rule
+            if result.rule.id == rule.id:
+                findings = list(result.findings.all())
+                count = len(findings)
+                rule.finding_count += count
+                finding_count += count
+                rule.findings.extend(findings)
+
+                # While we're in this loop, store off the number of times each severity is encountered
+                # This will be used to render the pie-chart in the UI
+                finding_severities[rule.severity] += count
+
+    return render(
+        request,
+        'scan/scan.html',
+        {
+            'scan': scan,  # The scan object
+            'finding_count': finding_count,  # Total number of findings
+            'unique_rules': unique_rules,  # List of unique rules hit by findings
+            'severities': list(finding_severities.keys()),  # List of all the severities encountered
+            'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
+        },
+    )
+
+
+@login_required
 def create(request):
     """Render the scan creation page and handle POST requests."""
     if request.method == 'POST':
         scan_form = ScanForm(request.POST, user=request.user)
+        scan_form.full_clean()
+
         if scan_form.is_valid():
 
             # Convert the scan form into a scan model
@@ -58,9 +116,17 @@ def create(request):
             # Kick off the scan task
             result = scan_task.delay(scan.id)
 
-            # Save off the Celery task ID on the Scan object
-            scan.celery_task_id = result.id
-            scan.save()
+            # For every target that was selected, kick off a task
+            for target in scan_form.cleaned_data['targets']:
+
+                scan_target = ScanTarget.objects.create(scan=scan, target=target)
+
+                # Kick off the scan task
+                result = scan_task.delay(scan_target_id=scan_target.id)
+
+                # Save off the Celery task ID on the Scan object
+                scan_target.celery_task_id = result.id
+                scan_target.save()
 
             # Redirect the user back to the dashboard
             return redirect('scan_dashboard')
@@ -88,26 +154,6 @@ def dashboard(request):
     paginator = Paginator(user_scans, request.GET.get('item_count', 25))
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
-    for scan in page_obj:
-        scan.policy_results = {}
-
-        for policy in scan.policies.all():
-            policy_rules = policy.current_version.rules.all()
-            results = Result.objects.filter(scan=scan, rule__in=policy_rules)
-
-            findings_count = defaultdict(int)
-            for result in results:
-                findings_count[result.rule.name] += result.findings_count
-
-            scan.policy_results[policy] = {
-                'results': {
-                    result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}
-                    for result in results
-                },
-            }
-
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
 
@@ -117,7 +163,37 @@ def status(request, scan_id):
     scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
 
     # Respond with the status of the celery task and the progress percentage of the scan
-    response = f'{scan.celery_task_status()} : {scan.progress} %'
+    response = f'{scan.status} : {scan.progress()} %'
+
+    if scan.finished_at is not None:
+        # HTMX will stop polling if we return a 286
+        return HttpResponse(content=response, status=286)
+
+    return HttpResponse(content=response, status=200)
+
+
+@login_required
+def target_status(request, scan_target_id):
+    """Fetch the status of a scan job."""
+    scan_target = get_object_or_404(ScanTarget, pk=scan_target_id, scan__user=request.user)
+
+    # Respond with the status of the celery task and the progress percentage of the scan
+    response = f'{scan_target.celery_task_status()} : {scan_target.progress} %'
+
+    if scan_target.finished_at is not None:
+        # HTMX will stop polling if we return a 286
+        return HttpResponse(content=response, status=286)
+
+    return HttpResponse(content=response, status=200)
+
+
+@login_required
+def findings_count(request, scan_id):
+    """Fetch the number of findings associated with a scan."""
+    scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
+
+    # Respond with the status of the celery task and the progress percentage of the scan
+    response = scan.findings_count()
 
     if scan.finished_at is not None:
         # HTMX will stop polling if we return a 286
