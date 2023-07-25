@@ -17,7 +17,6 @@ class Scan(models.Model):
     description = models.TextField()
     policies = models.ManyToManyField('policy.Policy')
     celery_task_id = models.CharField(max_length=256, null=True)
-    progress = models.IntegerField(default=0)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     status = models.CharField(
@@ -45,10 +44,11 @@ class Scan(models.Model):
         """Calculate the duration the scan has run."""
         if self.finished_at and self.started_at:
             return self.finished_at - self.started_at
-        elif self.started_at:
+
+        if self.started_at:
             return timezone.now() - self.started_at
-        else:
-            return 'N/A'
+
+        return 'N/A'
 
     def target_count(self):
         """Fetch the number of scan targets associated with this scan."""

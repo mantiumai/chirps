@@ -63,5 +63,5 @@ class ScanForm(ModelForm):
             try:
                 target = BaseTarget.objects.get(id=target_id, user=self.user)
                 self.cleaned_data['targets'].append(target)
-            except BaseTarget.DoesNotExist:
-                raise ValidationError('Invalid target(s) selected')
+            except BaseTarget.DoesNotExist as exc:
+                raise ValidationError('Invalid target(s) selected') from exc
