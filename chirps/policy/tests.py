@@ -645,6 +645,26 @@ class StandardPIIRegexTests(TestCase):
         invalid_numbers = ['912-68-1234', '987 91 5678']
         self.verify_pattern('Individual Taxpayer Identification Number', invalid_numbers, False)
 
+    def test_email_pattern(self):
+        """Verify that the Email Addresses regex pattern matches valid email addresses."""
+        valid_email_addresses = ['example@example.com', 'test.user@domain.co.uk', 'user+tag@example.org']
+        self.verify_pattern('Email Addresses', valid_email_addresses, True)
+
+    def test_email_pattern_invalid(self):
+        """Verify that the Email Addresses regex pattern does not match invalid email addresses."""
+        invalid_email_addresses = ['example@example', 'test.user@domain', 'user+tag@example@org']
+        self.verify_pattern('Email Addresses', invalid_email_addresses, False)
+
+    def test_phone_number_pattern(self):
+        """Verify that the Phone Numbers regex pattern matches valid phone numbers."""
+        valid_phone_numbers = ['123-456-7890', '987-654-3210', '555-123-4567']
+        self.verify_pattern('Phone Numbers', valid_phone_numbers, True)
+
+    def test_phone_number_pattern_invalid(self):
+        """Verify that the Phone Numbers regex pattern does not match invalid phone numbers."""
+        invalid_phone_numbers = ['123-45-6789', '987-65-432A', '001-23-45 67']
+        self.verify_pattern('Phone Numbers', invalid_phone_numbers, False)
+
 
 class FinanceRegexTests(TestCase):
     """Test rule regex"""
