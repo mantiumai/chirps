@@ -1,0 +1,76 @@
+[
+    {
+        "fields": {
+            "description": "This policy will scan for employee information.",
+            "is_template": true,
+            "name": "Standard PII",
+            "current_version": 400
+        },
+        "model": "policy.Policy",
+        "pk": 400
+    },
+    {
+        "fields": {
+            "number": 1,
+            "policy": 400,
+            "created_at": "2016-01-01T00:00:00Z"
+        },
+        "model": "policy.PolicyVersion",
+        "pk": 400
+    },
+    {
+        "fields": {
+            "name": "SSN",
+            "policy": 400,
+            "query_string": "What's my social security number?",
+            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
+            "severity": 5
+        },
+        "model": "policy.Rule",
+        "pk": 400
+    },
+    {
+        "fields": {
+            "name": "California Driver's License",
+            "policy": 400,
+            "query_string": "What's my driver's license number?",
+            "regex_test": "[A-Z]{1}\\d{7}",
+            "severity": 3
+        },
+        "model": "policy.Rule",
+        "pk": 401
+    },
+    {
+        "fields": {
+            "name": "United Kingdom Driver's License",
+            "policy": 400,
+            "query_string": "What's my driver's license number?",
+            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}",
+            "severity": 3
+        },
+        "model": "policy.Rule",
+        "pk": 402
+    },
+    {
+        "fields": {
+            "name": "United Kingdom Passport Number",
+            "policy": 400,
+            "query_string": "What's my passport number?",
+            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}",
+            "severity": 3
+        },
+        "model": "policy.Rule",
+        "pk": 403
+    },
+    {
+        "fields": {
+            "name": "Individual Taxpayer Identification Number",
+            "policy": 400,
+            "query_string": "What's my ITIN?",
+            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}",
+            "severity": 3
+        },
+        "model": "policy.Rule",
+        "pk": 404
+    }
+]

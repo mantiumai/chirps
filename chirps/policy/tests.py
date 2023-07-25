@@ -571,6 +571,137 @@ class SensitiveDataRegexTests(TestCase):
             self.assertIsNone(pattern.search(test_string), password)
 
 
+class StandardPIIRegexTests(TestCase):
+    """Test rule regex"""
+
+    fixtures = ['policy/standard_pii.json']
+
+    def setUp(self):
+        """Set up tests"""
+        standard_pii_policy = Policy.objects.get(name='Standard PII')
+        current_policy_version = standard_pii_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.test_string = 'Here is some information. The following {} is sensitive.'
+
+    def test_ssn_pattern(self):
+        """Verify that the SSN regex pattern matches valid SSN numbers."""
+        rule = self.rules.get(name='SSN')
+        pattern = re.compile(rule.regex_test)
+
+        valid_ssn_numbers = [
+            '123-45-6789',
+            '987-65-4321',
+            '001-23-4567',
+        ]
+
+        for ssn in valid_ssn_numbers:
+            test_string = self.test_string.format(ssn)
+            self.assertIsNotNone(pattern.search(test_string), ssn)
+
+    def test_ssn_pattern_invalid(self):
+        """Verify that the SSN regex pattern does not match invalid SSN numbers."""
+        rule = self.rules.get(name='SSN')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_ssn_numbers = [
+            '123-45-678',
+            '987-65-432A',
+            '001-23-45 67',
+        ]
+
+        for ssn in invalid_ssn_numbers:
+            test_string = self.test_string.format(ssn)
+            self.assertIsNone(pattern.search(test_string), ssn)
+
+    def test_california_drivers_license_pattern(self):
+        """Verify that the California driver's license pattern matches valid DL numbers"""
+        rule = self.rules.get(name="California Driver's License")
+        pattern = re.compile(rule.regex_test)
+
+        valid_numbers = ['A1234567', 'Z7654321']
+
+        for number in valid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_california_drivers_license_pattern_invalid(self):
+        """Verify that the California driver's license pattern matches valid DL numbers"""
+        rule = self.rules.get(name="California Driver's License")
+        pattern = re.compile(rule.regex_test)
+
+        invalid_numbers = ['1234567A', '7654321Z']
+
+        for number in invalid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_uk_drivers_license_pattern(self):
+        """Verify that the UK driver's license pattern matches valid DL numbers"""
+        rule = self.rules.get(name="United Kingdom Driver's License")
+        pattern = re.compile(rule.regex_test)
+
+        valid_numbers = ['ABCDE123456FG7HI', 'WXYZA987654JK5LM']
+
+        for number in valid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_uk_drivers_license_pattern_invalid(self):
+        """Verify that the UK driver's license pattern does not match invalid DL numbers"""
+        rule = self.rules.get(name="United Kingdom Driver's License")
+        pattern = re.compile(rule.regex_test)
+
+        invalid_numbers = ['ABCDE123456FGHIL', 'WXYZA987654JKLM5']
+
+        for number in invalid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_uk_passport_number_pattern(self):
+        """Verify that the UK passport number pattern matches valid passport numbers"""
+        rule = self.rules.get(name='United Kingdom Passport Number')
+        pattern = re.compile(rule.regex_test)
+
+        valid_numbers = ['1234567890GBR1234567U987654321', '0987654321GBP6543210F123456789']
+
+        for number in valid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_uk_passport_number_pattern_invalid(self):
+        """Verify that the UK passport number pattern does not match invalid passport numbers"""
+        rule = self.rules.get(name='United Kingdom Passport Number')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_numbers = ['1234567890GB1234567U987654321', '0987654321GBP6543210X123456789']
+
+        for number in invalid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_individual_taxpayer_identification_number_pattern(self):
+        """Verify that the ITIN pattern matches valid ITIN numbers"""
+        rule = self.rules.get(name='Individual Taxpayer Identification Number')
+        pattern = re.compile(rule.regex_test)
+
+        valid_numbers = ['912-78-1234', '987 81 5678']
+
+        for number in valid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_individual_taxpayer_identification_number_pattern_invalid(self):
+        """Verify that the ITIN pattern matches valid ITIN numbers"""
+        rule = self.rules.get(name='Individual Taxpayer Identification Number')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_numbers = ['912-68-1234', '987 91 5678']
+
+        for number in invalid_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+
 @skip('Disabling until pagination is re-added to the policy application.')
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
