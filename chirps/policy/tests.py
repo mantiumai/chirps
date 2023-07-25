@@ -702,6 +702,129 @@ class StandardPIIRegexTests(TestCase):
             self.assertIsNone(pattern.search(test_string), number)
 
 
+class FinanceRegexTests(TestCase):
+    """Test rule regex"""
+
+    fixtures = ['policy/finance.json']
+
+    def setUp(self):
+        """Set up tests"""
+        finance_policy = Policy.objects.get(name='Finance')
+        current_policy_version = finance_policy.current_version
+        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.test_string = 'Here is some information. The following {} is sensitive.'
+
+    def test_citibank_routing_number_pattern(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Citibank Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        valid_routing_numbers = [
+            '321171184',
+            '322271724',
+        ]
+
+        for number in valid_routing_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_citibank_routing_number_pattern_invalid(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Citibank Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_routing_numbers = [
+            '321271184',
+            '322171728',
+        ]
+
+        for number in invalid_routing_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_bank_of_america_routing_number_pattern(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Bank of America Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        valid_routing_numbers = [
+            '121009358',
+            '026009593',
+        ]
+
+        for number in valid_routing_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNotNone(pattern.search(test_string), number)
+
+    def test_bank_of_america_routing_number_pattern_invalid(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Bank of America Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_routing_numbers = [
+            '121019358',
+            '026009594',
+        ]
+
+        for number in invalid_routing_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_chase_routing_number_pattern(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Chase Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        valid_routing_number = 322271627
+
+        test_string = self.test_string.format(valid_routing_number)
+        self.assertIsNotNone(pattern.search(test_string), valid_routing_number)
+
+    def test_chase_routing_number_pattern_invalid(self):
+        """Verify that the routing number regex pattern matches valid routing numbers."""
+        rule = self.rules.get(name='Chase Routing Number - California')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_routing_numbers = [
+            '322271628',
+            '222271627',
+        ]
+
+        for number in invalid_routing_numbers:
+            test_string = self.test_string.format(number)
+            self.assertIsNone(pattern.search(test_string), number)
+
+    def test_bank_account_pattern(self):
+        """Verify that the Bank Account Numbers regex pattern matches valid bank account numbers."""
+        rule = self.rules.get(name='Bank Account')
+        pattern = re.compile(rule.regex_test)
+
+        valid_bank_account_numbers = [
+            '123-4567-8901234',
+            '987-1234-5678901',
+            '001-2345-6789012',
+        ]
+
+        for bank_account_number in valid_bank_account_numbers:
+            test_string = self.test_string.format(bank_account_number)
+            self.assertIsNotNone(pattern.search(test_string), bank_account_number)
+
+    def test_bank_account_pattern_invalid(self):
+        """Verify that the Bank Account regex pattern does not match invalid bank account numbers."""
+        rule = self.rules.get(name='Bank Account')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_bank_account_numbers = [
+            '123-456-78901234',
+            '987-1234-56789A1',
+            '001-2345-6789 012',
+        ]
+
+        for bank_account_number in invalid_bank_account_numbers:
+            test_string = self.test_string.format(bank_account_number)
+            self.assertIsNone(pattern.search(test_string), bank_account_number)
+
+
 @skip('Disabling until pagination is re-added to the policy application.')
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
