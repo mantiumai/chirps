@@ -16,7 +16,6 @@ class Scan(models.Model):
     finished_at = models.DateTimeField(null=True)
     description = models.TextField()
     policies = models.ManyToManyField('policy.Policy')
-    target = models.ForeignKey('target.BaseTarget', on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
 
@@ -55,7 +54,7 @@ class Scan(models.Model):
         """Fetch the number of scan targets associated with this scan."""
         return ScanTarget.objects.filter(scan=self).count()
 
-    def findings_count(self):
+    def findings_count(self) -> int:
         """Fetch the number of findings associated with this scan."""
         count = 0
         scan_targets = ScanTarget.objects.filter(scan=self)
@@ -66,11 +65,6 @@ class Scan(models.Model):
                 count += result.findings_count()
 
         return count
-
-    def policies(self):
-        """Return a list of policies associated with this scan."""
-        # TODO: Make this a variable length list
-        return [self.policy]
 
 
 class ScanTarget(models.Model):
@@ -118,11 +112,6 @@ class Result(models.Model):
     # The rule that was used to scan the text
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
 
-    @property
-    def findings_count(self):
-        """Convenience method for getting findings count"""
-        return self.finding_set.all().count()
-    
     def has_findings(self) -> bool:
         """Return True if the result has findings, False otherwise."""
         if self.findings_count():

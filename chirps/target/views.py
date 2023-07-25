@@ -34,7 +34,6 @@ def dashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    user_targets = BaseTarget.objects.filter(user=request.user)
     return render(request, 'target/dashboard.html', {'available_targets': targets, 'page_obj': page_obj})
 
 

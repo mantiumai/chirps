@@ -6,10 +6,18 @@
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "description": "Test",
-            "target": 1,
-            "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481",
-            "progress": 100,
             "user": 1
+        }
+    },
+    {
+        "model": "scan.scantarget",
+        "pk": 1,
+        "fields": {
+            "scan": 4,
+            "target": 1,
+            "started_at": "2023-07-07T20:09:15.998Z",
+            "finished_at": "2023-07-07T20:09:48.990Z",
+            "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481"
         }
     },
     {
@@ -19,10 +27,18 @@
             "started_at": "2023-07-11T00:52:49.365Z",
             "finished_at": "2023-07-11T00:53:24.915Z",
             "description": "Second Scan",
-            "target": 1,
-            "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd",
-            "progress": 100,
             "user": 1
+        }
+    },
+    {
+        "model": "scan.scantarget",
+        "pk": 1,
+        "fields": {
+            "scan": 5,
+            "target": 1,
+            "started_at": "2023-07-07T20:09:15.998Z",
+            "finished_at": "2023-07-07T20:09:48.990Z",
+            "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
         }
     },
     {
@@ -32,10 +48,18 @@
             "started_at": "2023-07-11T00:54:31.010Z",
             "finished_at": "2023-07-11T00:55:00.788Z",
             "description": "Third Scan",
-            "target": 1,
-            "celery_task_id": "09f9497d-a513-4aef-93c0-0daf309946c5",
-            "progress": 100,
             "user": 1
+        }
+    },
+    {
+        "model": "scan.scantarget",
+        "pk": 1,
+        "fields": {
+            "scan": 6,
+            "target": 1,
+            "started_at": "2023-07-07T20:09:15.998Z",
+            "finished_at": "2023-07-07T20:09:48.990Z",
+            "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
         }
     },
     {

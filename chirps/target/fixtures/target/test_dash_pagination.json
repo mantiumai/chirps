@@ -3,7 +3,7 @@
         "model": "target.basetarget",
         "pk": 1,
         "fields": {
-            "polymorphic_ctype": 14,
+            "polymorphic_ctype": ["target", "mantiumtarget"],
             "name": "ZimTest",
             "user": 1
         }
@@ -12,7 +12,7 @@
         "model": "target.basetarget",
         "pk": 2,
         "fields": {
-            "polymorphic_ctype": 16,
+            "polymorphic_ctype": ["target", "redistarget"],
             "name": "Dummy Redis",
             "user": 1
         }
@@ -21,7 +21,7 @@
         "model": "target.basetarget",
         "pk": 3,
         "fields": {
-            "polymorphic_ctype": 15,
+            "polymorphic_ctype": ["target", "pineconetarget"],
             "name": "Dummy Pinecone",
             "user": 1
         }

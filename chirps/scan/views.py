@@ -1,5 +1,4 @@
 """Views for the scan application."""
-from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -158,26 +157,6 @@ def dashboard(request):
     paginator = Paginator(user_scans, request.GET.get('item_count', 25))
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    # We're going to perform some manual aggregation (sqlite doesn't support calls to distinct())
-    for scan in page_obj:
-        scan.policy_results = {}
-
-        for policy in scan.policies.all():
-            policy_rules = policy.current_version.rules.all()
-            results = Result.objects.filter(scan=scan, rule__in=policy_rules)
-
-            findings_count = defaultdict(int)
-            for result in results:
-                findings_count[result.rule.name] += result.findings_count
-
-            scan.policy_results[policy] = {
-                'results': {
-                    result.rule.name: {'result': result, 'findings_count': findings_count[result.rule.name]}
-                    for result in results
-                },
-            }
-
     return render(request, 'scan/dashboard.html', {'page_obj': page_obj})
 
 

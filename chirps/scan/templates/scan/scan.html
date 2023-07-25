@@ -63,7 +63,7 @@
 
             <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
                 <div class="accordion" id="template-panel-accordion">
-                    {% include 'policy/dashboard_policy_list.html' with policy_list=scan.policies edit_mode=False %}
+                    {% include 'policy/dashboard_policy_list.html' with policy_list=scan.policies.all edit_mode=False %}
                 </div>
             </div>
 
