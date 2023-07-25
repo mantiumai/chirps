@@ -53,7 +53,6 @@ class ScanForm(ModelForm):
             except Policy.DoesNotExist as exc:
                 raise ValidationError('Invalid policies selected') from exc
 
-
         self.cleaned_data['targets'] = []
 
         # Targets were not passed in - bad!
@@ -66,4 +65,3 @@ class ScanForm(ModelForm):
                 self.cleaned_data['targets'].append(target)
             except BaseTarget.DoesNotExist:
                 raise ValidationError('Invalid target(s) selected')
-
