@@ -61,5 +61,16 @@
       },
       "model": "policy.Rule",
       "pk": 503
+    },
+    {
+      "fields": {
+        "name": "Credit Card",
+        "policy": 500,
+        "query_string": "What's my credit card number?",
+        "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
+        "severity": 5
+      },
+      "model": "policy.Rule",
+      "pk": 504
     }
 ]

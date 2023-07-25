@@ -824,6 +824,36 @@ class FinanceRegexTests(TestCase):
             test_string = self.test_string.format(bank_account_number)
             self.assertIsNone(pattern.search(test_string), bank_account_number)
 
+    def test_credit_card_pattern(self):
+        """Verify that the Credit Card Numbers regex pattern matches valid credit card numbers."""
+        rule = self.rules.get(name='Credit Card')
+        pattern = re.compile(rule.regex_test)
+
+        valid_credit_cards = [
+            '1234 5678 9012 3456',
+            '9876-5432-1098-7654',
+            '0011223344556677',
+        ]
+
+        for credit_card in valid_credit_cards:
+            test_string = self.test_string.format(credit_card)
+            self.assertIsNotNone(pattern.search(test_string), credit_card)
+
+    def test_credit_card_pattern_invalid(self):
+        """Verify that the Credit Card Numbers regex pattern does not match invalid credit card numbers."""
+        rule = self.rules.get(name='Credit Card')
+        pattern = re.compile(rule.regex_test)
+
+        invalid_credit_cards = [
+            '1234 5678 9012',
+            '9876-5432-1098 765A',
+            '001122334455 667',
+        ]
+
+        for credit_card in invalid_credit_cards:
+            test_string = self.test_string.format(credit_card)
+            self.assertIsNone(pattern.search(test_string), credit_card)
+
 
 @skip('Disabling until pagination is re-added to the policy application.')
 class PolicyPaginationTests(TestCase):
