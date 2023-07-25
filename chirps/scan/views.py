@@ -1,4 +1,5 @@
 """Views for the scan application."""
+from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -49,34 +50,30 @@ def view_scan(request, scan_id):
                 results.append(result)
 
     # Step 2: aggregate results by rules with matching rule IDs
-    unique_rules = []
-
-    # First, build a list of all the unique rule IDs
-    for result in results:
-        if result.rule not in unique_rules:
-            unique_rules.append(result.rule)
+    unique_rules = {result.rule for result in results}
 
     # Next, walk through all of the results, aggregating the findings count for each unique rule ID
     finding_count = 0
-    finding_severities = {}
+    finding_severities = defaultdict(int)
+
+    # Walk through each unique rule
     for rule in unique_rules:
         rule.finding_count = 0
         rule.findings = []
+
+        # Iterate through each result that was hit for the rule
         for result in results:
 
             # Increment the number of findings for this rule
             if result.rule.id == rule.id:
-                findings = result.findings.all()
-                count = findings.count()
+                findings = list(result.findings.all())
+                count = len(findings)
                 rule.finding_count += count
                 finding_count += count
-                rule.findings.extend(list(findings))
+                rule.findings.extend(findings)
 
                 # While we're in this loop, store off the number of times each severity is encountered
                 # This will be used to render the pie-chart in the UI
-                if rule.severity not in finding_severities:
-                    finding_severities[rule.severity] = 0
-
                 finding_severities[rule.severity] += count
 
     return render(

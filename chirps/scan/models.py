@@ -38,7 +38,10 @@ class Scan(models.Model):
             value += scan_target.progress
             value_count += 1
 
-        return int(value / value_count)
+        try:   # Avoid divide by zero
+            return int(value / value_count)
+        except ZeroDivisionError:
+            return 0
 
     def duration(self):
         """Calculate the duration the scan has run."""
