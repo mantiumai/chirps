@@ -3,4 +3,4 @@ from django.contrib import admin
 
 from .models import Embedding
 
-admin.register(Embedding)
+admin.site.register(Embedding)
