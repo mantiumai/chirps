@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Add A Asset
-permalink: /add-a-asset/
+title: Add An Asset
+permalink: /add-an-asset/
 ---
 
 

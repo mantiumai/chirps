@@ -15,7 +15,7 @@ A scan executes a plan against an asset. A plan is a list of rules. Each rule ha
 When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a plan, executing the queries against the scan asset. Results are stored in the database via the `Result` and `Finding` models.
 
 ## What are Assets?
-A asset is a destination that rule queries are executed against. Asset providers are responsible for executing the queries and handing back the results to the scan task.
+An asset is a destination that rule queries are executed against. Asset providers are responsible for executing the queries and handing back the results to the scan task.
 
 
 # Plan Application
