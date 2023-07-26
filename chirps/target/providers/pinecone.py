@@ -17,6 +17,8 @@ class PineconeTarget(BaseTarget):
     index_name = models.CharField(max_length=256, blank=True, null=True)
     project_name = models.CharField(max_length=256, blank=True, null=True)
     metadata_text_field = models.CharField(max_length=256, blank=False, null=True)
+    embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
+    embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/pinecone-logo.png'

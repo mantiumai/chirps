@@ -106,6 +106,8 @@ class PineconeTargetForm(ModelForm):
             'index_name',
             'project_name',
             'metadata_text_field',
+            'embedding_model',
+            'embedding_model_service',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -123,6 +125,12 @@ class PineconeTargetForm(ModelForm):
         )
         self.fields['metadata_text_field'].widget = forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': 'Metadata field in which text is stored'}
+        )
+        self.fields['embedding_model'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
+        )
+        self.fields['embedding_model_service'].widget = forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'The host of the model that generated the embeddings'}
         )
 
 
