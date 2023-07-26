@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         # Iterate over each file in the policies directory
         for filename in os.listdir(policies_directory):
-            if filename.startswith('__'):
+            if filename.startswith('__') or filename.endswith('_mock.json'):
                 continue
 
             file_path = os.path.join(policies_directory, filename)
