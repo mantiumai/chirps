@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="d-flex">
-  <h1 class="my-auto ml-0 mr-auto text-success">Scan Result</h1>
+    <h1 class="my-auto ml-0 mr-auto text-success">Scan Result</h1>
 </div>
 
 <div class="row">
@@ -13,24 +13,25 @@
         <!-- tab navs -->
         <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="tab-1" data-bs-toggle="tab"
-                   href="#tabs-1" role="tab" aria-controls="tabs-1" aria-selected="true">
-                   Assets <span class="badge bg-primary text-white">{{scan.asset_count}}</span>
+                <a class="nav-link active" id="tab-1" data-bs-toggle="tab" href="#tabs-1" role="tab"
+                    aria-controls="tabs-1" aria-selected="true">
+                    Assets <span class="badge bg-primary text-white">{{scan.asset_count}}</span>
                 </a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="tab-2" data-bs-toggle="tab"
-                   href="#tabs-2" role="tab" aria-controls="tabs-2" aria-selected="false">
-                   Profiles <span class="badge bg-primary text-white">{{scan.policy.count}}</span>
+                <a class="nav-link" id="tab-2" data-bs-toggle="tab" href="#tabs-2" role="tab" aria-controls="tabs-2"
+                    aria-selected="false">
+                    Profiles <span class="badge bg-primary text-white">{{scan.policy.count}}</span>
                 </a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="tab-3" data-bs-toggle="tab"
-                   href="#tabs-3" role="tab" aria-controls="tabs-3" aria-selected="false">
-                   Findings
-                   <span class="badge bg-danger text-white" hx-get="{% url 'scan_findings_count' scan.id %}" hx-trigger="every 1s">
+                <a class="nav-link" id="tab-3" data-bs-toggle="tab" href="#tabs-3" role="tab" aria-controls="tabs-3"
+                    aria-selected="false">
+                    Findings
+                    <span class="badge bg-danger text-white" hx-get="{% url 'scan_findings_count' scan.id %}"
+                        hx-trigger="every 1s">
                         <i id="scan-findings-spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>
-                   </span>
+                    </span>
                 </a>
             </li>
         </ul>
@@ -42,20 +43,21 @@
 
                 {% for scan_asset in scan.scan_assets.all %}
                 <div class="row">
-                <div class="col-md-12 col-lg-12">
-                    <div class="card my-4" id="chirps-asset-{{scan_asset.asset.id}}">
-                        <div class="d-flex card-header">
-                            <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{scan_asset.asset.logo_url}}">
-                            <h5 class="my-auto ml-0 mr-auto">{{ scan_asset.asset.name }}</h5>
-                            <h5 class="my-auto ml-0 text-right">
-                                <div hx-get="{% url 'scan_asset_status' scan_asset.id %}" hx-trigger="every 1s">
-                                    <i id="spinner-{{scan_asset.id}}" class="fa-solid fa-spinner fa-spin"></i>
-                                </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div class="card my-4" id="chirps-asset-{{scan_asset.asset.id}}">
+                            <div class="d-flex card-header">
+                                <img width=48 class="rounded float-end my-auto ml-0 mr-3"
+                                    src="{{scan_asset.asset.logo_url}}">
+                                <h5 class="my-auto ml-0 mr-auto">{{ scan_asset.asset.name }}</h5>
+                                <h5 class="my-auto ml-0 text-right">
+                                    <div hx-get="{% url 'scan_asset_status' scan_asset.id %}" hx-trigger="every 1s">
+                                        <i id="spinner-{{scan_asset.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                                    </div>
 
-                            </h5>
+                                </h5>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 {% endfor %}
 
@@ -80,42 +82,43 @@
                     </thead>
 
                     <tbody>
-                    {% for rule in unique_rules %}
-                    <tr>
-                        <td>{{rule.severity}}</td>
-                        <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
-                        <td>{{rule.finding_count}}</td>
-                        <td>
-                            <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                    data-bs-asset="#collapse{{rule.id}}" aria-expanded="false"
-                                    aria-controls="collapse{{rule.id}}"> <i class="fa-solid fa-magnifying-glass"></i> </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="7">
-                          <div class="collapse" id="collapse{{rule.id}}">
-                            <div class="card card-body">
-                              <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">Finding</th>
-                                    <th scope="col">Asset</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {% for finding in rule.findings %}
-                                  <tr>
-                                    <td>{{ finding.surrounding_text }}</td>
-                                    <td>{{ finding.result.scan_asset.asset.name }}</td>
-                                  </tr>
-                                  {% endfor %}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    {% endfor %}
+                        {% for rule in unique_rules %}
+                        <tr>
+                            <td>{{rule.severity}}</td>
+                            <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
+                            <td>{{rule.finding_count}}</td>
+                            <td>
+                                <button class="btn btn-link" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{rule.id}}" aria-expanded="false"
+                                    aria-controls="collapse{{rule.id}}"> <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7">
+                                <div class="collapse" id="collapse{{rule.id}}">
+                                    <div class="card card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Finding</th>
+                                                    <th scope="col">Asset</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for finding in rule.findings %}
+                                                <tr>
+                                                    <td>{{ finding.surrounding_text }}</td>
+                                                    <td>{{ finding.result.scan_asset.asset.name }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
 
@@ -146,7 +149,7 @@
             <div class="col">{{scan.duration}}</div>
         </div>
 
-        <hr/>
+        <hr />
 
         <h5 class="my-auto ml-0 mr-auto text-success">Findings by Severity</h5>
         <canvas id="scan_findings_chart"></canvas>
@@ -160,16 +163,16 @@
     const ctx = document.getElementById('scan_findings_chart');
 
     new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: {{severities}},
+        type: 'doughnut',
+        data: {
+            labels: {{ severities }},
         datasets: [{
-          label: '# of Votes',
-          data: {{severity_counts}},
-          borderWidth: 1
+            label: '# of Votes',
+            data: {{ severity_counts }},
+        borderWidth: 1
         }]
       },
-      options: {}
+        options: {}
     });
 </script>
 {% endblock %}

@@ -1,8 +1,8 @@
 {% for policy in policy_list %}
-<div class="accordion-item policy-row", id="chirps-policy-{{policy.id}}" hx-asset="closest .policy-row" hx-swap="outerHTML">
+<div class="accordion-item policy-row", id="chirps-policy-{{policy.id}}" hx-target="closest .policy-row" hx-swap="outerHTML">
     <div class="accordion-header">
         <button class="accordion-button collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-asset="#collapse-{{policy.id}}"
+                data-bs-toggle="collapse" data-bs-target="#collapse-{{policy.id}}"
                 aria-expanded="false" aria-controls="collapse-{{policy.id}}">
             <div class="d-flex">
                 <h5 class="ml-0 mr-3 my-auto">{{policy.name}}</h5>
