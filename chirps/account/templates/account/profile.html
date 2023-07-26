@@ -9,13 +9,15 @@
     <form method="POST" action="{% url 'profile'%}">
         <div>
             {% csrf_token %}
-            {{ form }}
+            <div class="form-group">
+                <label for="{{ form.openai_key.id_for_label }}">OpenAI Key:</label>
+                <input type="text" class="form-control" id="{{ form.openai_key.auto_id }}" name="{{ form.openai_key.html_name }}" value="{{ user.profile.masked_openai_key }}">
+            </div>
         </div>
         <div class="mt-3 d-flex">
             <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
         </div>
     </form>
 </div>
-
 
 {% endblock %}
