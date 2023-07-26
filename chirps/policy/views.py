@@ -54,6 +54,9 @@ def create(request):
                 policy=policy_version,
             )
 
+        # Redirect the user back to the dashboard
+        return redirect('policy_dashboard')
+
     return render(request, 'policy/create.html', {})
 
 
@@ -126,9 +129,11 @@ def edit(request, policy_id):
         policy.name = form.cleaned_data['name']
         policy.description = form.cleaned_data['description']
         policy.save()
-    else:
 
-        form = PolicyForm.from_policy(policy=policy)
+        # Redirect the user back to the dashboard
+        return redirect('policy_dashboard')
+
+    form = PolicyForm.from_policy(policy=policy)
 
     return render(request, 'policy/edit.html', {'policy': policy, 'form': form})
 
