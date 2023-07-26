@@ -56,7 +56,7 @@ def create(request):
 
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
-        
+
     return render(request, 'policy/create.html', {})
 
 
@@ -132,9 +132,8 @@ def edit(request, policy_id):
 
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
-    
-    else:
-        form = PolicyForm.from_policy(policy=policy)
+
+    form = PolicyForm.from_policy(policy=policy)
 
     return render(request, 'policy/edit.html', {'policy': policy, 'form': form})
 
