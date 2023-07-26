@@ -46,8 +46,11 @@ def scan_task(scan_target_id):
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if target.REQUIRES_EMBEDDINGS:
+            # template policies should not be bound to a user
+            add_user_filter = not policy.is_template
+            user = scan.user if add_user_filter else None
             embedding = create_embedding(
-                rule.query_string, target.embedding_model, target.embedding_model_service, scan.user
+                rule.query_string, target.embedding_model, target.embedding_model_service, user
             )
             query = embedding.vectors
         else:

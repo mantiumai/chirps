@@ -5,16 +5,15 @@ from .models import Embedding
 from .providers.base import BaseEmbeddingProvider
 
 
-def create_embedding(text: str, model: str, service: str, user: User) -> Embedding:
+def create_embedding(text: str, model: str, service: str, user: User | None) -> Embedding:
     """Pull an embedding from the database, or generate a new one."""
     # Search for the text to see if an embedding already exists
     try:
-        embedding = Embedding.objects.get(
-            text=text,
-            model=model,
-            service=service,
-            user=user,
-        )
+        filters = dict(text=text, model=model, service=service)
+        if user:
+            filters['user'] = user
+        embedding = Embedding.objects.get(**filters)
+
     except Embedding.DoesNotExist:
         # We need to generate a new embedding!
         # Fetch the required provider class from the name of the service requested by the user. The service name
