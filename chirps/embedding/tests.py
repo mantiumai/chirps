@@ -62,7 +62,7 @@ class TestEmbedding(TestCase):
     def test_create_invalid_openai_model(self, _mock_openai_embedding_create):
         """Pass in a junk model name to the OpenAI service."""
         response = self.client.get(
-            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OA'}
+            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OpenAI'}
         )
         self.assertContains(
             response,
@@ -82,7 +82,7 @@ class TestEmbedding(TestCase):
         # Fire off an embedding request that will hit the OpenAI mock
         # The request SHOULD create a new Embedding object in the database
         response = self.client.get(
-            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OA'}
+            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OpenAI'}
         )
         self.assertContains(response, text='-0.016634132713079453', count=2, status_code=200)
 
@@ -91,7 +91,7 @@ class TestEmbedding(TestCase):
 
         # Fire off a duplicate request - verify there is still only one model in the DB
         response = self.client.get(
-            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OA'}
+            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OpenAI'}
         )
         self.assertContains(response, text='-0.016634132713079453', count=2, status_code=200)
         self.assertEqual(1, Embedding.objects.all().count())
@@ -108,7 +108,7 @@ class TestEmbedding(TestCase):
         # Fire off an embedding request that will hit the OpenAI mock
         # The request SHOULD create a new Embedding object in the database
         response = self.client.get(
-            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OA'}
+            reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OpenAI'}
         )
         self.assertContains(response, text='-0.016634132713079453', count=2, status_code=200)
 

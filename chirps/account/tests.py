@@ -8,19 +8,16 @@ from .forms import ProfileForm
 class AccountTests(TestCase):
     """Main test class for the account application."""
 
-    def test_openai_key_hash(self):
-        """Verify that the openai_key paramater is correctly hashed by the form"""
+    def test_openai_key(self):
+        """Verify that the openai_key paramater is stored by the form"""
         secret_val = 'secret_12345abcd'
         form = ProfileForm({'openai_key': secret_val})
 
         # Valid form, or bust
         assert form.is_valid()
 
-        # Make sure the password isn't part of the cleaned data!
-        self.assertNotEqual(form.cleaned_data['openai_key'], secret_val)
-
-        # Make sure the cleaned data is a valid hash
-        self.assertTrue(form.cleaned_data['openai_key'].startswith('pbkdf2_sha256$'))
+        # Make sure the OpenAI key is part of the cleaned data!
+        self.assertEqual(form.cleaned_data['openai_key'], secret_val)
 
     def test_new_account_signup(self):
         """Verify that a new account can be created"""
