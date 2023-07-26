@@ -14,13 +14,13 @@ class Command(BaseCommand):
 
     help = 'Initialize the app by running multiple management commands'
 
-    def load_data_from_fixtures(self, path):
+    def load_data_from_fixtures(self, path, ignore_mocks=True):
         """Iterate over policies in directory and load their data"""
         policies_directory = BASE_DIR.as_posix() + path
 
         # Iterate over each file in the policies directory
         for filename in os.listdir(policies_directory):
-            if filename.startswith('__') or filename.endswith('_mock.json'):
+            if filename.startswith('__') or (ignore_mocks and filename.endswith('_mock.json')):
                 continue
 
             file_path = os.path.join(policies_directory, filename)
