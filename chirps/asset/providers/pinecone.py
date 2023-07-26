@@ -2,9 +2,9 @@
 from logging import getLogger
 
 import pinecone as pinecone_lib
-from asset.custom_fields import CustomEncryptedCharField
 from asset.models import BaseAsset
 from django.db import models
+from fernet_fields import EncryptedCharField
 
 logger = getLogger(__name__)
 
@@ -12,7 +12,7 @@ logger = getLogger(__name__)
 class PineconeAsset(BaseAsset):
     """Implementation of a Pinecone asset."""
 
-    api_key = CustomEncryptedCharField(max_length=256, editable=True)
+    api_key = EncryptedCharField(max_length=256, editable=True)
     environment = models.CharField(max_length=256, blank=True, null=True)
     index_name = models.CharField(max_length=256, blank=True, null=True)
     project_name = models.CharField(max_length=256, blank=True, null=True)
@@ -33,7 +33,8 @@ class PineconeAsset(BaseAsset):
         if self.api_key is not None:
             try:
                 decrypted_value = self.api_key
-                return decrypted_value
+                masked_value = decrypted_value[:4] + '*' * (len(decrypted_value) - 4)
+                return masked_value
             except UnicodeDecodeError:
                 return 'Error: Decryption failed'
         return None
