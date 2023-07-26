@@ -25,5 +25,5 @@ urlpatterns = [
     path('embedding/', include('embedding.urls')),
     path('policy/', include('policy.urls')),
     path('scan/', include('scan.urls')),
-    path('target/', include('target.urls')),
+    path('asset/', include('asset.urls')),
 ]

@@ -1,15 +1,15 @@
 """Views for the scan application."""
 from collections import defaultdict
 
+from asset.models import BaseAsset
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from policy.models import Policy
-from target.models import BaseTarget
 
 from .forms import ScanForm
-from .models import Finding, Result, Scan, ScanTarget
+from .models import Finding, Result, Scan, ScanAsset
 from .tasks import scan_task
 
 
@@ -38,14 +38,14 @@ def view_scan(request, scan_id):
     """View details for a particular scan."""
     scan = get_object_or_404(Scan, pk=scan_id, user=request.user)
 
-    # Assemble a slit of all the results that had findings, across all targets
+    # Assemble a slit of all the results that had findings, across all assets
     results = []
-    scan_targets = ScanTarget.objects.filter(scan=scan)
+    scan_assets = ScanAsset.objects.filter(scan=scan)
 
     # Step 1: build a list of all the results (rules) with findings.
-    for scan_target in scan_targets:
+    for scan_asset in scan_assets:
         # Iterate through the rule set
-        for result in scan_target.results.all():
+        for result in scan_asset.results.all():
             if result.has_findings():
                 results.append(result)
 
@@ -113,17 +113,17 @@ def create(request):
             selected_policies = scan_form.cleaned_data['policies']
             scan.policies.set(selected_policies)
 
-            # For every target that was selected, kick off a task
-            for target in scan_form.cleaned_data['targets']:
+            # For every asset that was selected, kick off a task
+            for asset in scan_form.cleaned_data['assets']:
 
-                scan_target = ScanTarget.objects.create(scan=scan, target=target)
+                scan_asset = ScanAsset.objects.create(scan=scan, asset=asset)
 
                 # Kick off the scan task
-                result = scan_task.delay(scan_target_id=scan_target.id)
+                result = scan_task.delay(scan_asset_id=scan_asset.id)
 
                 # Save off the Celery task ID on the Scan object
-                scan_target.celery_task_id = result.id
-                scan_target.save()
+                scan_asset.celery_task_id = result.id
+                scan_asset.save()
 
             # Redirect the user back to the dashboard
             return redirect('scan_dashboard')
@@ -134,12 +134,12 @@ def create(request):
     # Fetch the list of template and custom policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
     user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')
-    targets = BaseTarget.objects.filter(user=request.user)
+    assets = BaseAsset.objects.filter(user=request.user)
 
     return render(
         request,
         'scan/create.html',
-        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'targets': targets},
+        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'assets': assets},
     )
 
 
@@ -170,14 +170,14 @@ def status(request, scan_id):
 
 
 @login_required
-def target_status(request, scan_target_id):
+def asset_status(request, scan_asset_id):
     """Fetch the status of a scan job."""
-    scan_target = get_object_or_404(ScanTarget, pk=scan_target_id, scan__user=request.user)
+    scan_asset = get_object_or_404(ScanAsset, pk=scan_asset_id, scan__user=request.user)
 
     # Respond with the status of the celery task and the progress percentage of the scan
-    response = f'{scan_target.celery_task_status()} : {scan_target.progress} %'
+    response = f'{scan_asset.celery_task_status()} : {scan_asset.progress} %'
 
-    if scan_target.finished_at is not None:
+    if scan_asset.finished_at is not None:
         # HTMX will stop polling if we return a 286
         return HttpResponse(content=response, status=286)
 

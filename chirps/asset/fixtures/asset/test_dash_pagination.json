@@ -1,33 +1,33 @@
 [
     {
-        "model": "target.basetarget",
+        "model": "asset.baseasset",
         "pk": 1,
         "fields": {
-            "polymorphic_ctype": ["target", "mantiumtarget"],
+            "polymorphic_ctype": ["asset", "mantiumasset"],
             "name": "ZimTest",
             "user": 1
         }
     },
     {
-        "model": "target.basetarget",
+        "model": "asset.baseasset",
         "pk": 2,
         "fields": {
-            "polymorphic_ctype": ["target", "redistarget"],
+            "polymorphic_ctype": ["asset", "redisasset"],
             "name": "Dummy Redis",
             "user": 1
         }
     },
     {
-        "model": "target.basetarget",
+        "model": "asset.baseasset",
         "pk": 3,
         "fields": {
-            "polymorphic_ctype": ["target", "pineconetarget"],
+            "polymorphic_ctype": ["asset", "pineconeasset"],
             "name": "Dummy Pinecone",
             "user": 1
         }
     },
     {
-        "model": "target.mantiumtarget",
+        "model": "asset.mantiumasset",
         "pk": 1,
         "fields": {
             "app_id": "6487620f86cc840954d29704",
@@ -37,7 +37,7 @@
         }
     },
     {
-        "model": "target.pineconetarget",
+        "model": "asset.pineconeasset",
         "pk": 3,
         "fields": {
             "api_key": "secret_123",
@@ -47,7 +47,7 @@
         }
     },
     {
-        "model": "target.redistarget",
+        "model": "asset.redisasset",
         "pk": 2,
         "fields": {
             "host": "127.0.0.1",

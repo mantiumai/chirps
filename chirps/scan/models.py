@@ -1,4 +1,5 @@
 """Models for the scan application."""
+from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -6,11 +7,10 @@ from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
 from policy.models import Rule
-from target.models import BaseTarget
 
 
 class Scan(models.Model):
-    """Model for a single scan run against a target."""
+    """Model for a single scan run against an asset."""
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
@@ -34,8 +34,8 @@ class Scan(models.Model):
         value_count = 0
         value = 0
 
-        for scan_target in self.scan_targets.all():
-            value += scan_target.progress
+        for scan_asset in self.scan_assets.all():
+            value += scan_asset.progress
             value_count += 1
 
         try:   # Avoid divide by zero
@@ -53,36 +53,36 @@ class Scan(models.Model):
 
         return 'N/A'
 
-    def target_count(self):
-        """Fetch the number of scan targets associated with this scan."""
-        return ScanTarget.objects.filter(scan=self).count()
+    def asset_count(self):
+        """Fetch the number of scan assets associated with this scan."""
+        return ScanAsset.objects.filter(scan=self).count()
 
     def findings_count(self) -> int:
         """Fetch the number of findings associated with this scan."""
         count = 0
-        scan_targets = ScanTarget.objects.filter(scan=self)
-        for scan_target in scan_targets:
+        scan_assets = ScanAsset.objects.filter(scan=self)
+        for scan_asset in scan_assets:
 
             # Iterate through the rule set
-            for result in scan_target.results.all():
+            for result in scan_asset.results.all():
                 count += result.findings_count()
 
         return count
 
 
-class ScanTarget(models.Model):
-    """Model for a single target that was scanned."""
+class ScanAsset(models.Model):
+    """Model for a single asset that was scanned."""
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
-    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_targets')
-    target = models.ForeignKey(BaseTarget, on_delete=models.CASCADE)
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_assets')
+    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
 
     def __str__(self) -> str:
-        """Stringify the target name"""
-        return self.target.name
+        """Stringify the asset name"""
+        return self.asset.name
 
     def celery_task_status(self) -> str:
         """Fetch the status of the Celery task associated with this scan."""
@@ -106,8 +106,8 @@ class ScanTarget(models.Model):
 class Result(models.Model):
     """Model for a single result from a rule."""
 
-    # Scan target that the result belongs to
-    scan_target = models.ForeignKey(ScanTarget, on_delete=models.CASCADE, related_name='results')
+    # Scan asset that the result belongs to
+    scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='results')
 
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()
@@ -129,7 +129,7 @@ class Result(models.Model):
 
     def __str__(self):
         """Stringify the rule name and scan ID"""
-        return f'{self.rule.name} - {self.scan_target.scan.id}'
+        return f'{self.rule.name} - {self.scan_asset.scan.id}'
 
 
 class Finding(models.Model):

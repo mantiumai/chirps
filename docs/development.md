@@ -10,17 +10,17 @@ permalink: /development/
 The Chirps application will execute scans against a taget.
 
 ## What is in a Scan?
-A scan executes a plan against a target. A plan is a list of rules. Each rule has a query which is executed against the target. The rule has a match regular expression that will be used to search the results of the query. If a match is found, it is flagged.
+A scan executes a plan against an asset. A plan is a list of rules. Each rule has a query which is executed against the asset. The rule has a match regular expression that will be used to search the results of the query. If a match is found, it is flagged.
 
-When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a plan, executing the queries against the scan target. Results are stored in the database via the `Result` and `Finding` models.
+When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a plan, executing the queries against the scan asset. Results are stored in the database via the `Result` and `Finding` models.
 
-## What are Targets?
-A target is a destination that rule queries are executed against. Target providers are responsible for executing the queries and handing back the results to the scan task.
+## What are Assets?
+An asset is a destination that rule queries are executed against. Asset providers are responsible for executing the queries and handing back the results to the scan task.
 
 
 # Plan Application
 
-The Plan application provides functionality for managing scanning plans and rules. A Plan consists of a set of rules that define the steps to be executed when scanning a target. Plans can be created by users or preloaded as templates.
+The Plan application provides functionality for managing scanning plans and rules. A Plan consists of a set of rules that define the steps to be executed when scanning an asset. Plans can be created by users or preloaded as templates.
 
 ## Models
 
@@ -39,7 +39,7 @@ The `Rule` model represents a step to be executed within a plan. It contains the
 
 - `name`: A CharField with a maximum length of 256 characters.
 - `description`: A TextField for storing a detailed description of the rule.
-- `query_string`: A TextField for storing the query to be run against the target.
+- `query_string`: A TextField for storing the query to be run against the asset.
 - `query_embedding`: A TextField for storing the embedding of the query string. This field is nullable and can be left blank.
 - `regex_test`: A TextField for storing the regular expression to be run against the response documents.
 - `severity`: An IntegerField indicating the severity of the problem if the regex test finds results in the response documents.
@@ -66,19 +66,19 @@ Plans can be loaded from JSON files stored in the `fixtures/plans` directory. Al
 
 ## Overview
 
-The Scan application provides functionality for managing scans and their results. Scans are executed against a target using a selected plan, which consists of a set of rules. The results of the scan include the findings for each rule.
+The Scan application provides functionality for managing scans and their results. Scans are executed against an asset using a selected plan, which consists of a set of rules. The results of the scan include the findings for each rule.
 
 ## Models
 
 ### Scan
 
-The `Scan` model represents a single scan run against a target. It contains the following fields:
+The `Scan` model represents a single scan run against an asset. It contains the following fields:
 
 - `started_at`: A DateTimeField indicating the start time of the scan.
 - `finished_at`: A DateTimeField indicating the completion time of the scan. This field is nullable.
 - `description`: A TextField for storing a description of the scan.
 - `plan`: A ForeignKey to the Plan model.
-- `target`: A ForeignKey to the BaseTarget model.
+- `asset`: A ForeignKey to the BaseAsset model.
 - `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
 - `progress`: An IntegerField for storing the progress percentage of the scan.
 - `user`: A ForeignKey to the User model, indicating the user who initiated the scan. This field is nullable.
@@ -103,7 +103,7 @@ The `Finding` model identifies the location of a finding within a result. It con
 
 ### scan_task
 
-The `scan_task` is a Celery task that performs the scan process. It iterates through the plan's rules and executes them against the target. The results and findings are then persisted in the database.
+The `scan_task` is a Celery task that performs the scan process. It iterates through the plan's rules and executes them against the asset. The results and findings are then persisted in the database.
 
 ## Views
 
@@ -131,37 +131,37 @@ The `status` view returns the status of a scan job. It responds with the Celery 
 
 User-provided scans…
 
-# Target Application
+# Asset Application
 
 ## Overview
 
-The Target application provides functionality for managing and interfacing with various target databases used for storing and searching document embeddings. The supported target types include Mantium, Redis, and Pinecone.
+The Asset application provides functionality for managing and interfacing with various asset databases used for storing and searching document embeddings. The supported asset types include Mantium, Redis, and Pinecone.
 
 ## Models
 
-### BaseTarget
+### BaseAsset
 
-The `BaseTarget` model is a polymorphic base class that all target models inherit from. It contains the following fields:
+The `BaseAsset` model is a polymorphic base class that all asset models inherit from. It contains the following fields:
 
 - `name`: A CharField with a maximum length of 128 characters.
 - `user`: A ForeignKey to the User model. This field is nullable.
 
-Each derived target model should implement the `search()` and `test_connection()` methods.
+Each derived asset model should implement the `search()` and `test_connection()` methods.
 
-## Derived Target Models
+## Derived Asset Models
 
-### MantiumTarget
+### MantiumAsset
 
-The `MantiumTarget` model represents a Mantium target. It contains the following fields:
+The `MantiumAsset` model represents a Mantium asset. It contains the following fields:
 
 - `app_id`: A CharField with a maximum length of 256 characters.
 - `client_id`: A CharField with a maximum length of 256 characters.
 - `client_secret`: An EncryptedCharField with a maximum length of 256 characters.
 - `top_k`: An IntegerField with a default value of 100.
 
-### RedisTarget
+### RedisAsset
 
-The `RedisTarget` model represents a Redis target. It contains the following fields:
+The `RedisAsset` model represents a Redis asset. It contains the following fields:
 
 - `host`: A CharField with a maximum length of 1048 characters.
 - `port`: A PositiveIntegerField.
@@ -172,9 +172,9 @@ The `RedisTarget` model represents a Redis target. It contains the following fie
 - `text_field`: A CharField with a maximum length of 256 characters.
 - `embedding_field`: A CharField with a maximum length of 256 characters.
 
-### PineconeTarget
+### PineconeAsset
 
-The `PineconeTarget` model represents a Pinecone target. It contains the following fields:
+The `PineconeAsset` model represents a Pinecone asset. It contains the following fields:
 
 - `api_key`: A CustomEncryptedCharField with a maximum length of 256 characters.
 - `environment`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
@@ -186,25 +186,25 @@ The `PineconeTarget` model represents a Pinecone target. It contains the followi
 
 ### dashboard
 
-The `dashboard` view renders the target dashboard. It displays the user's targets, paginated with a default of 25 targets per page.
+The `dashboard` view renders the asset dashboard. It displays the user's assets, paginated with a default of 25 assets per page.
 
 ### create
 
-The `create` view renders the target creation page and handles the creation of new targets.
+The `create` view renders the asset creation page and handles the creation of new assets.
 
 ### ping
 
-The `ping` view tests the connection to a RedisTarget database using the `test_connection()` function.
+The `ping` view tests the connection to a RedisAsset database using the `test_connection()` function.
 
 ### delete
 
-The `delete` view deletes a target from the database.
+The `delete` view deletes an asset from the database.
 
 ## Providers
 
 ### mantium.py
 
-These files contain the logic for interfacing with each target type.
+These files contain the logic for interfacing with each asset type.
 
 # Account Application
 

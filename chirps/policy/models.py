@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Policy(models.Model):
-    """Model for what to do when scanning a target."""
+    """Model for what to do when scanning an asset."""
 
     # True to hide this policy from the user
     archived = models.BooleanField(default=False)
@@ -41,7 +41,7 @@ class Rule(models.Model):
 
     name = models.CharField(max_length=256)
 
-    # Query to run against the target
+    # Query to run against the asset
     query_string = models.TextField()
 
     # Embedding of the query string

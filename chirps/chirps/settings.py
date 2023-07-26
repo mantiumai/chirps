@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'fernet_fields',
     'base_app',
     'scan',
-    'target',
+    'asset',
     'account',
     'policy',
     'embedding',

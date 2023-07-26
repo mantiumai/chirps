@@ -1,6 +1,6 @@
 # Chirps
 
-Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against a target using a selected plan, and view the results of the scan, including any findings.
+Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against an asset using a selected plan, and view the results of the scan, including any findings.
 
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
 ## Quick Start
@@ -68,11 +68,11 @@ The `/docs` folder contains documentation which is built via [Jekyll](https://je
 
 ## Project Layout
 
-At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Target`.
+At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Asset`.
 
-### `Target`
+### `Asset`
 
-The `Target` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete target configurations, which include connection details and authentication credentials. Each target model is derived from a `BaseTarget` model that implements the `search()` and `test_connection()` methods for seamless integration with different services/databases.
+The `Asset` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete asset configurations, which include connection details and authentication credentials. Each asset model is derived from a `BaseAsset` model that implements the `search()` and `test_connection()` methods for seamless integration with different services/databases.
 
 ### `Scan`
 
@@ -80,7 +80,7 @@ The `Scan` application manages scans and their results. Users can create, execut
 
 ### `Plan`
 
-The `Plan` application manages scanning plans and rules for the Scan application. A Plan consists of a set of rules that define the steps executed when scanning a target. Users can create plans or use preloaded templates.
+The `Plan` application manages scanning plans and rules for the Scan application. A Plan consists of a set of rules that define the steps executed when scanning an asset. Users can create plans or use preloaded templates.
 
 ### `Authentication System`
 
