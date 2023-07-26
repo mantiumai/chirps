@@ -72,7 +72,9 @@ class TestEmbedding(TestCase):
 
     @patch(
         'openai.Embedding.create',
-        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json', encoding='utf-8').read()),
+        return_value=json.loads(
+            open(f'{fixture_path}/tests/openai_embedding_create_mock.json', encoding='utf-8').read()
+        ),
     )
     def test_create_valid(self, _mock_openai_embedding_create):
         """Test creating a valid embedding."""
@@ -98,7 +100,9 @@ class TestEmbedding(TestCase):
 
     @patch(
         'openai.Embedding.create',
-        return_value=json.loads(open(f'{fixture_path}/openai_embedding_create_mock.json', encoding='utf-8').read()),
+        return_value=json.loads(
+            open(f'{fixture_path}/tests/openai_embedding_create_mock.json', encoding='utf-8').read()
+        ),
     )
     def test_delete(self, _mock_openai_embedding_create):
         """Test deleting an embedding."""

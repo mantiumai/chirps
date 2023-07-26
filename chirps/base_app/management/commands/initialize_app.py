@@ -14,9 +14,9 @@ class Command(BaseCommand):
 
     help = 'Initialize the app by running multiple management commands'
 
-    def load_data_from_policies_directory(self):
+    def load_data_from_fixtures(self, path):
         """Iterate over policies in directory and load their data"""
-        policies_directory = BASE_DIR.as_posix() + '/policy/fixtures/policy'
+        policies_directory = BASE_DIR.as_posix() + path
 
         # Iterate over each file in the policies directory
         for filename in os.listdir(policies_directory):
@@ -68,8 +68,10 @@ class Command(BaseCommand):
 
         # Run the 'loaddata' command
         self.stdout.write(self.style.WARNING('Loading data from fixtures...'))
-        self.load_data_from_policies_directory()
-        self.stdout.write(self.style.SUCCESS('Data loaded from fixtures'))
+        self.load_data_from_fixtures('/policy/fixtures/policy')
+        self.stdout.write(self.style.SUCCESS('Policy data loaded from fixtures'))
+        self.load_data_from_fixtures('/embedding/fixtures/embedding')
+        self.stdout.write(self.style.SUCCESS('Policy rule text embeddings data loaded from fixtures'))
 
         # Run the 'runserver' command
         self.stdout.write(self.style.WARNING('Starting the development server...'))
