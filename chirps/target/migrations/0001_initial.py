@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='BaseTarget',
+            name='BaseAsset',
             fields=[
                 (
                     'id',
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='MantiumTarget',
+            name='MantiumAsset',
             fields=[
                 (
                     'baseasset_ptr',
@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
             bases=('asset.baseasset',),
         ),
         migrations.CreateModel(
-            name='PineconeTarget',
+            name='PineconeAsset',
             fields=[
                 (
                     'baseasset_ptr',
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
             bases=('asset.baseasset',),
         ),
         migrations.CreateModel(
-            name='RedisTarget',
+            name='RedisAsset',
             fields=[
                 (
                     'baseasset_ptr',

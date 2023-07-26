@@ -1,25 +1,25 @@
 ---
 layout: page
-title: Add A Target
+title: Add A Asset
 permalink: /add-a-asset/
 ---
 
 
 This guide will walk you through the process of adding a new asset to the application by creating a custom `.py` file in the `/chirps/asset/providers` subdirectory.
 
-## Step 1: Create a New Target Model
+## Step 1: Create a New Asset Model
 
 Create a new `.py` file in the `/chirps/asset/providers` subdirectory. Name the file after your asset, for example: `my_asset.py`.
 
-## Step 2: Define the Target Model
+## Step 2: Define the Asset Model
 
-In the newly created file, define a class for your asset that inherits from the `BaseTarget` model. Here's an example using the `RedisTarget` model:
+In the newly created file, define a class for your asset that inherits from the `BaseAsset` model. Here's an example using the `RedisAsset` model:
 
 ```python
 from django.db import models
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 
-class RedisTarget(BaseTarget):
+class RedisAsset(BaseAsset):
     """Implementation of a Redis asset."""
 
     host = models.CharField(max_length=1048)
@@ -43,7 +43,7 @@ Customize the fields, properties, and methods as needed for your specific asset.
 
 ## Step 3: Implement Search and Test Connection Methods
 
-Define the `search()` and `test_connection()` methods for your asset model. These methods allow the asset to perform searches and test its connection to the database. Here's an example from the `PineconeTarget` model:
+Define the `search()` and `test_connection()` methods for your asset model. These methods allow the asset to perform searches and test its connection to the database. Here's an example from the `PineconeAsset` model:
 
 ```python
 def search(self, query: list, max_results: int) -> list[str]:
@@ -55,18 +55,18 @@ def test_connection(self) -> bool:
     # Implementation details ...
 ```
 
-## Step 4: Create a ModelForm for the Target Model
+## Step 4: Create a ModelForm for the Asset Model
 
-In the `asset/forms.py` file, create a new `ModelForm` for your asset model. This form will be used to render and validate the asset model in the user interface. Here's an example using the `RedisTargetForm`:
+In the `asset/forms.py` file, create a new `ModelForm` for your asset model. This form will be used to render and validate the asset model in the user interface. Here's an example using the `RedisAssetForm`:
 
 ```python
-from .providers.my_asset import MyTarget
+from .providers.my_asset import MyAsset
 
-class MyTargetForm(ModelForm):
-    """Form for the MyTarget model."""
+class MyAssetForm(ModelForm):
+    """Form for the MyAsset model."""
 
     class Meta:
-        model = MyTarget
+        model = MyAsset
         fields = [
             # List the fields you want to include in the form
         ]
@@ -76,22 +76,22 @@ class MyTargetForm(ModelForm):
         }
 ```
 
-## Step 5: Register the Target Model and Form
+## Step 5: Register the Asset Model and Form
 
 In the `asset/forms.py` file, add your new asset model and form to the `assets` list:
 
 ```python
 assets = [
-    {'form': RedisTargetForm, 'model': RedisTarget},
+    {'form': RedisAssetForm, 'model': RedisAsset},
     # ...
-    {'form': MyTargetForm, 'model': MyTarget},
+    {'form': MyAssetForm, 'model': MyAsset},
 ]
 ```
 
 This will make your new asset model and form available in the application.
 
-## Step 6: Test Your New Target
+## Step 6: Test Your New Asset
 
-After completing these steps, start the application and test your new asset by navigating to the "Add Target" page. Ensure that the asset is working correctly by performing searches and testing its connection to the database.
+After completing these steps, start the application and test your new asset by navigating to the "Add Asset" page. Ensure that the asset is working correctly by performing searches and testing its connection to the database.
 
 Congratulations! You have successfully added a new asset to the application.

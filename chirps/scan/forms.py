@@ -1,5 +1,5 @@
 """Forms for rendering scan application models."""
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django import forms
 from django.forms import ModelForm, ValidationError
 from policy.models import Policy
@@ -68,4 +68,4 @@ class ScanForm(ModelForm):
             return asset.user == user
 
         self.cleaned_data['policies'] = process_items('policies', Policy, is_valid_policy)
-        self.cleaned_data['assets'] = process_items('assets', BaseTarget, is_valid_asset)
+        self.cleaned_data['assets'] = process_items('assets', BaseAsset, is_valid_asset)

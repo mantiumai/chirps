@@ -9,7 +9,7 @@ from polymorphic.models import PolymorphicModel
 logger = getLogger(__name__)
 
 
-class BaseTarget(PolymorphicModel):
+class BaseAsset(PolymorphicModel):
     """Base class that all assets will inherit from."""
 
     name = models.CharField(max_length=128)

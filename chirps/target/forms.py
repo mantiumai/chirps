@@ -2,18 +2,18 @@
 from django import forms
 from django.forms import ModelForm
 
-from .providers.mantium import MantiumTarget
-from .providers.pinecone import PineconeTarget
-from .providers.redis import RedisTarget
+from .providers.mantium import MantiumAsset
+from .providers.pinecone import PineconeAsset
+from .providers.redis import RedisAsset
 
 
-class RedisTargetForm(ModelForm):
-    """Form for the RedisTarget model."""
+class RedisAssetForm(ModelForm):
+    """Form for the RedisAsset model."""
 
     class Meta:
-        """Django Meta options for the RedisTargetForm."""
+        """Django Meta options for the RedisAssetForm."""
 
-        model = RedisTarget
+        model = RedisAsset
         fields = [
             'name',
             'host',
@@ -53,13 +53,13 @@ class RedisTargetForm(ModelForm):
         }
 
 
-class MantiumTargetForm(ModelForm):
-    """Form for the MantiumTarget model."""
+class MantiumAssetForm(ModelForm):
+    """Form for the MantiumAsset model."""
 
     class Meta:
-        """Django Meta options for the MantiumTargetForm."""
+        """Django Meta options for the MantiumAssetForm."""
 
-        model = MantiumTarget
+        model = MantiumAsset
         fields = [
             'name',
             'app_id',
@@ -75,8 +75,8 @@ class MantiumTargetForm(ModelForm):
         }
 
 
-class PineconeTargetForm(ModelForm):
-    """Form for the PineconeTarget model."""
+class PineconeAssetForm(ModelForm):
+    """Form for the PineconeAsset model."""
 
     ENV_CHOICES = [
         ('us-west4-gcp-free', 'us-west4-gcp-free'),
@@ -96,9 +96,9 @@ class PineconeTargetForm(ModelForm):
     ]
 
     class Meta:
-        """Django Meta options for the PineconeTargetForm."""
+        """Django Meta options for the PineconeAssetForm."""
 
-        model = PineconeTarget
+        model = PineconeAsset
         fields = [
             'name',
             'api_key',
@@ -135,9 +135,9 @@ class PineconeTargetForm(ModelForm):
 
 
 assets = [
-    {'form': RedisTargetForm, 'model': RedisTarget},
-    {'form': MantiumTargetForm, 'model': MantiumTarget},
-    {'form': PineconeTargetForm, 'model': PineconeTarget},
+    {'form': RedisAssetForm, 'model': RedisAsset},
+    {'form': MantiumAssetForm, 'model': MantiumAsset},
+    {'form': PineconeAssetForm, 'model': PineconeAsset},
 ]
 
 

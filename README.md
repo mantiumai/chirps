@@ -68,11 +68,11 @@ The `/docs` folder contains documentation which is built via [Jekyll](https://je
 
 ## Project Layout
 
-At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Target`.
+At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Asset`.
 
-### `Target`
+### `Asset`
 
-The `Target` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete asset configurations, which include connection details and authentication credentials. Each asset model is derived from a `BaseTarget` model that implements the `search()` and `test_connection()` methods for seamless integration with different services/databases.
+The `Asset` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete asset configurations, which include connection details and authentication credentials. Each asset model is derived from a `BaseAsset` model that implements the `search()` and `test_connection()` methods for seamless integration with different services/databases.
 
 ### `Scan`
 

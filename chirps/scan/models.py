@@ -1,5 +1,5 @@
 """Models for the scan application."""
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -55,12 +55,12 @@ class Scan(models.Model):
 
     def asset_count(self):
         """Fetch the number of scan assets associated with this scan."""
-        return ScanTarget.objects.filter(scan=self).count()
+        return ScanAsset.objects.filter(scan=self).count()
 
     def findings_count(self) -> int:
         """Fetch the number of findings associated with this scan."""
         count = 0
-        scan_assets = ScanTarget.objects.filter(scan=self)
+        scan_assets = ScanAsset.objects.filter(scan=self)
         for scan_asset in scan_assets:
 
             # Iterate through the rule set
@@ -70,13 +70,13 @@ class Scan(models.Model):
         return count
 
 
-class ScanTarget(models.Model):
+class ScanAsset(models.Model):
     """Model for a single asset that was scanned."""
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_assets')
-    asset = models.ForeignKey(BaseTarget, on_delete=models.CASCADE)
+    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE)
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
 
@@ -107,7 +107,7 @@ class Result(models.Model):
     """Model for a single result from a rule."""
 
     # Scan asset that the result belongs to
-    scan_asset = models.ForeignKey(ScanTarget, on_delete=models.CASCADE, related_name='results')
+    scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='results')
 
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()

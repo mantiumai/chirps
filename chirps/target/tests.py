@@ -3,15 +3,15 @@ from unittest import mock
 
 import fakeredis
 import pytest
-from asset.providers.mantium import MantiumTarget
-from asset.providers.redis import RedisTarget
+from asset.providers.mantium import MantiumAsset
+from asset.providers.redis import RedisAsset
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
 from redis import exceptions
 
 
-class TargetTests(TestCase):
+class AssetTests(TestCase):
     """Test the asset application."""
 
     def setUp(self):
@@ -37,8 +37,8 @@ class TargetTests(TestCase):
     def test_asset_tenant_isolation(self):
         """Verify that assets are isolated to a single tenant."""
         # Create an asset for user1
-        MantiumTarget.objects.create(
-            name='Mantium Target',
+        MantiumAsset.objects.create(
+            name='Mantium Asset',
             app_id='12345',
             client_id='1234',
             client_secret='secret_dummy_value',
@@ -55,7 +55,7 @@ class TargetTests(TestCase):
         )
         self.assertRedirects(response, '/', status_code=302)
         response = self.client.get(reverse('asset_dashboard'))
-        self.assertContains(response, 'Mantium Target', status_code=200)
+        self.assertContains(response, 'Mantium Asset', status_code=200)
 
         # Verify that the is not accessible to user2 (need to login first)
         response = self.client.post(
@@ -67,10 +67,10 @@ class TargetTests(TestCase):
         )
         self.assertRedirects(response, '/', status_code=302)
         response = self.client.get(reverse('asset_dashboard'))
-        self.assertNotContains(response, 'Mantium Target', status_code=200)
+        self.assertNotContains(response, 'Mantium Asset', status_code=200)
 
 
-class TargetPaginationTests(TestCase):
+class AssetPaginationTests(TestCase):
     """Test the scan application."""
 
     fixtures = ['asset/test_dash_pagination.json']
@@ -115,11 +115,11 @@ class TargetPaginationTests(TestCase):
         self.assertContains(response, 'chirps-asset-3', status_code=200)
 
 
-class RedisTargetTests(TestCase):
-    """Test the RedisTarget"""
+class RedisAssetTests(TestCase):
+    """Test the RedisAsset"""
 
     def setUp(self):
-        """Set up the RedisTarget tests"""
+        """Set up the RedisAsset tests"""
         # Login the user before performing any tests
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
         self.server = fakeredis.FakeServer()
@@ -130,7 +130,7 @@ class RedisTargetTests(TestCase):
         self.server.connected = True
 
         with mock.patch('asset.providers.redis.Redis', return_value=self.redis):
-            asset = RedisTarget(host='localhost', port=12000)
+            asset = RedisAsset(host='localhost', port=12000)
             assert asset.test_connection()
 
     def test_ping__failure(self):
@@ -138,6 +138,6 @@ class RedisTargetTests(TestCase):
         self.server.connected = False
 
         with mock.patch('asset.providers.redis.Redis', return_value=self.redis):
-            asset = RedisTarget(host='localhost', port=12000)
+            asset = RedisAsset(host='localhost', port=12000)
             with pytest.raises(exceptions.ConnectionError):
                 assert asset.test_connection()

@@ -2,7 +2,7 @@
 from logging import getLogger
 
 import numpy as np
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django.db import models
 from redis import Redis
 from redis.commands.search.query import Query
@@ -10,7 +10,7 @@ from redis.commands.search.query import Query
 logger = getLogger(__name__)
 
 
-class RedisTarget(BaseTarget):
+class RedisAsset(BaseAsset):
     """Implementation of a Redis asset."""
 
     host = models.CharField(max_length=1048)

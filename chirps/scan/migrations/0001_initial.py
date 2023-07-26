@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ScanTarget',
+            name='ScanAsset',
             fields=[
                 (
                     'id',

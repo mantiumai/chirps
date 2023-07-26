@@ -3,36 +3,36 @@
 from django.contrib import admin
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 
-from .models import BaseTarget
-from .providers.mantium import MantiumTarget
-from .providers.pinecone import PineconeTarget
-from .providers.redis import RedisTarget
+from .models import BaseAsset
+from .providers.mantium import MantiumAsset
+from .providers.pinecone import PineconeAsset
+from .providers.redis import RedisAsset
 
 
-class BaseTargetAdmin(PolymorphicParentModelAdmin):
-    """Base admin class for the BaseTarget model."""
+class BaseAssetAdmin(PolymorphicParentModelAdmin):
+    """Base admin class for the BaseAsset model."""
 
-    base_model = BaseTarget
-
-
-class PineconeTargetAdmin(PolymorphicChildModelAdmin):
-    """Admin class for the PineconeTarget model."""
-
-    base_model = PineconeTarget
+    base_model = BaseAsset
 
 
-class MantiumTargetAdmin(PolymorphicChildModelAdmin):
-    """Admin class for the MantiumTarget model."""
+class PineconeAssetAdmin(PolymorphicChildModelAdmin):
+    """Admin class for the PineconeAsset model."""
 
-    base_model = MantiumTarget
-
-
-class RedisTargetAdmin(PolymorphicChildModelAdmin):
-    """Admin class for the RedisTarget model."""
-
-    base_model = RedisTarget
+    base_model = PineconeAsset
 
 
-admin.site.register(RedisTarget)
-admin.site.register(MantiumTarget)
-admin.site.register(PineconeTarget)
+class MantiumAssetAdmin(PolymorphicChildModelAdmin):
+    """Admin class for the MantiumAsset model."""
+
+    base_model = MantiumAsset
+
+
+class RedisAssetAdmin(PolymorphicChildModelAdmin):
+    """Admin class for the RedisAsset model."""
+
+    base_model = RedisAsset
+
+
+admin.site.register(RedisAsset)
+admin.site.register(MantiumAsset)
+admin.site.register(PineconeAsset)

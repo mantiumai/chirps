@@ -1,7 +1,7 @@
 """Logic for interfacing with the Mantium asset."""
 from logging import getLogger
 
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django.db import models
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
@@ -10,7 +10,7 @@ from mantium_spec.api.applications_api import ApplicationsApi
 logger = getLogger(__name__)
 
 
-class MantiumTarget(BaseTarget):
+class MantiumAsset(BaseAsset):
     """Implementation of a Mantium asset."""
 
     app_id = models.CharField(max_length=256)
@@ -25,7 +25,7 @@ class MantiumTarget(BaseTarget):
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Search the vector database"""
-        logger.debug('Starting Mantium Target search', extra={'id': self.id})
+        logger.debug('Starting Mantium Asset search', extra={'id': self.id})
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 

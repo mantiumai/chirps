@@ -2,12 +2,12 @@
 import re
 from logging import getLogger
 
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
 
-from .models import Finding, Result, ScanTarget
+from .models import Finding, Result, ScanAsset
 
 logger = getLogger(__name__)
 
@@ -18,21 +18,21 @@ def scan_task(scan_asset_id):
     logger.info('Starting scan task', extra={'scan_asset_id': scan_asset_id})
 
     try:
-        scan_asset = ScanTarget.objects.get(pk=scan_asset_id)
+        scan_asset = ScanAsset.objects.get(pk=scan_asset_id)
         scan = scan_asset.scan
 
         # Update scan status
         scan.status = 'Running'
         scan.save()
 
-    except ScanTarget.DoesNotExist:
-        logger.error('ScanTarget record not found', extra={'scan_asset_id': scan_asset_id})
-        scan_task.update_state(state='FAILURE', meta={'error': f'ScanTarget record not found ({scan_asset_id})'})
+    except ScanAsset.DoesNotExist:
+        logger.error('ScanAsset record not found', extra={'scan_asset_id': scan_asset_id})
+        scan_task.update_state(state='FAILURE', meta={'error': f'ScanAsset record not found ({scan_asset_id})'})
         return
 
     # Need to perform a secondary query in order to fetch the derrived class
     # This magic is handled by django-polymorphic
-    asset = BaseTarget.objects.get(id=scan_asset.asset.id)
+    asset = BaseAsset.objects.get(id=scan_asset.asset.id)
 
     # Iterate through the selected policies and fetch their rules
     policy_rules = []

@@ -3,13 +3,13 @@ from logging import getLogger
 
 import pinecone as pinecone_lib
 from asset.custom_fields import CustomEncryptedCharField
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django.db import models
 
 logger = getLogger(__name__)
 
 
-class PineconeTarget(BaseTarget):
+class PineconeAsset(BaseAsset):
     """Implementation of a Pinecone asset."""
 
     api_key = CustomEncryptedCharField(max_length=256, editable=True)

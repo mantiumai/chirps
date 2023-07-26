@@ -8,11 +8,11 @@ Chirps is a Django-based Python web application that allows users to search and 
 
 ## Project Layout
 
-At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Target`.
+At a high level, chirps performs security scans on vector databases and knowledge query systems. Users choose a `Plan` to `Scan` a `Asset`.
 
-### `Target`
+### `Asset`
 
-The `Target` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete asset configurations, which include connection details and authentication credentials. Each asset model is derived from a `BaseTarget` model that implements the `search()` and `test_connection()` methods for seamless integration with different database types.
+The `Asset` application allows users to interact with Mantium applications and vector databases like Redis and Pinecone for storing and searching document embeddings. Users can create, edit, and delete asset configurations, which include connection details and authentication credentials. Each asset model is derived from a `BaseAsset` model that implements the `search()` and `test_connection()` methods for seamless integration with different database types.
 
 ### `Scan`
 
@@ -42,7 +42,7 @@ The `Profile` model extends Django's built-in User model with a one-to-one relat
 - When prompted, create a superuser profile
 - In the codespace, click "Ports" on the lower toolbar and click the link under "Forwarded Ports" to access the application at port 8000.
 
-### Target Configuration
+### Asset Configuration
 Now that Chirps is running, it's time to setup your first asset. Click on the `assets` top level menu. From the assets dashboard, click the `new` button and select your asset type. As of this writing, Redis, Pinecone, and Mantium are supported. On the asset configuration page, enter the details which will allow Chirps to perform queries against it.
 
 ### Plan Configuration

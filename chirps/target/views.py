@@ -8,15 +8,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from redis import exceptions
 
 from .forms import asset_from_html_name, assets
-from .models import BaseTarget
-from .providers.pinecone import PineconeTarget
-from .providers.redis import RedisTarget
+from .models import BaseAsset
+from .providers.pinecone import PineconeAsset
+from .providers.redis import RedisAsset
 
 
 def decrypted_keys(request):
     """Return a list of decrypted API keys for all Pinecone assets."""
     keys = []
-    for asset in PineconeTarget.objects.all():
+    for asset in PineconeAsset.objects.all():
         keys.append(asset.decrypted_api_key)
     return JsonResponse({'keys': keys})
 
@@ -29,7 +29,7 @@ def dashboard(request):
         request (HttpRequest): Django request object
     """
     # Paginate the number of items returned to the user, defaulting to 25 per page
-    user_assets = BaseTarget.objects.filter(user=request.user).order_by('id')
+    user_assets = BaseAsset.objects.filter(user=request.user).order_by('id')
     paginator = Paginator(user_assets, request.GET.get('item_count', 25))
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -77,9 +77,9 @@ def create(request, html_name):
 
 @login_required
 def ping(request, asset_id):
-    """Ping a RedisTarget database using the test_connection() function."""
-    asset = get_object_or_404(BaseTarget, pk=asset_id)
-    if isinstance(asset, RedisTarget):
+    """Ping a RedisAsset database using the test_connection() function."""
+    asset = get_object_or_404(BaseAsset, pk=asset_id)
+    if isinstance(asset, RedisAsset):
         try:
             result = asset.test_connection()
             return JsonResponse({'success': result})
@@ -87,11 +87,11 @@ def ping(request, asset_id):
             return HttpResponseBadRequest(
                 json.dumps({'success': False, 'error': 'Unable to connect to Redis'}), content_type='application/json'
             )
-    return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Not a RedisTarget'}))
+    return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Not a RedisAsset'}))
 
 
 @login_required
 def delete(request, asset_id):   # pylint: disable=unused-argument
     """Delete an asset from the database."""
-    get_object_or_404(BaseTarget, pk=asset_id).delete()
+    get_object_or_404(BaseAsset, pk=asset_id).delete()
     return redirect('asset_dashboard')

@@ -14,8 +14,8 @@ A scan executes a plan against an asset. A plan is a list of rules. Each rule ha
 
 When a user kicks off a scan, a Celery task is queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a plan, executing the queries against the scan asset. Results are stored in the database via the `Result` and `Finding` models.
 
-## What are Targets?
-A asset is a destination that rule queries are executed against. Target providers are responsible for executing the queries and handing back the results to the scan task.
+## What are Assets?
+A asset is a destination that rule queries are executed against. Asset providers are responsible for executing the queries and handing back the results to the scan task.
 
 
 # Plan Application
@@ -78,7 +78,7 @@ The `Scan` model represents a single scan run against an asset. It contains the 
 - `finished_at`: A DateTimeField indicating the completion time of the scan. This field is nullable.
 - `description`: A TextField for storing a description of the scan.
 - `plan`: A ForeignKey to the Plan model.
-- `asset`: A ForeignKey to the BaseTarget model.
+- `asset`: A ForeignKey to the BaseAsset model.
 - `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
 - `progress`: An IntegerField for storing the progress percentage of the scan.
 - `user`: A ForeignKey to the User model, indicating the user who initiated the scan. This field is nullable.
@@ -131,37 +131,37 @@ The `status` view returns the status of a scan job. It responds with the Celery 
 
 User-provided scans…
 
-# Target Application
+# Asset Application
 
 ## Overview
 
-The Target application provides functionality for managing and interfacing with various asset databases used for storing and searching document embeddings. The supported asset types include Mantium, Redis, and Pinecone.
+The Asset application provides functionality for managing and interfacing with various asset databases used for storing and searching document embeddings. The supported asset types include Mantium, Redis, and Pinecone.
 
 ## Models
 
-### BaseTarget
+### BaseAsset
 
-The `BaseTarget` model is a polymorphic base class that all asset models inherit from. It contains the following fields:
+The `BaseAsset` model is a polymorphic base class that all asset models inherit from. It contains the following fields:
 
 - `name`: A CharField with a maximum length of 128 characters.
 - `user`: A ForeignKey to the User model. This field is nullable.
 
 Each derived asset model should implement the `search()` and `test_connection()` methods.
 
-## Derived Target Models
+## Derived Asset Models
 
-### MantiumTarget
+### MantiumAsset
 
-The `MantiumTarget` model represents a Mantium asset. It contains the following fields:
+The `MantiumAsset` model represents a Mantium asset. It contains the following fields:
 
 - `app_id`: A CharField with a maximum length of 256 characters.
 - `client_id`: A CharField with a maximum length of 256 characters.
 - `client_secret`: An EncryptedCharField with a maximum length of 256 characters.
 - `top_k`: An IntegerField with a default value of 100.
 
-### RedisTarget
+### RedisAsset
 
-The `RedisTarget` model represents a Redis asset. It contains the following fields:
+The `RedisAsset` model represents a Redis asset. It contains the following fields:
 
 - `host`: A CharField with a maximum length of 1048 characters.
 - `port`: A PositiveIntegerField.
@@ -172,9 +172,9 @@ The `RedisTarget` model represents a Redis asset. It contains the following fiel
 - `text_field`: A CharField with a maximum length of 256 characters.
 - `embedding_field`: A CharField with a maximum length of 256 characters.
 
-### PineconeTarget
+### PineconeAsset
 
-The `PineconeTarget` model represents a Pinecone asset. It contains the following fields:
+The `PineconeAsset` model represents a Pinecone asset. It contains the following fields:
 
 - `api_key`: A CustomEncryptedCharField with a maximum length of 256 characters.
 - `environment`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
@@ -194,7 +194,7 @@ The `create` view renders the asset creation page and handles the creation of ne
 
 ### ping
 
-The `ping` view tests the connection to a RedisTarget database using the `test_connection()` function.
+The `ping` view tests the connection to a RedisAsset database using the `test_connection()` function.
 
 ### delete
 

@@ -1,7 +1,7 @@
 """Views for the scan application."""
 from collections import defaultdict
 
-from asset.models import BaseTarget
+from asset.models import BaseAsset
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse
@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from policy.models import Policy
 
 from .forms import ScanForm
-from .models import Finding, Result, Scan, ScanTarget
+from .models import Finding, Result, Scan, ScanAsset
 from .tasks import scan_task
 
 
@@ -40,7 +40,7 @@ def view_scan(request, scan_id):
 
     # Assemble a slit of all the results that had findings, across all assets
     results = []
-    scan_assets = ScanTarget.objects.filter(scan=scan)
+    scan_assets = ScanAsset.objects.filter(scan=scan)
 
     # Step 1: build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
@@ -119,7 +119,7 @@ def create(request):
             # For every asset that was selected, kick off a task
             for asset in scan_form.cleaned_data['assets']:
 
-                scan_asset = ScanTarget.objects.create(scan=scan, asset=asset)
+                scan_asset = ScanAsset.objects.create(scan=scan, asset=asset)
 
                 # Kick off the scan task
                 result = scan_task.delay(scan_asset_id=scan_asset.id)
@@ -137,7 +137,7 @@ def create(request):
     # Fetch the list of template and custom policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
     user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')
-    assets = BaseTarget.objects.filter(user=request.user)
+    assets = BaseAsset.objects.filter(user=request.user)
 
     return render(
         request,
@@ -175,7 +175,7 @@ def status(request, scan_id):
 @login_required
 def asset_status(request, scan_asset_id):
     """Fetch the status of a scan job."""
-    scan_asset = get_object_or_404(ScanTarget, pk=scan_asset_id, scan__user=request.user)
+    scan_asset = get_object_or_404(ScanAsset, pk=scan_asset_id, scan__user=request.user)
 
     # Respond with the status of the celery task and the progress percentage of the scan
     response = f'{scan_asset.celery_task_status()} : {scan_asset.progress} %'
