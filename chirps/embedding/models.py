@@ -12,8 +12,8 @@ class Embedding(models.Model):
     class Service(models.TextChoices):
         """Enumerations to define services available for generating embeddings."""
 
-        OPEN_AI = 'OA', 'OpenAI'
-        LOCAL = 'LH', 'Locally Hosted: NOT IMPLEMENTED'
+        OPEN_AI = 'OpenAI', 'OpenAI'
+        LOCAL = 'Localhost', 'Locally Hosted: NOT IMPLEMENTED'
 
         @classmethod
         def get_provider_from_service_name(cls, name: str) -> BaseEmbeddingProvider:
@@ -29,7 +29,7 @@ class Embedding(models.Model):
     model = models.CharField(max_length=256)
 
     # The service used to generate the embedding
-    service = models.CharField(max_length=2, choices=Service.choices)
+    service = models.CharField(max_length=256, choices=Service.choices)
 
     # The text used to generate the embedding
     text = models.TextField()
