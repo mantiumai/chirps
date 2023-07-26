@@ -5,7 +5,7 @@ permalink: /development/
 ---
 
 # Architecture
-![Architecture]({{"/assets/images/Application Architecture.png" | relative_url }})
+![Architecture]({{"/assets/images/application_architecture.png" | relative_url }})
 
 The Chirps application will execute scans against a taget.
 
