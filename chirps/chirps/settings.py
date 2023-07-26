@@ -148,12 +148,6 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 
-# FERNET SETTINGS
-if os.getenv('FERNET_KEY') is None:
-    raise Exception('FERNET_KEY environment variable is not set')   # pylint: disable=broad-exception-raised
-
-FERNET_KEY = os.getenv('FERNET_KEY')
-
 # LOGGING Configuration Options
 LOGGING = {
     'version': 1,

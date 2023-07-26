@@ -176,7 +176,7 @@ The `RedisAsset` model represents a Redis asset. It contains the following field
 
 The `PineconeAsset` model represents a Pinecone asset. It contains the following fields:
 
-- `api_key`: A CustomEncryptedCharField with a maximum length of 256 characters.
+- `api_key`: An EncryptedCharField with a maximum length of 256 characters.
 - `environment`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
 - `index_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
 - `project_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
