@@ -11,11 +11,11 @@ class InitializeAppTests(TestCase):
     """Test the initialize_app management command"""
 
     @skip(reason='fixture fails to load')
-    def test_load_data_from_policies_directory(self):
+    def test_load_data_from_fixtures(self):
         """Test that data is loaded"""
         assert Policy.objects.count() == 0
         command = Command()
-        command.load_data_from_policies_directory()
+        command.load_data_from_fixtures()
 
         # check that data was loaded
         assert Policy.objects.count() > 0
