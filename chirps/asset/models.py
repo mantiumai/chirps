@@ -1,4 +1,4 @@
-"""Models for the asset appliation."""
+"""Models for the asset application."""
 from logging import getLogger
 
 from django.contrib.auth.models import User
