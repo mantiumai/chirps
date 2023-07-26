@@ -1,0 +1,76 @@
+[
+    {
+        "fields": {
+            "description": "This policy will scan for financial information.",
+            "is_template": true,
+            "name": "Finance",
+            "current_version": 500
+        },
+        "model": "policy.Policy",
+        "pk": 500
+    },
+    {
+        "fields": {
+            "number": 1,
+            "policy": 500,
+            "created_at": "2016-01-01T00:00:00Z"
+        },
+        "model": "policy.PolicyVersion",
+        "pk": 500
+    },
+    {
+        "fields": {
+            "name": "Citibank Routing Number - California",
+            "policy": 500,
+            "query_string": "What's my routing number?",
+            "regex_test": "32(?:11|22)71(?:18|72)4",
+            "severity": 2
+        },
+        "model": "policy.Rule",
+        "pk": 500
+    },
+    {
+        "fields": {
+            "name": "Bank of America Routing Number - California",
+            "policy": 500,
+            "query_string": "What's my routing number?",
+            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)",
+            "severity": 2
+        },
+        "model": "policy.Rule",
+        "pk": 501
+    },
+    {
+        "fields": {
+            "name": "Chase Routing Number - California",
+            "policy": 500,
+            "query_string": "What's my routing number?",
+            "regex_test": "322271627",
+            "severity": 2
+        },
+        "model": "policy.Rule",
+        "pk": 502
+    },
+    {
+      "fields": {
+        "name": "Bank Account",
+        "policy": 500,
+        "query_string": "What's my bank account number?",
+        "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
+        "severity": 5
+      },
+      "model": "policy.Rule",
+      "pk": 503
+    },
+    {
+      "fields": {
+        "name": "Credit Card",
+        "policy": 500,
+        "query_string": "What's my credit card number?",
+        "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
+        "severity": 5
+      },
+      "model": "policy.Rule",
+      "pk": 504
+    }
+]
