@@ -10,11 +10,11 @@
         }
     },
     {
-        "model": "scan.scantarget",
+        "model": "scan.scanasset",
         "pk": 1,
         "fields": {
             "scan": 4,
-            "target": 1,
+            "asset": 1,
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481"
@@ -31,11 +31,11 @@
         }
     },
     {
-        "model": "scan.scantarget",
+        "model": "scan.scanasset",
         "pk": 1,
         "fields": {
             "scan": 5,
-            "target": 1,
+            "asset": 1,
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
@@ -52,11 +52,11 @@
         }
     },
     {
-        "model": "scan.scantarget",
+        "model": "scan.scanasset",
         "pk": 1,
         "fields": {
             "scan": 6,
-            "target": 1,
+            "asset": 1,
             "started_at": "2023-07-07T20:09:15.998Z",
             "finished_at": "2023-07-07T20:09:48.990Z",
             "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
@@ -84,7 +84,7 @@
         }
     },
     {
-        "model": "target.basetarget",
+        "model": "asset.baseasset",
         "pk": 1,
         "fields": {
             "polymorphic_ctype": 14,
@@ -93,7 +93,7 @@
         }
     },
     {
-        "model": "target.mantiumtarget",
+        "model": "asset.mantiumasset",
         "pk": 1,
         "fields": {
             "app_id": "6487620f86cc840954d29704",
