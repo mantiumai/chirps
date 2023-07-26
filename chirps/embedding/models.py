@@ -38,7 +38,7 @@ class Embedding(models.Model):
     vectors = models.JSONField()
 
     # Which user does this embedding belong to?
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def to_dict(self) -> dict:
         """Convert the model to a dictionary."""

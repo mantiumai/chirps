@@ -25,7 +25,7 @@ class MantiumTarget(BaseTarget):
 
     def search(self, query: str, max_results: int) -> list[str]:
         """Search the vector database"""
-        logger.info('Starting Mantium Target search', extra={'id': self.id})
+        logger.debug('Starting Mantium Target search', extra={'id': self.id})
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
         apps_api = ApplicationsApi(client)
 
@@ -33,5 +33,5 @@ class MantiumTarget(BaseTarget):
         results = apps_api.query_application(self.app_id, query_request)
 
         documents = [doc['content'] for doc in results['documents']]
-        logger.info('Mantium target search complete', extra={'id': self.id})
+        logger.debug('Mantium target search complete', extra={'id': self.id})
         return documents

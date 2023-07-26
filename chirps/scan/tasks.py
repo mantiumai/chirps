@@ -38,15 +38,20 @@ def scan_task(scan_target_id):
     policy_rules = []
     for policy in scan.policies.all():
         for rule in policy.current_version.rules.all():
-            policy_rules.append(rule)
+            policy_rules.append((policy, rule))
 
     total_rules = len(policy_rules)
     rules_run = 0
-    for rule in policy_rules:
+    for policy, rule in policy_rules:
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if target.REQUIRES_EMBEDDINGS:
-            embedding = create_embedding(rule.query_string, 'text-embedding-ada-002', 'OA', scan.user)
+            # template policies should not be bound to a user
+            add_user_filter = not policy.is_template
+            user = scan.user if add_user_filter else None
+            embedding = create_embedding(
+                rule.query_string, target.embedding_model, target.embedding_model_service, user
+            )
             query = embedding.vectors
         else:
             query = rule.query_string
