@@ -65,7 +65,7 @@ The `create` view renders the form for creating a new policy.
 
 ## Loading Policies from JSON Files
 
-Policies can be loaded from JSON files stored in the `fixtures/policies` directory. All policies are automatically loaded when running the `./manage.py initialize_app` command. To load a new policy added to the fixtures directory, use the following command:
+Policies can be loaded from JSON files stored in the `fixtures/policy` directory. All policies are automatically loaded when running the `./manage.py initialize_app` command. To load a new policy added to the fixtures directory, use the following command:
 
 `./manage.py loaddata /policy/fixtures/policy/<new_plan>.json`
 
@@ -74,7 +74,7 @@ Policies can be loaded from JSON files stored in the `fixtures/policies` directo
 
 ## Overview
 
-The Scan application provides functionality for managing scans and their results. Scans are executed against an asset using a selected policy, which consists of a set of rules. The results of the scan include the findings for each rule.
+The Scan application provides functionality for managing scans and their results. Scans are executed against one or more assets using selected policies, each of which consists of a set of rules. The results of the scan include the findings for each rule.
 
 ## Models
 
@@ -82,36 +82,70 @@ The Scan application provides functionality for managing scans and their results
 
 The `Scan` model represents a single scan run against an asset. It contains the following fields:
 
-- `started_at`: A DateTimeField indicating the start time of the scan.
+- `started_at`: A DateTimeField indicating the start time of the scan, automatically set when the scan is created.
 - `finished_at`: A DateTimeField indicating the completion time of the scan. This field is nullable.
 - `description`: A TextField for storing a description of the scan.
-- `policy`: A ForeignKey to the Policy model.
+- `policies`: A ManyToManyField to the Policy model.
+- `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
+- `user`: A ForeignKey to the User model, indicating the user who initiated the scan. This field is nullable.
+- `status`: A CharField with a maximum length of 32 characters, storing the status of the scan. The options are 'Queued', 'Running', 'Complete', 'Failed', with 'Queued' being the default.
+
+Additional methods of `Scan` model:
+- `__str__`: Returns the description of the scan.
+- `progress`: Computes the progress of the scan.
+- `duration`: Calculates the duration the scan has run.
+- `asset_count`: Fetches the number of scan assets associated with this scan.
+- `findings_count`: Fetches the number of findings associated with this scan.
+
+### ScanAsset
+
+The `ScanAsset` model represents a single asset that was scanned. It contains the following fields:
+
+- `started_at`: A DateTimeField indicating the start time of the scan of the asset, automatically set when the scan is created.
+- `finished_at`: A DateTimeField indicating the completion time of the scan of the asset. This field is nullable.
+- `scan`: A ForeignKey to the Scan model, with the related name 'scan_assets'.
 - `asset`: A ForeignKey to the BaseAsset model.
 - `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
-- `progress`: An IntegerField for storing the progress percentage of the scan.
-- `user`: A ForeignKey to the User model, indicating the user who initiated the scan. This field is nullable.
+- `progress`: An IntegerField for storing the progress percentage of the scan of the asset, with a default of 0.
+
+Additional methods of `ScanAsset` model:
+- `__str__`: Returns the name of the asset.
+- `celery_task_status`: Fetches the status of the Celery task associated with this scan.
+- `celery_task_output`: Fetches the output of the Celery task associated with this scan.
 
 ### Result
 
 The `Result` model represents a single result from a rule. It contains the following fields:
 
-- `scan`: A ForeignKey to the Scan model.
+- `scan_asset`: A ForeignKey to the ScanAsset model, with the related name 'results'.
 - `text`: An EncryptedTextField for storing the raw text that was scanned.
 - `rule`: A ForeignKey to the Rule model.
+
+Additional methods of `Result` model:
+- `has_findings`: Returns True if the result has findings, False otherwise.
+- `findings_count`: Returns the number of findings associated with this result.
+- `__str__`: Returns the rule name and scan ID as a string.
 
 ### Finding
 
 The `Finding` model identifies the location of a finding within a result. It contains the following fields:
 
-- `result`: A ForeignKey to the Result model.
+- `result`: A ForeignKey to the Result model, with the related name 'findings'.
 - `offset`: An IntegerField indicating the starting position of the finding in the result text.
 - `length`: An IntegerField indicating the length of the finding in the result text.
+
+Additional methods of `Finding` model:
+- `__str__`: Returns the offset and length as a string, separated by a colon.
+- `text`: Returns the text of the finding.
+- `surrounding_text`: Returns the text of the finding, with some surrounding context, highlighted with the 'text-danger' CSS class.
+- `with_highlight`: Returns the entire text searched by the finding's rule, with the finding highlighted with the 'bg-danger text-white' CSS class.
+
 
 ## Tasks
 
 ### scan_task
 
-The `scan_task` is a Celery task that performs the scan process. It iterates through the policy's rules and executes them against the asset. The results and findings are then persisted in the database.
+The `scan_task` is a Celery task that performs the scan process. It iterates through a policy's rules and executes them against the asset. The results and findings are then persisted in the database.
 
 ## Views
 
@@ -121,11 +155,15 @@ The `finding_detail` view renders the finding detail page. It retrieves a specif
 
 ### result_detail
 
-The `result_detail` view renders the scan result detail page. It retrieves a specific result based on the provided `result_id`.
+The `result_detail` view renders the scan result detail page. It retrieves specific results based on the provided `scan_id`, `policy_id`, and `rule_id`.
+
+### view_scan
+
+The `view_scan` view renders the details for a particular scan based on the provided `scan_id`. It aggregates the results and findings of the scan, as well as the severity count for display on the scan detail page.
 
 ### create
 
-The `create` view renders the scan creation page and handles the creation of new scans. When a new scan is created, it kicks off the `scan_task` Celery task.
+The `create` view renders the scan creation page and handles the creation of new scans. When a new scan is created, it initiates a `scan_task` Celery task for each selected asset.
 
 ### dashboard
 
@@ -135,15 +173,20 @@ The `dashboard` view renders the scan dashboard. It displays the user's scans, p
 
 The `status` view returns the status of a scan job. It responds with the Celery task status and the progress percentage of the scan.
 
-## in-dev
+### asset_status
 
-User-provided scans…
+The `asset_status` view returns the status of a particular scan asset job. It responds with the Celery task status and the progress percentage of the scan asset.
+
+### findings_count
+
+The `findings_count` view returns the number of findings associated with a particular scan. The response is the count of findings for the scan.
+
 
 # Asset Application
 
 ## Overview
 
-The Asset application provides functionality for managing and interfacing with various asset databases used for storing and searching document embeddings. The supported asset types include Mantium, Redis, and Pinecone.
+The Asset application provides functionality for managing and interfacing with various vector database services used for storing and searching document embeddings. The supported asset types include Mantium, Redis, and Pinecone.
 
 ## Models
 
@@ -152,13 +195,17 @@ The Asset application provides functionality for managing and interfacing with v
 The `BaseAsset` model is a polymorphic base class that all asset models inherit from. It contains the following fields:
 
 - `name`: A CharField with a maximum length of 128 characters.
-- `user`: A ForeignKey to the User model. This field is nullable.
+- `user`: A ForeignKey to the User model. On delete, it follows the cascade strategy. This field is nullable.
+- `html_logo`: This is a string field used to define a path to the logo of the asset. The path should be within the static directory. It defaults to None.
+- `REQUIRES_EMBEDDINGS`: This is a boolean field used to indicate whether or not the model requires embeddings. It defaults to False.
 
-Each derived asset model should implement the `search()` and `test_connection()` methods.
+Each derived asset model should implement the `search()`, `test_connection()`, and `logo_url()` methods.
 
-## Derived Asset Models
+The `logo_url()` method fetches the logo URL for the asset.
 
-### MantiumAsset
+### Derived Asset Models
+
+#### MantiumAsset
 
 The `MantiumAsset` model represents a Mantium asset. It contains the following fields:
 
@@ -166,8 +213,30 @@ The `MantiumAsset` model represents a Mantium asset. It contains the following f
 - `client_id`: A CharField with a maximum length of 256 characters.
 - `client_secret`: An EncryptedCharField with a maximum length of 256 characters.
 - `top_k`: An IntegerField with a default value of 100.
+- `html_logo`: A string field that represents the path to the logo of the Mantium asset. The path should be within the static directory.
+- `html_name`: A string field that stores the name of the Mantium asset.
+- `html_description`: A string field that stores a description of the Mantium asset.
 
-### RedisAsset
+The `search()` method performs a vector database search against the Mantium asset.
+
+#### PineconeAsset
+
+The `PineconeAsset` model represents a Pinecone asset. It contains the following fields:
+
+- `api_key`: An EncryptedCharField with a maximum length of 256 characters. This field is editable.
+- `environment`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
+- `index_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
+- `project_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
+- `metadata_text_field`: A CharField with a maximum length of 256 characters. This field is not nullable.
+- `embedding_model`: A CharField with a default value of 'text-embedding-ada-002' and a maximum length of 256 characters.
+- `embedding_model_service`: A CharField with a default value of 'OpenAI' and a maximum length of 256 characters.
+- `html_logo`: A string field that represents the path to the logo of the Pinecone asset. The path should be within the static directory.
+- `html_name`: A string field that stores the name of the Pinecone asset.
+- `html_description`: A string field that stores a description of the Pinecone asset.
+
+The `search()` method performs a search against the Pinecone asset.
+
+#### RedisAsset
 
 The `RedisAsset` model represents a Redis asset. It contains the following fields:
 
@@ -179,16 +248,13 @@ The `RedisAsset` model represents a Redis asset. It contains the following field
 - `index_name`: A CharField with a maximum length of 256 characters.
 - `text_field`: A CharField with a maximum length of 256 characters.
 - `embedding_field`: A CharField with a maximum length of 256 characters.
+- `embedding_model`: A CharField with a default value of 'text-embedding-ada-002' and a maximum length of 256 characters.
+- `embedding_model_service`: A CharField with a default value of 'OpenAI' and a maximum length of 256 characters.
+- `html_logo`: A string field that represents the path to the logo of the Redis asset. The path should be within the static directory.
+- `html_name`: A string field that stores the name of the Redis asset.
+- `html_description`: A string field that stores a description of the Redis asset.
 
-### PineconeAsset
-
-The `PineconeAsset` model represents a Pinecone asset. It contains the following fields:
-
-- `api_key`: An EncryptedCharField with a maximum length of 256 characters.
-- `environment`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
-- `index_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
-- `project_name`: A CharField with a maximum length of 256 characters. This field is nullable and can be left blank.
-- `metadata_text_field`: A CharField with a maximum length of 256 characters. This field is nullable.
+The `search()` method performs a search against the Redis asset.
 
 ## Views
 
@@ -209,8 +275,6 @@ The `ping` view tests the connection to a RedisAsset database using the `test_co
 The `delete` view deletes an asset from the database.
 
 ## Providers
-
-### mantium.py
 
 These files contain the logic for interfacing with each asset type.
 
