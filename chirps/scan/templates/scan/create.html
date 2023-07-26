@@ -30,10 +30,10 @@
                   </div>
 
                   <div class="col-6">
-                    <label for="targets" class="form-label">Target(s)</label>
-                    <select class="selectpicker form-control" id="targets" name="targets" multiple>
-                      {% for target in targets %}
-                        <option value="{{ target.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{target.logo_url}}'> {{ target.name }}">{{ target.name }}</option>
+                    <label for="assets" class="form-label">Target(s)</label>
+                    <select class="selectpicker form-control" id="assets" name="assets" multiple>
+                      {% for asset in assets %}
+                        <option value="{{ asset.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{asset.logo_url}}'> {{ asset.name }}">{{ asset.name }}</option>
                       {% endfor %}
                     </select>
                   </div>

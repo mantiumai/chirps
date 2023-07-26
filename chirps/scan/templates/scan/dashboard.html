@@ -27,7 +27,7 @@
       <td>{{ scan.started_at }}</td>
       <td>{{ scan.finished_at }}</td>
       <td>{{ scan.description }}</td>
-      <td>{{ scan.target_count }}</td>
+      <td>{{ scan.asset_count }}</td>
       <td>
         <div hx-get="{% url 'scan_status' scan.id %}" hx-trigger="every 1s">
           <i id="spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>

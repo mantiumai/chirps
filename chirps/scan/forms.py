@@ -1,8 +1,8 @@
 """Forms for rendering scan application models."""
+from asset.models import BaseTarget
 from django import forms
 from django.forms import ModelForm, ValidationError
 from policy.models import Policy
-from target.models import BaseTarget
 
 from .models import Scan
 
@@ -29,12 +29,12 @@ class ScanForm(ModelForm):
 
         widgets = {
             'description': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
+                attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}
             ),
         }
 
     def clean(self):
-        """Create the 'policies' and 'targets' cleaned data fields."""
+        """Create the 'policies' and 'assets' cleaned data fields."""
         super().clean()
 
         def process_items(item_name, model_type, is_valid_item):
@@ -63,9 +63,9 @@ class ScanForm(ModelForm):
             """Check if the user owns the policy, or if it's a template."""
             return policy.is_template or policy.user == user
 
-        def is_valid_target(target, user):
-            """Check if the user owns the target."""
-            return target.user == user
+        def is_valid_asset(asset, user):
+            """Check if the user owns the asset."""
+            return asset.user == user
 
         self.cleaned_data['policies'] = process_items('policies', Policy, is_valid_policy)
-        self.cleaned_data['targets'] = process_items('targets', BaseTarget, is_valid_target)
+        self.cleaned_data['assets'] = process_items('assets', BaseTarget, is_valid_asset)

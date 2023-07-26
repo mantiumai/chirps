@@ -1,4 +1,4 @@
-"""Forms for rendering and validating the target models."""
+"""Forms for rendering and validating the asset models."""
 from django import forms
 from django.forms import ModelForm
 
@@ -29,7 +29,7 @@ class RedisTargetForm(ModelForm):
         ]
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
             'host': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hostname or IP address'}),
             'port': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '6379'}),
             'database_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Database name'}),
@@ -68,7 +68,7 @@ class MantiumTargetForm(ModelForm):
         ]
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
             'app_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Application ID'}),
             'client_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Client ID'}),
             'client_secret': forms.PasswordInput(attrs={'class': 'form-control'}),
@@ -113,7 +113,7 @@ class PineconeTargetForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget = forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': 'Enter a name for the target'}
+            attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}
         )
         self.fields['api_key'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'})
         self.fields['environment'].widget = forms.Select(choices=self.ENV_CHOICES, attrs={'class': 'form-control'})
@@ -134,17 +134,17 @@ class PineconeTargetForm(ModelForm):
         )
 
 
-targets = [
+assets = [
     {'form': RedisTargetForm, 'model': RedisTarget},
     {'form': MantiumTargetForm, 'model': MantiumTarget},
     {'form': PineconeTargetForm, 'model': PineconeTarget},
 ]
 
 
-def target_from_html_name(html_name: str) -> dict:
+def asset_from_html_name(html_name: str) -> dict:
     """Return the form class for the specified html_name."""
-    for target in targets:
-        if target['model'].html_name == html_name:
-            return target
+    for asset in assets:
+        if asset['model'].html_name == html_name:
+            return asset
 
     return {}

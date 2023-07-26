@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('target', '0001_initial'),
+        ('asset', '0001_initial'),
         ('policy', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -76,15 +76,15 @@ class Migration(migrations.Migration):
                     'scan',
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name='scan_targets',
+                        related_name='scan_assets',
                         to='scan.scan',
                     ),
                 ),
                 (
-                    'target',
+                    'asset',
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to='target.basetarget',
+                        to='asset.baseasset',
                     ),
                 ),
             ],
@@ -107,11 +107,11 @@ class Migration(migrations.Migration):
                     models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='policy.rule'),
                 ),
                 (
-                    'scan_target',
+                    'scan_asset',
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name='results',
-                        to='scan.scantarget',
+                        to='scan.scanasset',
                     ),
                 ),
             ],

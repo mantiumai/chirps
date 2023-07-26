@@ -5,17 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('target', '0003_redistarget_embedding_model_service'),
+        ('asset', '0003_redisasset_embedding_model_service'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pineconetarget',
+            model_name='pineconeasset',
             name='embedding_model',
             field=models.CharField(default='text-embedding-ada-002', max_length=256),
         ),
         migrations.AddField(
-            model_name='pineconetarget',
+            model_name='pineconeasset',
             name='embedding_model_service',
             field=models.CharField(default='OpenAI', max_length=256),
         ),

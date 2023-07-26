@@ -20,7 +20,7 @@ Findings
   <tbody>
     {% for finding in findings %}
     <tr>
-      <td>{{ finding.surrounding_text }} <a href="{% url 'finding_detail' finding.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
+      <td>{{ finding.surrounding_text }} <a href="{% url 'finding_detail' finding.id %}" asset="_blank"><i class="fa-solid fa-eye"></i></a></td>
       <td>{{ finding }}</td>
     </tr>
     {% empty %}

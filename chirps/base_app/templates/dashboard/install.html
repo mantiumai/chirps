@@ -19,7 +19,7 @@
                     <h2 class="text-center text-dark mt-5">Chirps Install</h2>
                     <div class="card my-5">
 
-                      <form class="card-body cardbody-color p-lg-5" method="POST" target="{% url 'install' %}">
+                      <form class="card-body cardbody-color p-lg-5" method="POST" asset="{% url 'install' %}">
 
                         {% csrf_token %}
                         <div class="text-center">

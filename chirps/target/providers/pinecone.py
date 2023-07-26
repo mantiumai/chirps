@@ -1,16 +1,16 @@
-"""Logic for interfacing with a Pinecone target."""
+"""Logic for interfacing with a Pinecone asset."""
 from logging import getLogger
 
 import pinecone as pinecone_lib
+from asset.custom_fields import CustomEncryptedCharField
+from asset.models import BaseTarget
 from django.db import models
-from target.custom_fields import CustomEncryptedCharField
-from target.models import BaseTarget
 
 logger = getLogger(__name__)
 
 
 class PineconeTarget(BaseTarget):
-    """Implementation of a Pinecone target."""
+    """Implementation of a Pinecone asset."""
 
     api_key = CustomEncryptedCharField(max_length=256, editable=True)
     environment = models.CharField(max_length=256, blank=True, null=True)
@@ -20,8 +20,8 @@ class PineconeTarget(BaseTarget):
     embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
     embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
-    # Name of the file in the ./target/static/ directory to use as a logo
-    html_logo = 'target/pinecone-logo.png'
+    # Name of the file in the ./asset/static/ directory to use as a logo
+    html_logo = 'asset/pinecone-logo.png'
     html_name = 'Pinecone'
     html_description = 'Pinecone Vector Database'
 
@@ -39,7 +39,7 @@ class PineconeTarget(BaseTarget):
         return None
 
     def search(self, query: list, max_results: int) -> list[str]:
-        """Search the Pinecone target with the specified query."""
+        """Search the Pinecone asset with the specified query."""
         pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
         # Perform search on the Pinecone index
@@ -52,7 +52,7 @@ class PineconeTarget(BaseTarget):
         return result_content
 
     def test_connection(self) -> bool:
-        """Ensure that the Pinecone target can be connected to."""
+        """Ensure that the Pinecone asset can be connected to."""
         try:
             pinecone_lib.init(api_key=self.api_key, environment=self.environment)
             pinecone_lib.deinit()

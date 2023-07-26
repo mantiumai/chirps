@@ -5,12 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('target', '0001_initial'),
+        ('asset', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='redistarget',
+            model_name='redisasset',
             name='embedding_model',
             field=models.CharField(default='text-embedding-ada-002', max_length=256),
         ),

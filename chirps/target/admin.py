@@ -1,4 +1,4 @@
-"""Admin interface definitions for target application models."""
+"""Admin interface definitions for asset application models."""
 
 from django.contrib import admin
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin

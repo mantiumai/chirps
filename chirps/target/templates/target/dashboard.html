@@ -11,9 +11,9 @@
             <div class="dropdown"></div>
             <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Create</button>
             <div class="dropdown-menu">
-                {% for target in available_targets %}
+                {% for asset in available_assets %}
                 <a class="dropdown-item"
-                    href="{% url 'target_create' target.model.html_name %}">{{target.model.html_name}}</a>
+                    href="{% url 'asset_create' asset.model.html_name %}">{{asset.model.html_name}}</a>
                 {% endfor %}
             </div>
         </div>
@@ -22,35 +22,35 @@
 <hr>
 
 <div class="row">
-    {% for target in page_obj %}
+    {% for asset in page_obj %}
         <div class="col-md-12 col-lg-12">
-            <div class="card my-4" id="chirps-target-{{target.id}}">
+            <div class="card my-4" id="chirps-asset-{{asset.id}}">
                 <div class="d-flex card-header">
-                    <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{target.logo_url}}">
-                    <h5 class="my-auto ml-0 mr-auto">{{ target.name }}</h5>
+                    <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{asset.logo_url}}">
+                    <h5 class="my-auto ml-0 mr-auto">{{ asset.name }}</h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text">
-                        {% if target.html_name == 'Mantium' %}
-                        Application ID: {{ target.app_id }}
-                        {% elif target.html_name == 'Redis' %}
-                        Host: {{ target.host }}<br/>
-                        Port: {{ target.port }}<br/>
-                        Database Name: {{ target.database_name }}<br/>
-                        Username: {{ target.username }}
+                        {% if asset.html_name == 'Mantium' %}
+                        Application ID: {{ asset.app_id }}
+                        {% elif asset.html_name == 'Redis' %}
+                        Host: {{ asset.host }}<br/>
+                        Port: {{ asset.port }}<br/>
+                        Database Name: {{ asset.database_name }}<br/>
+                        Username: {{ asset.username }}
                         {% endif %}
-                        {% if target.html_name == 'Pinecone' %}
-                        API Key: {{ target.decrypted_api_key }}<br/>
-                        Environment: {{ target.environment }}<br/>
-                        Index Name: {{ target.index_name }}<br/>
-                        Project Name: {{ target.project_name }}
+                        {% if asset.html_name == 'Pinecone' %}
+                        API Key: {{ asset.decrypted_api_key }}<br/>
+                        Environment: {{ asset.environment }}<br/>
+                        Index Name: {{ asset.index_name }}<br/>
+                        Project Name: {{ asset.project_name }}
                         {% endif %}
                     </p>
                     <div class="d-flex">
-                        <a href="{% url 'target_delete' target.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
+                        <a href="{% url 'asset_delete' asset.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
                         <a href="#" class="btn btn-primary ml-2 mr-0 disabled">Edit</a>
-                        {% if target.html_name == 'Redis' %}
-                        <button data-target-id="{{ target.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
+                        {% if asset.html_name == 'Redis' %}
+                        <button data-asset-id="{{ asset.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
                         {% endif %}
                     </div>
                 </div>
@@ -78,8 +78,8 @@
     const pingButtons = document.querySelectorAll('.ping-btn');
     pingButtons.forEach(btn => {
         btn.addEventListener('click', async function () {
-            const targetId = btn.getAttribute('data-target-id');
-            const response = await fetch(`/target/ping/${targetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const assetId = btn.getAttribute('data-asset-id');
+            const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             if (response.status === 200) {
                 showToast('Success: Connection established', 'success');
             } else {

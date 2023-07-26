@@ -5,12 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('target', '0002_redistarget_embedding_model'),
+        ('asset', '0002_redisasset_embedding_model'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='redistarget',
+            model_name='redisasset',
             name='embedding_model_service',
             field=models.CharField(default='OpenAI', max_length=256),
         ),

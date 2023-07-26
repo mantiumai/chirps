@@ -15,7 +15,7 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="tab-1" data-bs-toggle="tab"
                    href="#tabs-1" role="tab" aria-controls="tabs-1" aria-selected="true">
-                   Targets <span class="badge bg-primary text-white">{{scan.target_count}}</span>
+                   Targets <span class="badge bg-primary text-white">{{scan.asset_count}}</span>
                 </a>
             </li>
             <li class="nav-item" role="presentation">
@@ -40,16 +40,16 @@
 
             <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
 
-                {% for scan_target in scan.scan_targets.all %}
+                {% for scan_asset in scan.scan_assets.all %}
                 <div class="row">
                 <div class="col-md-12 col-lg-12">
-                    <div class="card my-4" id="chirps-target-{{scan_target.target.id}}">
+                    <div class="card my-4" id="chirps-asset-{{scan_asset.asset.id}}">
                         <div class="d-flex card-header">
-                            <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{scan_target.target.logo_url}}">
-                            <h5 class="my-auto ml-0 mr-auto">{{ scan_target.target.name }}</h5>
+                            <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{scan_asset.asset.logo_url}}">
+                            <h5 class="my-auto ml-0 mr-auto">{{ scan_asset.asset.name }}</h5>
                             <h5 class="my-auto ml-0 text-right">
-                                <div hx-get="{% url 'scan_target_status' scan_target.id %}" hx-trigger="every 1s">
-                                    <i id="spinner-{{scan_target.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                                <div hx-get="{% url 'scan_asset_status' scan_asset.id %}" hx-trigger="every 1s">
+                                    <i id="spinner-{{scan_asset.id}}" class="fa-solid fa-spinner fa-spin"></i>
                                 </div>
 
                             </h5>
@@ -87,7 +87,7 @@
                         <td>{{rule.finding_count}}</td>
                         <td>
                             <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse{{rule.id}}" aria-expanded="false"
+                                    data-bs-asset="#collapse{{rule.id}}" aria-expanded="false"
                                     aria-controls="collapse{{rule.id}}"> <i class="fa-solid fa-magnifying-glass"></i> </button>
                         </td>
                     </tr>
@@ -106,7 +106,7 @@
                                   {% for finding in rule.findings %}
                                   <tr>
                                     <td>{{ finding.surrounding_text }}</td>
-                                    <td>{{ finding.result.scan_target.target.name }}</td>
+                                    <td>{{ finding.result.scan_asset.asset.name }}</td>
                                   </tr>
                                   {% endfor %}
                                 </tbody>

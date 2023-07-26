@@ -1,4 +1,4 @@
-"""View handlers for targets."""
+"""View handlers for assets."""
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -7,81 +7,81 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from redis import exceptions
 
-from .forms import target_from_html_name, targets
+from .forms import asset_from_html_name, assets
 from .models import BaseTarget
 from .providers.pinecone import PineconeTarget
 from .providers.redis import RedisTarget
 
 
 def decrypted_keys(request):
-    """Return a list of decrypted API keys for all Pinecone targets."""
+    """Return a list of decrypted API keys for all Pinecone assets."""
     keys = []
-    for target in PineconeTarget.objects.all():
-        keys.append(target.decrypted_api_key)
+    for asset in PineconeTarget.objects.all():
+        keys.append(asset.decrypted_api_key)
     return JsonResponse({'keys': keys})
 
 
 @login_required
 def dashboard(request):
-    """Render the dashboard for the target app.
+    """Render the dashboard for the asset app.
 
     Args:
         request (HttpRequest): Django request object
     """
     # Paginate the number of items returned to the user, defaulting to 25 per page
-    user_targets = BaseTarget.objects.filter(user=request.user).order_by('id')
-    paginator = Paginator(user_targets, request.GET.get('item_count', 25))
+    user_assets = BaseTarget.objects.filter(user=request.user).order_by('id')
+    paginator = Paginator(user_assets, request.GET.get('item_count', 25))
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'target/dashboard.html', {'available_targets': targets, 'page_obj': page_obj})
+    return render(request, 'asset/dashboard.html', {'available_assets': assets, 'page_obj': page_obj})
 
 
 @login_required
 def create(request, html_name):
-    """Render the create target form.
+    """Render the create asset form.
 
     Args:
         request (HttpRequest): Django request object
-        html_name (str): used to get the target dictionary entry
+        html_name (str): used to get the asset dictionary entry
     """
     if request.method == 'POST':
 
-        # Get the target dictionary entry from the html_name parameter
-        target = target_from_html_name(html_name=html_name)
-        form = target['form'](request.POST)
+        # Get the asset dictionary entry from the html_name parameter
+        asset = asset_from_html_name(html_name=html_name)
+        form = asset['form'](request.POST)
 
         if form.is_valid():
 
             # Persist the
             form.user = request.user
 
-            # Convert the form into a target object (don't persist to the DB yet)
-            target = form.save(commit=False)
+            # Convert the form into an asset object (don't persist to the DB yet)
+            asset = form.save(commit=False)
 
-            # Assign the target to the current user
-            target.user = request.user
+            # Assign the asset to the current user
+            asset.user = request.user
 
             # Off to the DB we go!
-            target.save()
+            asset.save()
 
             # Redirect the user back to the dashboard
-            return redirect('target_dashboard')
+            return redirect('asset_dashboard')
 
     else:
-        target = target_from_html_name(html_name=html_name)
-        form = target['form']()
+        asset = asset_from_html_name(html_name=html_name)
+        form = asset['form']()
 
-    return render(request, 'target/create.html', {'form': form, 'target': target})
+    return render(request, 'asset/create.html', {'form': form, 'asset': asset})
 
 
 @login_required
-def ping(request, target_id):
+def ping(request, asset_id):
     """Ping a RedisTarget database using the test_connection() function."""
-    target = get_object_or_404(BaseTarget, pk=target_id)
-    if isinstance(target, RedisTarget):
+    asset = get_object_or_404(BaseTarget, pk=asset_id)
+    if isinstance(asset, RedisTarget):
         try:
-            result = target.test_connection()
+            result = asset.test_connection()
             return JsonResponse({'success': result})
         except exceptions.ConnectionError:
             return HttpResponseBadRequest(
@@ -91,7 +91,7 @@ def ping(request, target_id):
 
 
 @login_required
-def delete(request, target_id):   # pylint: disable=unused-argument
-    """Delete a target from the database."""
-    get_object_or_404(BaseTarget, pk=target_id).delete()
-    return redirect('target_dashboard')
+def delete(request, asset_id):   # pylint: disable=unused-argument
+    """Delete an asset from the database."""
+    get_object_or_404(BaseTarget, pk=asset_id).delete()
+    return redirect('asset_dashboard')

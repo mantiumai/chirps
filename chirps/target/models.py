@@ -1,4 +1,4 @@
-"""Models for the target appliation."""
+"""Models for the asset appliation."""
 from logging import getLogger
 
 from django.contrib.auth.models import User
@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 
 
 class BaseTarget(PolymorphicModel):
-    """Base class that all targets will inherit from."""
+    """Base class that all assets will inherit from."""
 
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -18,13 +18,13 @@ class BaseTarget(PolymorphicModel):
     REQUIRES_EMBEDDINGS = False
 
     def search(self, query: str, max_results: int) -> list[str]:
-        """Perform a query against the specified target, returning the max_results number of matches."""
+        """Perform a query against the specified asset, returning the max_results number of matches."""
 
     def test_connection(self) -> bool:
-        """Verify that the target can be connected to."""
+        """Verify that the asset can be connected to."""
 
     def logo_url(self) -> str:
-        """Fetch the logo URL for the target."""
+        """Fetch the logo URL for the asset."""
         return static(self.html_logo)
 
     def __str__(self) -> str:

@@ -1,17 +1,17 @@
-"""Logic for interfacing with a Redis target."""
+"""Logic for interfacing with a Redis asset."""
 from logging import getLogger
 
 import numpy as np
+from asset.models import BaseTarget
 from django.db import models
 from redis import Redis
 from redis.commands.search.query import Query
-from target.models import BaseTarget
 
 logger = getLogger(__name__)
 
 
 class RedisTarget(BaseTarget):
-    """Implementation of a Redis target."""
+    """Implementation of a Redis asset."""
 
     host = models.CharField(max_length=1048)
     port = models.PositiveIntegerField()
@@ -25,15 +25,15 @@ class RedisTarget(BaseTarget):
     embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
     embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
-    # Name of the file in the ./target/static/ directory to use as a logo
-    html_logo = 'target/redis-logo.png'
+    # Name of the file in the ./asset/static/ directory to use as a logo
+    html_logo = 'asset/redis-logo.png'
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 
     REQUIRES_EMBEDDINGS = True
 
     def search(self, query: list, max_results: int) -> str:
-        """Search the Redis target with the specified query."""
+        """Search the Redis asset with the specified query."""
         client = Redis(
             host=self.host,
             port=self.port,
@@ -63,7 +63,7 @@ class RedisTarget(BaseTarget):
             client.close()
 
     def test_connection(self) -> bool:
-        """Ensure that the Redis target can be connected to."""
+        """Ensure that the Redis asset can be connected to."""
         client = Redis(
             host=self.host,
             port=self.port,
