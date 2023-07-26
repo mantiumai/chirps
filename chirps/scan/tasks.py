@@ -46,7 +46,7 @@ def scan_task(scan_target_id):
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if target.REQUIRES_EMBEDDINGS:
-            embedding = create_embedding(rule.query_string, 'text-embedding-ada-002', 'OA', scan.user)
+            embedding = create_embedding(rule.query_string, target.embedding_model, 'OA', scan.user)
             query = embedding.vectors
         else:
             query = rule.query_string
