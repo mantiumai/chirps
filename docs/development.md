@@ -12,7 +12,7 @@ The Chirps application will execute scans against a taget.
 ## What is in a Scan?
 A scan executes one or more policies against one or more assets. A policy is a list of rules. Each rule has a query which is executed against the asset(s). The rule has a match regular expression that will be used to search the results of the query. If a match is found, it is flagged.
 
-When a user kicks off a scan, a Celery task is queued. If multiple targets are selected, multiple tasks are queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a policy, executing the queries against the scan asset. Results are stored in the database via the `Result` and `Finding` models.
+When a user kicks off a scan, a Celery task is queued. If multiple assets are selected, multiple tasks are queued. The scan task, found in `./scan/tasks.py`, will iterate through each rule in a policy, executing the queries against the scan asset. Results are stored in the database via the `Result` and `Finding` models.
 
 ## What are Assets?
 An asset is a destination that rule queries are executed against. Asset providers are responsible for executing the queries and handing back the results to the scan task.
