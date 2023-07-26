@@ -1,5 +1,6 @@
 """Utility functions for the embedding app."""
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from .models import Embedding
 from .providers.base import BaseEmbeddingProvider
@@ -9,10 +10,14 @@ def create_embedding(text: str, model: str, service: str, user: User | None) -> 
     """Pull an embedding from the database, or generate a new one."""
     # Search for the text to see if an embedding already exists
     try:
-        filters = {'text': text, 'model': model, 'service': service}
+        query = Q(text=text, model=model, service=service)
+
+        # If the user is specified, we need to search for embeddings
+        # that are either owned by the user or nobody (templates)
         if user:
-            filters['user'] = user
-        embedding = Embedding.objects.get(**filters)
+            query = query & (Q(user=user) | Q(user=None))
+
+        embedding = Embedding.objects.get(query)
 
     except Embedding.DoesNotExist:
         # We need to generate a new embedding!
