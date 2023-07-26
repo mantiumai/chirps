@@ -31,6 +31,8 @@ class RedisAsset(BaseAsset):
     index_name = models.CharField(max_length=256)
     text_field = models.CharField(max_length=256)
     embedding_field = models.CharField(max_length=256)
+    embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
+    embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     html_logo = 'asset/redis-logo.png'
     html_name = 'Redis'
@@ -47,11 +49,11 @@ Define the `search()` and `test_connection()` methods for your asset model. Thes
 
 ```python
 def search(self, query: list, max_results: int) -> list[str]:
-    """Search the Pinecone asset with the specified query."""
+    """Search the Redis asset with the specified query."""
     # Implementation details ...
 
 def test_connection(self) -> bool:
-    """Ensure that the Pinecone asset can be connected to."""
+    """Ensure that the Redis asset can be connected to."""
     # Implementation details ...
 ```
 
