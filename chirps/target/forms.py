@@ -25,6 +25,7 @@ class RedisTargetForm(ModelForm):
             'text_field',
             'embedding_field',
             'embedding_model',
+            'embedding_model_service',
         ]
 
         widgets = {
@@ -45,6 +46,9 @@ class RedisTargetForm(ModelForm):
             ),
             'embedding_model': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
+            ),
+            'embedding_model_service': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'The host of the model that generated the embeddings'}
             ),
         }
 

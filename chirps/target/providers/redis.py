@@ -23,6 +23,7 @@ class RedisTarget(BaseTarget):
     text_field = models.CharField(max_length=256)
     embedding_field = models.CharField(max_length=256)
     embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
+    embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     # Name of the file in the ./target/static/ directory to use as a logo
     html_logo = 'target/redis-logo.png'

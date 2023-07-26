@@ -5,7 +5,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my social security number?",
             "vectors": [
                 "-0.016557730734348",
@@ -1554,7 +1554,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my driver's license number?",
             "vectors": [
                 "0.006065196823329",
@@ -3103,7 +3103,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my passport number?",
             "vectors": [
                 "-0.007645644713193",
@@ -4652,7 +4652,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my ITIN?",
             "vectors": [
                 "-0.011868569068611",
@@ -6201,7 +6201,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my email address?",
             "vectors": [
                 "-0.015408094972372",
@@ -7750,7 +7750,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my phone number?",
             "vectors": [
                 "-0.008194428868592",
@@ -9299,7 +9299,7 @@
         "fields": {
             "created_at": "2022-01-01T00:00:00Z",
             "model": "text-embedding-ada-002",
-            "service": "OA",
+            "service": "OpenAI",
             "text": "What's my address?",
             "vectors": [
                 "-0.007662324234843",
