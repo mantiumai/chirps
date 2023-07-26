@@ -113,9 +113,6 @@ def create(request):
             selected_policies = scan_form.cleaned_data['policies']
             scan.policies.set(selected_policies)
 
-            # Kick off the scan task
-            result = scan_task.delay(scan.id)
-
             # For every target that was selected, kick off a task
             for target in scan_form.cleaned_data['targets']:
 
