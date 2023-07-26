@@ -26,25 +26,4 @@
   </div>
 </div>
 
-<!-- <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <h1 class="text-center text-dark mt-5 display-1">New Asset</h1>
-      <div class="card my-5">
-        <div class="card-body cardbody-color p-lg-5">
-            <div class="form-group">
-
-                <img width=64 class="rounded float-end" src="{{asset.model.logo_url}}">
-                <h2 class="display-4">{{ asset.model.html_name }}</h2>
-                <form method="POST" action="{% url 'asset_create' asset.model.html_name %}">
-                    {% csrf_token %}
-                    {{ form }}
-                    <button class="btn btn-success" type="submit">Create</button>
-                    <a class="btn btn-danger" type="button" href="{% url 'asset_dashboard' %}">Cancel</a>
-                </form>
-            </div>
-        </div>
-      </div>
-    </div>
-</div> -->
-
 {% endblock %}
