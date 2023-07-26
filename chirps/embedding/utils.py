@@ -9,7 +9,7 @@ def create_embedding(text: str, model: str, service: str, user: User | None) -> 
     """Pull an embedding from the database, or generate a new one."""
     # Search for the text to see if an embedding already exists
     try:
-        filters = dict(text=text, model=model, service=service)
+        filters = {'text': text, 'model': model, 'service': service}
         if user:
             filters['user'] = user
         embedding = Embedding.objects.get(**filters)

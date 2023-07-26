@@ -38,11 +38,11 @@ def scan_task(scan_target_id):
     policy_rules = []
     for policy in scan.policies.all():
         for rule in policy.current_version.rules.all():
-            policy_rules.append(rule)
+            policy_rules.append((policy, rule))
 
     total_rules = len(policy_rules)
     rules_run = 0
-    for rule in policy_rules:
+    for policy, rule in policy_rules:
         logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if target.REQUIRES_EMBEDDINGS:
