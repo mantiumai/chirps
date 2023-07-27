@@ -4,6 +4,11 @@ Chirps is a Django-based Python web application that allows users to search and 
 
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
 
+## Demo Video
+
+https://github.com/mantiumai/chirps/assets/23481310/b8aa426a-7a9f-484f-b46f-46cb45144b8c
+
+
 ## Quick Start
 
 - `pip install -r requirements.txt`
