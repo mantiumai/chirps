@@ -3,12 +3,16 @@
 Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against an asset using a selected plan, and view the results of the scan, including any findings.
 
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
+
 ## Quick Start
 
 - `pip install -r requirements.txt`
-- create a .env file in /chirps with `FERNET_KEY`=
-- Enter in a Fernet key - must be 32 url-safe base64-encoded bytes. You can use the python script in `/chirps/chirps/key_script.py` to generate one.
-- Navigate to /chirps and run `./manage.py initialize_app` to start the application and necessary services
+- Initialize the app by running the following command `./chirps/manage.py initialize_app`
+- In the codespace, click "Ports" on the lower toolbar and click the link under "Forwarded Ports" to access the application at port 8000.
+- Create a user account in the UI.
+
+## Getting Started
+Please familiarize yourself with the project by visiting our [Getting Started](https://chirps.mantiumai.com/getting-started/) page.
 
 ## Support
 

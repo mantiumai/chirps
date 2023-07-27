@@ -38,7 +38,7 @@ The `Profile` model extends Django's built-in User model with a one-to-one relat
 ## Quick Start
 
 - `pip install -r requirements.txt`
-- Navigate to /Chirps and run `./manage.py initialize_app`
+- Initialize the app by running the following command `./chirps/manage.py initialize_app`
 - In the codespace, click "Ports" on the lower toolbar and click the link under "Forwarded Ports" to access the application at port 8000.
 - Create a user account in the UI.
 
