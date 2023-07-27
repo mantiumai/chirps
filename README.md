@@ -7,9 +7,12 @@ Chirps is a Django-based Python web application that allows users to search and 
 ## Quick Start
 
 - `pip install -r requirements.txt`
-- Navigate to /chirps and run `./manage.py initialize_app`
+- Navigate to the chirps subdirectory (`cd chirps`) and run `./manage.py initialize_app`
 - In the codespace, click "Ports" on the lower toolbar and click the link under "Forwarded Ports" to access the application at port 8000.
 - Create a user account in the UI.
+
+## Getting Started
+Please familiarize yourself with the project by visiting our [Getting Started](https://chirps.mantiumai.com/getting-started/) page.
 
 ## Support
 
