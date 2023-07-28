@@ -87,7 +87,7 @@
         "model": "asset.baseasset",
         "pk": 1,
         "fields": {
-            "polymorphic_ctype": 14,
+            "polymorphic_ctype": ["asset", "mantiumasset"],
             "name": "ZimTest",
             "user": 1
         }

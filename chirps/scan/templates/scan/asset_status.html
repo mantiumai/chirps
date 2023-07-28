@@ -1,0 +1,33 @@
+{{celery_status}}
+
+{% if celery_status == 'FAILURE' %}
+
+    <button class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#asset-error-{{scan_asset.id}}">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="asset-error-{{scan_asset.id}}" tabindex="-1"
+         aria-labelledby="asset-error-{{scan_asset.id}}-label" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="asset-error-{{scan_asset.id}}-label">Scan Asset Failure</h1>
+                <button class="btn btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <samp style="font-size: 60%">
+                {{scan_asset.failure_text|linebreaks}}
+                </samp>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+{% else %}
+    : {{scan_asset.progress}} %
+{% endif %}

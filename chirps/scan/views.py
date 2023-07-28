@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template import loader
 from policy.models import Policy
 
 from .forms import ScanForm
@@ -166,6 +167,11 @@ def status(request, scan_id):
         # HTMX will stop polling if we return a 286
         return HttpResponse(content=response, status=286)
 
+    # Walk through all of the ScanAsset entries (tasks)
+    # If none of them are running anymore, something has gone wrong!
+    for scan_asset in scan.scan_assets.all():
+        if scan_asset.finished_at is None:
+            return HttpResponse(content=response, status=200)
     return HttpResponse(content=response, status=200)
 
 
@@ -174,14 +180,16 @@ def asset_status(request, scan_asset_id):
     """Fetch the status of a scan job."""
     scan_asset = get_object_or_404(ScanAsset, pk=scan_asset_id, scan__user=request.user)
 
-    # Respond with the status of the celery task and the progress percentage of the scan
-    response = f'{scan_asset.celery_task_status()} : {scan_asset.progress} %'
+    template = loader.get_template('scan/asset_status.html')
+
+    celery_status = scan_asset.celery_task_status()
+    rendered_template = template.render({'scan_asset': scan_asset, 'celery_status': celery_status}, request)
 
     if scan_asset.finished_at is not None:
         # HTMX will stop polling if we return a 286
-        return HttpResponse(content=response, status=286)
+        return HttpResponse(content=rendered_template, status=286)
 
-    return HttpResponse(content=response, status=200)
+    return HttpResponse(content=rendered_template, status=200)
 
 
 @login_required

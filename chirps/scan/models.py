@@ -102,6 +102,28 @@ class ScanAsset(models.Model):
         result = TaskResult.objects.get(task_id=self.celery_task_id)
         return result.result
 
+    def failure_text(self):
+        """Fetch the failure text of the Celery task associated with this scan."""
+        if self.celery_task_id is None:
+            return 'N/A'
+
+        try:
+            failure = ScanAssetFailure.objects.get(scan_asset=self)
+            return failure.traceback
+        except ScanAssetFailure.DoesNotExist:
+            return 'N/A'
+
+        return 'N/A'
+
+
+class ScanAssetFailure(models.Model):
+    """Model to store data for a scan asset failure."""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='failures')
+    exception = models.TextField()
+    traceback = models.TextField()
+
 
 class Result(models.Model):
     """Model for a single result from a rule."""
