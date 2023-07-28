@@ -58,10 +58,11 @@ class ScanTest(TestCase):
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-scan-6', status_code=200)
 
+
 @shared_task(on_failure=task_failure_handler)
 def dummy_task(*args, **kwargs):
     """Monkeypatched scan task that raises an exception."""
-    raise Exception('Dummy exception') # pylint: disable=broad-exception-raised
+    raise Exception('Dummy exception')   # pylint: disable=broad-exception-raised
 
 
 class ScanCeleryTests(TransactionTestCase):
