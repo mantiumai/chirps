@@ -11,7 +11,7 @@ from .models import Finding, Result, ScanAsset, ScanAssetFailure
 
 logger = getLogger(__name__)
 
-
+# pylint: disable=unused-argument,too-many-arguments
 def task_failure_handler(self, exc, task_id, args, kwargs, einfo):
     """
     Create task ScanAssetFailure record when a task fails.
