@@ -1,9 +1,19 @@
 """Tests for the scan application."""
+import time
+from unittest.mock import patch
 
-from django.test import TestCase
+import pytest
+from celery import shared_task
+from celery.contrib.testing.app import TestApp
+from celery.contrib.testing.worker import start_worker
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
+from .models import ScanAsset, ScanAssetFailure
+from .tasks import task_failure_handler
 
+
+@pytest.mark.usefixtures('celery_session_worker')
 class ScanTest(TestCase):
     """Test the scan application."""
 
@@ -47,3 +57,73 @@ class ScanTest(TestCase):
         response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-scan-6', status_code=200)
+
+
+@shared_task(on_failure=task_failure_handler)
+def dummy_task(*args, **kwargs):
+    """Monkeypatched scan task that raises an exception."""
+    raise Exception('Dummy exception')   # pylint: disable=broad-exception-raised
+
+
+class ScanCeleryTests(TransactionTestCase):
+    """Test the Celery job mechanism for scans."""
+
+    fixtures = ['scan/test_dash_pagination.json']
+
+    def setUp(self):
+        """Login the user before performing any tests"""
+        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+
+        celery_config = {
+            'accept_content': {'json'},
+            'broker_heartbeat': 0,
+            'broker_url': 'memory://',
+            'enable_utc': True,
+            'result_backend': 'django-db',  # We need to use the Django DB backend to query task results
+            'timezone': 'UTC',
+            'worker_hijack_root_logger': False,
+            'worker_log_color': False,
+        }
+
+        app = TestApp(config=celery_config)
+        self.celery_worker = start_worker(app)
+        self.celery_worker.__enter__()
+
+    def tearDown(self):
+        """Ensure the Celery worker is stopped after each test."""
+        self.celery_worker.__exit__(None, None, None)
+
+    def test_scan_failure(self):
+        """Given a failed scan, ensure that the UI renders the failure message."""
+        with patch('scan.views.scan_task', dummy_task):
+            response = self.client.post(
+                reverse('scan_create'), {'policies': [100], 'assets': [1], 'description': 'test scan'}
+            )
+
+            # Should redirect the user back to the dashboard
+            self.assertRedirects(response, '/scan/', status_code=302)
+
+            # Wait for the scan asset to reach a failed state
+            total_wait = 5
+
+            while ScanAssetFailure.objects.all().count() == 0 and total_wait > 0:
+                time.sleep(0.5)
+                total_wait -= 0.5
+
+            # Make sure the scan asset poll didn't timeout
+            self.assertGreater(total_wait, 0)
+
+        # Verify that the scan is available in the dashboard
+        response = self.client.get(reverse('scan_dashboard'))
+
+        # Given the current state of the fixtures, the latest scan should be ID #7
+        self.assertContains(response, 'chirps-scan-7', status_code=200)
+
+        # Obtain the ID of the ScanAsset instance created for the scan
+        scan_asset = ScanAsset.objects.get(scan__id=7)
+
+        # Open the scan details page
+        response = self.client.get(reverse('scan_asset_status', kwargs={'scan_asset_id': scan_asset.id}))
+
+        # Verify the scan asset status contains the proper error message
+        self.assertContains(response, 'Dummy exception', status_code=286)

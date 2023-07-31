@@ -7,12 +7,44 @@ from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
 
-from .models import Finding, Result, ScanAsset
+from .models import Finding, Result, ScanAsset, ScanAssetFailure
 
 logger = getLogger(__name__)
 
 
-@shared_task
+# pylint: disable=unused-argument,too-many-arguments
+def task_failure_handler(self, exc, task_id, args, kwargs, einfo):
+    """
+    Create task ScanAssetFailure record when a task fails.
+
+    exc (Exception) - The exception raised by the task.
+    task_id (str) - Unique id of the failed task.
+    args (Tuple) - Original arguments for the task that failed.
+    kwargs (Dict) - Original keyword arguments for the task that failed.
+    einfo (ExceptionInfo) - Exception information.
+    """
+    logger.error('Scan task failed', extra={'exc': exc, 'einfo': einfo, 'task_id': task_id})
+
+    # Fetch the ScanAsset that this failure belongs to
+    scan_asset = ScanAsset.objects.get(celery_task_id=task_id)
+    scan_asset.finished_at = timezone.now()
+    scan_asset.save()
+
+    ScanAssetFailure.objects.create(scan_asset=scan_asset, exception=str(exc), traceback=str(einfo))
+
+    # If any of the other scan assets are running, skip setting the main scan status to complete
+    scan = scan_asset.scan
+    for scan_asset in scan.scan_assets.all():
+        if scan_asset.finished_at is None:
+            return
+
+    # All of the other scan assets are complete, so we can mark the scan as failed
+    scan.status = 'Failed'
+    scan.finished_at = timezone.now()
+    scan.save()
+
+
+@shared_task(on_failure=task_failure_handler)
 def scan_task(scan_asset_id):
     """Scan task."""
     logger.info('Starting scan task', extra={'scan_asset_id': scan_asset_id})
@@ -84,6 +116,15 @@ def scan_task(scan_asset_id):
         if scan_asset.finished_at is None:
             return
 
+    # Double check to see if any of the scan assets failed
+    for scan_asset in scan.scan_assets.all():
+        if scan_asset.celery_task_status() == 'FAILURE':
+            scan.status = 'Failed'
+            scan.finished_at = timezone.now()
+            scan.save()
+            return
+
+    # Everything went well, mark the scan as complete!
     scan.status = 'Complete'
     scan.finished_at = timezone.now()
     scan.save()
