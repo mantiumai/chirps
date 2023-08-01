@@ -2,11 +2,13 @@
 from collections import defaultdict
 
 from asset.models import BaseAsset
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+from embedding.models import Embedding
 from policy.models import Policy
 
 from .forms import ScanForm
@@ -114,9 +116,20 @@ def create(request):
             selected_policies = scan_form.cleaned_data['policies']
             scan.policies.set(selected_policies)
 
+            # Check if the user has configured their OpenAI key
+            policies_and_rules = [
+                (policy, rule) for policy in selected_policies for rule in policy.current_version.rules.all()
+            ]
+            if any(
+                not policy.is_template and not Embedding.objects.filter(text=rule.query_string).exists()
+                for policy, rule in policies_and_rules
+            ):
+                if not request.user.profile.openai_key:
+                    messages.error(request, 'User has not configured their OpenAI key')
+                    return redirect('scan_create')
+
             # For every asset that was selected, kick off a task
             for asset in scan_form.cleaned_data['assets']:
-
                 scan_asset = ScanAsset.objects.create(scan=scan, asset=asset)
 
                 # Kick off the scan task
