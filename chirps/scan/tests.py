@@ -3,11 +3,14 @@ import time
 from unittest.mock import patch
 
 import pytest
+from account.models import Profile
 from celery import shared_task
 from celery.contrib.testing.app import TestApp
 from celery.contrib.testing.worker import start_worker
+from django.contrib.auth.models import User
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
+from policy.models import Policy, PolicyVersion, Rule
 
 from .models import ScanAsset, ScanAssetFailure
 from .tasks import task_failure_handler
@@ -127,3 +130,56 @@ class ScanCeleryTests(TransactionTestCase):
 
         # Verify the scan asset status contains the proper error message
         self.assertContains(response, 'Dummy exception', status_code=286)
+
+    def test_scan_requires_openai_key(self):
+        """Test that a scan requires the user's OpenAI key"""
+        # Create a new policy with a rule that doesn't have a stored Embedding
+        policy = Policy.objects.create(name='Test policy', is_template=False)
+        policy_version = PolicyVersion.objects.create(policy=policy, number=1)
+        Rule.objects.create(
+            name='Test rule', regex_test='test', query_string='test query', severity=1, policy=policy_version
+        )
+
+        # Set the current_version field of the policy to the created policy_version instance
+        policy.current_version = policy_version
+        policy.save()
+
+        # Update the user's OpenAI key to be empty
+        user = User.objects.get(username='admin')
+        Profile.objects.create(user=user)
+        user.profile.openai_key = ''
+        user.profile.save()
+
+        # Trigger a scan for the new policy
+        with patch('scan.views.scan_task', dummy_task):
+            response = self.client.post(
+                reverse('scan_create'),
+                {'policies': [policy.id], 'assets': [1], 'description': 'test scan requiring OpenAI key'},
+            )
+
+        # The scan should fail as the user doesn't have an OpenAI key configured
+        self.assertRedirects(response, '/scan/', status_code=302)
+
+        # Wait for the scan asset to reach a failed state
+        total_wait = 5
+        while ScanAssetFailure.objects.all().count() == 0 and total_wait > 0:
+            time.sleep(0.5)
+            total_wait -= 0.5
+
+        # Make sure the scan asset poll didn't timeout
+        self.assertGreater(total_wait, 0)
+
+        # Verify that the scan is available in the dashboard
+        response = self.client.get(reverse('scan_dashboard'))
+
+        # Given the current state of the fixtures, the latest scan should be ID #7
+        self.assertContains(response, 'chirps-scan-7', status_code=200)
+
+        # Obtain the ID of the ScanAsset instance created for the scan
+        scan_asset = ScanAsset.objects.get(scan__id=7)
+
+        # Open the scan details page
+        response = self.client.get(reverse('scan_asset_status', kwargs={'scan_asset_id': scan_asset.id}))
+
+        # Verify the scan asset status contains the proper error message
+        self.assertContains(response, 'User has not configured their OpenAI key', status_code=286)
