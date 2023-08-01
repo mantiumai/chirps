@@ -100,6 +100,19 @@ def create(request):
         scan_form.full_clean()
 
         if scan_form.is_valid():
+            # Set the selected policies to the scan
+            selected_policies = scan_form.cleaned_data['policies']
+            # Check if the user has configured their OpenAI key
+            policies_and_rules = [
+                (policy, rule) for policy in selected_policies for rule in policy.current_version.rules.all()
+            ]
+            if any(
+                not policy.is_template and not Embedding.objects.filter(text=rule.query_string).exists()
+                for policy, rule in policies_and_rules
+            ):
+                if not request.user.profile.openai_key:
+                    messages.error(request, 'User has not configured their OpenAI key')
+                    return redirect('scan_create')
 
             # Convert the scan form into a scan model
             scan = scan_form.save(commit=False)
@@ -112,21 +125,7 @@ def create(request):
 
             scan_form.save_m2m()
 
-            # Set the selected policies to the scan
-            selected_policies = scan_form.cleaned_data['policies']
             scan.policies.set(selected_policies)
-
-            # Check if the user has configured their OpenAI key
-            policies_and_rules = [
-                (policy, rule) for policy in selected_policies for rule in policy.current_version.rules.all()
-            ]
-            if any(
-                not policy.is_template and not Embedding.objects.filter(text=rule.query_string).exists()
-                for policy, rule in policies_and_rules
-            ):
-                if not request.user.profile.openai_key:
-                    messages.error(request, 'User has not configured their OpenAI key')
-                    return redirect('scan_create')
 
             # For every asset that was selected, kick off a task
             for asset in scan_form.cleaned_data['assets']:
