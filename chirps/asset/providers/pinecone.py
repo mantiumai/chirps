@@ -27,6 +27,18 @@ class PineconeAsset(BaseAsset):
 
     REQUIRES_EMBEDDINGS = True
 
+    @property
+    def decrypted_api_key(self):
+        """Return the decrypted API key~."""
+        if self.api_key is not None:
+            try:
+                decrypted_value = self.api_key
+                masked_value = decrypted_value[:4] + '*' * (len(decrypted_value) - 4)
+                return masked_value
+            except UnicodeDecodeError:
+                return 'Error: Decryption failed'
+        return None
+
     def search(self, query: list, max_results: int) -> list[SearchResult]:
         """Search the Pinecone asset with the specified query."""
         pinecone_lib.init(api_key=self.api_key, environment=self.environment)

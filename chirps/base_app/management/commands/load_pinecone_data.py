@@ -1,4 +1,4 @@
-"""Load redis dummy data"""
+"""Load pinecone dummy data"""
 import json
 import os
 
