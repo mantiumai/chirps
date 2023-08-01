@@ -2,7 +2,7 @@
 import re
 from logging import getLogger
 
-from asset.models import BaseAsset
+from asset.models import BaseAsset, SearchResult
 from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
@@ -85,19 +85,26 @@ def scan_task(scan_asset_id):
             query = embedding.vectors
         else:
             query = rule.query_string
-        results = asset.search(query, max_results=100)
 
-        for text in results:
+        # Issue the search query to the asset provider
+        results: list[SearchResult] = asset.search(query, max_results=100)
+
+        for search_result in results:
 
             # Create the result. We'll flip the result flag to True if any findings are found
-            result = Result(rule=rule, text=text, scan_asset=scan_asset)
+            result = Result(rule=rule, text=search_result.data, scan_asset=scan_asset)
             result.save()
 
             # Run the regex against the text
-            for match in re.finditer(rule.regex_test, text):
+            for match in re.finditer(rule.regex_test, search_result.data):
 
                 # Persist the finding
-                finding = Finding(result=result, offset=match.start(), length=match.end() - match.start())
+                finding = Finding(
+                    result=result,
+                    offset=match.start(),
+                    length=match.end() - match.start(),
+                    source_id=search_result.source_id,
+                )
                 finding.save()
 
         # Update the progress counter based on the number of rules that have been evaluated

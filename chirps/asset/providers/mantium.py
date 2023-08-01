@@ -1,7 +1,7 @@
 """Logic for interfacing with the Mantium asset."""
 from logging import getLogger
 
-from asset.models import BaseAsset
+from asset.models import BaseAsset, SearchResult
 from django.db import models
 from fernet_fields import EncryptedCharField
 from mantium_client.api_client import MantiumClient
@@ -23,7 +23,7 @@ class MantiumAsset(BaseAsset):
     html_name = 'Mantium'
     html_description = 'Mantium Knowledge Vault'
 
-    def search(self, query: str, max_results: int) -> list[str]:
+    def search(self, query: str, max_results: int) -> list[SearchResult]:
         """Search the vector database"""
         logger.debug('Starting Mantium Asset search', extra={'id': self.id})
         client = MantiumClient(client_id=self.client_id, client_secret=self.client_secret)
@@ -31,7 +31,7 @@ class MantiumAsset(BaseAsset):
 
         query_request = {'query': query}
         results = apps_api.query_application(self.app_id, query_request)
-
-        documents = [doc['content'] for doc in results['documents']]
+        logger.info(f'Results keys: {dir(results)}')
+        documents = [SearchResult(data=doc['content']) for doc in results['documents']]
         logger.debug('Mantium asset search complete', extra={'id': self.id})
         return documents

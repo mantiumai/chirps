@@ -102,6 +102,7 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Finding</th>
+                                                    <th scope="col">Source ID</th>
                                                     <th scope="col">Asset</th>
                                                 </tr>
                                             </thead>
@@ -109,6 +110,7 @@
                                                 {% for finding in rule.findings %}
                                                 <tr>
                                                     <td>{{ finding.surrounding_text }}</td>
+                                                    <td>{{ finding.source_id }}</td>
                                                     <td>{{ finding.result.scan_asset.asset.name }}</td>
                                                 </tr>
                                                 {% endfor %}
