@@ -31,7 +31,6 @@ class MantiumAsset(BaseAsset):
 
         query_request = {'query': query}
         results = apps_api.query_application(self.app_id, query_request)
-        logger.info(f'Results keys: {dir(results)}')
         documents = [SearchResult(data=doc['content']) for doc in results['documents']]
         logger.debug('Mantium asset search complete', extra={'id': self.id})
         return documents
