@@ -1,5 +1,7 @@
 """Models for the asset application."""
+from dataclasses import dataclass
 from logging import getLogger
+from typing import Any
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -7,6 +9,14 @@ from django.templatetags.static import static
 from polymorphic.models import PolymorphicModel
 
 logger = getLogger(__name__)
+
+
+@dataclass
+class SearchResult:
+    """Dataclass for a search result."""
+
+    data: str
+    source_id: Any | None = None
 
 
 class BaseAsset(PolymorphicModel):
@@ -17,7 +27,7 @@ class BaseAsset(PolymorphicModel):
     html_logo = None
     REQUIRES_EMBEDDINGS = False
 
-    def search(self, query: str, max_results: int) -> list[str]:
+    def search(self, query: str, max_results: int) -> list[SearchResult]:
         """Perform a query against the specified asset, returning the max_results number of matches."""
 
     def test_connection(self) -> bool:

@@ -2,7 +2,7 @@
 from logging import getLogger
 
 import numpy as np
-from asset.models import BaseAsset
+from asset.models import BaseAsset, SearchResult
 from django.db import models
 from redis import Redis
 from redis.commands.search.query import Query
@@ -32,7 +32,7 @@ class RedisAsset(BaseAsset):
 
     REQUIRES_EMBEDDINGS = True
 
-    def search(self, query: list, max_results: int) -> str:
+    def search(self, query: list, max_results: int) -> list[SearchResult]:
         """Search the Redis asset with the specified query."""
         client = Redis(
             host=self.host,
@@ -57,7 +57,7 @@ class RedisAsset(BaseAsset):
             params: dict[str, float] = {vector_param: embedding}
             results = index.search(search_query, query_params=params)
 
-            docs = [doc[self.text_field] for doc in results.docs]
+            docs = [SearchResult(data=doc[self.text_field], source_id=doc.id) for doc in results.docs]
             return docs
         finally:
             client.close()

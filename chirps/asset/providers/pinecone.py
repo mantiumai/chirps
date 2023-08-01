@@ -2,7 +2,7 @@
 from logging import getLogger
 
 import pinecone as pinecone_lib
-from asset.models import BaseAsset
+from asset.models import BaseAsset, SearchResult
 from django.db import models
 from fernet_fields import EncryptedCharField
 
@@ -29,7 +29,7 @@ class PineconeAsset(BaseAsset):
 
     @property
     def decrypted_api_key(self):
-        """Return the decrypted API key."""
+        """Return the decrypted API key~."""
         if self.api_key is not None:
             try:
                 decrypted_value = self.api_key
@@ -39,7 +39,7 @@ class PineconeAsset(BaseAsset):
                 return 'Error: Decryption failed'
         return None
 
-    def search(self, query: list, max_results: int) -> list[str]:
+    def search(self, query: list, max_results: int) -> list[SearchResult]:
         """Search the Pinecone asset with the specified query."""
         pinecone_lib.init(api_key=self.api_key, environment=self.environment)
 
@@ -48,7 +48,9 @@ class PineconeAsset(BaseAsset):
         search_results = index.query(vector=query, top_k=max_results, include_metadata=True)
 
         metadata_text_field = self.metadata_text_field if self.metadata_text_field else 'content'
-        result_content = [r['metadata'][metadata_text_field] for r in search_results['matches']]
+        result_content = [
+            SearchResult(data=r['metadata'][metadata_text_field], source_id=r['id']) for r in search_results['matches']
+        ]
 
         return result_content
 

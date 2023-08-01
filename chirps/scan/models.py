@@ -157,6 +157,7 @@ class Result(models.Model):
 class Finding(models.Model):
     """Model to identify the location of a finding within a result."""
 
+    source_id = models.TextField(blank=True, null=True)
     result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name='findings')
     offset = models.IntegerField()
     length = models.IntegerField()
