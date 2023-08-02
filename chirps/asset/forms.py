@@ -1,4 +1,5 @@
 """Forms for rendering and validating the asset models."""
+from asset.models import BaseAsset
 from django import forms
 from django.forms import ModelForm
 
@@ -148,3 +149,12 @@ def asset_from_html_name(html_name: str) -> dict:
             return asset
 
     return {}
+
+
+def form_from_model(model: BaseAsset) -> ModelForm:
+    """Return the form class for the specified model."""
+    for asset in assets:
+        if asset['model'] == type(model):
+            return asset['form']
+
+    return None

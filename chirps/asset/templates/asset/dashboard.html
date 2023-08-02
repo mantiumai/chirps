@@ -21,6 +21,14 @@
 </div>
 <hr>
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{message.tags}}" role="alert">
+            {{message}}
+        </div>
+    {% endfor %}
+{% endif %}
+
 <div class="row">
     {% for asset in page_obj %}
         <div class="col-md-12 col-lg-12">
@@ -48,16 +56,24 @@
                     </p>
                     <div class="d-flex">
                         <a href="{% url 'asset_delete' asset.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
-                        <a href="#" class="btn btn-primary ml-2 mr-0 disabled">Edit</a>
+
+                        {% if asset.scan_is_active %}
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="scan in progress (editing disabled)">
+                            <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0 disabled">Edit <i class="fa-solid fa-triangle-exclamation"></i></a>
+                        </span>
+                        {% else %}
+                            <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0">Edit</a>
+                        {% endif %}
+
                         {% if asset.html_name == 'Redis' %}
-                        <button data-asset-id="{{ asset.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
+                            <button data-asset-id="{{ asset.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
                         {% endif %}
                     </div>
                 </div>
-            </div>
+            </div>`
         </div>
     {% endfor %}
-</div>
+</div>`
 
 <!-- Toast notification -->
 <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 0; right: 0; z-index: 0;">
@@ -98,6 +114,10 @@ function showToast(message, type) {
     const toast = new bootstrap.Toast(toastElement);
     toast.show();
 }
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 
 {% include 'pagination.html' with page_obj=page_obj %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Edit Asset - {{asset.name}}{% endblock %}
+
+{% block content %}
+
+<div>
+  <h1 class="text-success">Edit Asset - {{asset.name}}</h1>
+  <hr>
+
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{message}}
+        </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card my-4">
+    <div class="card-body cardbody-color p-4">
+      <div class="form-group">
+        <div class="d-flex">
+          <img width=48 class="rounded ml-0 mr-3 my-auto" src="{{asset.logo_url}}">
+          <h2 class="ml-0 mr-auto my-auto">{{ asset.html_name }}</h2>
+        </div>
+        <form class="my-3" method="POST" action="{% url 'asset_edit' asset.id %}">
+          {% csrf_token %}
+          {{ form }}
+          <div class="d-flex mt-3">
+            <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'asset_dashboard' %}">Cancel</a>
+            <button class="btn btn-success ml-2 mr-0" type="submit">Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
