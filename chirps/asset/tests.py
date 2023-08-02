@@ -36,6 +36,8 @@ class AssetTests(TestCase):
 
             self.assertRedirects(response, '/', 302)
 
+        self.get_embedding_models_url = reverse('get_embedding_models')
+
     def test_asset_tenant_isolation(self):
         """Verify that assets are isolated to a single tenant."""
         # Create an asset for user1
@@ -91,7 +93,7 @@ class AssetTests(TestCase):
             'index_name': 'redis-index',
             'text_field': 'text',
             'embedding_field': 'embedding',
-            'embedding_model': 'model',
+            'embedding_model': 'text-embedding-ada-002',
             'embedding_model_service': Embedding.Service.OPEN_AI,
         }
         form = RedisAssetForm(data=form_data)
@@ -117,7 +119,7 @@ class AssetTests(TestCase):
             'index_name': 'pinecone-index',
             'project_name': 'pinecone-project',
             'metadata_text_field': 'text',
-            'embedding_model': 'model',
+            'embedding_model': 'text-embedding-ada-002',
             'embedding_model_service': Embedding.Service.OPEN_AI,
         }
         form = PineconeAssetForm(data=form_data)
@@ -125,6 +127,26 @@ class AssetTests(TestCase):
 
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
+
+    def test_get_embedding_models_view(self):
+        """Ensure expected models are returned"""
+        self.client.post(
+            reverse('login'),
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+        )
+        service = Embedding.Service.OPEN_AI
+        response = self.client.get(self.get_embedding_models_url, {'service': service})
+
+        self.assertEqual(response.status_code, 200)
+
+        models = Embedding.get_models_for_service(service)
+        returned_models = response.json()
+
+        self.assertEqual(len(models), len(returned_models))
+        self.assertEqual(set([model[0] for model in models]), set([model[0] for model in returned_models]))
 
 
 class AssetPaginationTests(TestCase):
