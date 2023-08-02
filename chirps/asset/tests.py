@@ -146,7 +146,7 @@ class AssetTests(TestCase):
         returned_models = response.json()
 
         self.assertEqual(len(models), len(returned_models))
-        self.assertEqual(set([model[0] for model in models]), set([model[0] for model in returned_models]))
+        self.assertEqual({model[0] for model in models}, {model[0] for model in returned_models})
 
 
 class AssetPaginationTests(TestCase):
