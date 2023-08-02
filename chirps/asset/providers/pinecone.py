@@ -16,7 +16,7 @@ class PineconeAsset(BaseAsset):
     environment = models.CharField(max_length=256, blank=True, null=True)
     index_name = models.CharField(max_length=256, blank=True, null=True)
     project_name = models.CharField(max_length=256, blank=True, null=True)
-    embedding_text_field = models.CharField(max_length=256, blank=False, null=True)
+    metadata_text_field = models.CharField(max_length=256, blank=False, null=True)
     embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
     embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
