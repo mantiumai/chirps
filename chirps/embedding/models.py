@@ -55,11 +55,6 @@ class Embedding(models.Model):
     def get_models_for_service(service):
         """Get available embedding models based on selected service"""
         if service == Embedding.Service.OPEN_AI:
-            return [
-                ('text-embedding-ada-002', 'text-embedding-ada-002'),
-                ('text-embedding-ada-003', 'text-embedding-ada-003'),
-                ('text-embedding-ada-004', 'text-embedding-ada-004'),
-                ('text-embedding-ada-005', 'text-embedding-ada-005'),
-            ]
+            return [('text-embedding-ada-002', 'text-embedding-ada-002')]
         # Add more services here as needed
         return []
