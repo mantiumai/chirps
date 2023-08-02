@@ -102,14 +102,22 @@ def create(request):
         if scan_form.is_valid():
             # Set the selected policies to the scan
             selected_policies = scan_form.cleaned_data['policies']
-            # Check if the user has configured their OpenAI key
-            policies_and_rules = [
-                (policy, rule) for policy in selected_policies for rule in policy.current_version.rules.all()
-            ]
+
+            # Check if the scan requires an OpenAI key
+            policies_and_rules = []
+
+            for policy in selected_policies:
+                for rule in policy.current_version.rules.all():
+                    policies_and_rules.append((policy, rule))
+
             # Check if any non-template policies don't have an associated embedding for their rule's query_string
             rule_strings = [rule.query_string for policy, rule in policies_and_rules if not policy.is_template]
-            missing_embeddings = not Embedding.objects.filter(text__in=rule_strings).count() == len(rule_strings)
+            rule_count = len(rule_strings)
 
+            rule_embedding_count = Embedding.objects.filter(text__in=rule_strings).count()
+            missing_embeddings = rule_embedding_count != rule_count
+
+            # an OpenAI key is required to generate embeddings if any are missing
             if missing_embeddings:
                 # If the user hasn't configured their OpenAI key, show an error message and redirect
                 if not request.user.profile.openai_key:
