@@ -13,7 +13,7 @@ class RedisAssetForm(ModelForm):
 
     embedding_model_service = forms.ChoiceField(
         choices=Embedding.Service.choices,
-        widget=forms.SelectMultiple(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+        widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
         required=True,
     )
 
@@ -101,7 +101,7 @@ class PineconeAssetForm(ModelForm):
 
     embedding_model_service = forms.ChoiceField(
         choices=Embedding.Service.choices,
-        widget=forms.SelectMultiple(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+        widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
         required=True,
     )
 
