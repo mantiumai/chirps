@@ -3,11 +3,15 @@ import time
 from unittest.mock import patch
 
 import pytest
+from account.models import Profile
 from celery import shared_task
 from celery.contrib.testing.app import TestApp
 from celery.contrib.testing.worker import start_worker
+from django.contrib.auth.models import User
+from django.contrib.messages import get_messages
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
+from policy.models import Policy, PolicyVersion, Rule
 
 from .models import ScanAsset, ScanAssetFailure
 from .tasks import task_failure_handler
@@ -22,6 +26,10 @@ class ScanTest(TestCase):
     def setUp(self):
         """Login the user before performing any tests"""
         self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+
+        # Create a profile for the user
+        user = User.objects.get(username='admin')
+        Profile.objects.create(user=user)
 
     def test_scan_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
@@ -57,6 +65,30 @@ class ScanTest(TestCase):
         response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
         self.assertContains(response, 'chirps-scan-6', status_code=200)
+
+    def test_scan_requires_openai_key(self):
+        """Test that a scan requires the user's OpenAI key"""
+        # Create a new policy with a rule
+        policy = Policy.objects.create(name='Test Policy', user=User.objects.get(username='admin'))
+        policy_version = PolicyVersion.objects.create(number=1, policy=policy)
+        policy.current_version = policy_version
+        policy.save()
+        Rule.objects.create(query_string='some query', policy=policy_version, severity=1)
+
+        # Trigger a scan for the new policy
+        with patch('scan.views.scan_task', dummy_task):
+            response = self.client.post(
+                reverse('scan_create'),
+                {'policies': [policy.id], 'assets': [1], 'description': 'test scan requiring OpenAI key'},
+            )
+
+        # The scan should fail as the user doesn't have an OpenAI key configured
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'User has not configured their OpenAI key')
+
+        # Check if ScanAsset object was not created
+        self.assertFalse(ScanAsset.objects.filter(scan__description='test scan requiring OpenAI key').exists())
 
 
 @shared_task(on_failure=task_failure_handler)

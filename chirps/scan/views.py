@@ -2,11 +2,13 @@
 from collections import defaultdict
 
 from asset.models import BaseAsset
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+from embedding.models import Embedding
 from policy.models import Policy
 
 from .forms import ScanForm
@@ -98,6 +100,29 @@ def create(request):
         scan_form.full_clean()
 
         if scan_form.is_valid():
+            # Set the selected policies to the scan
+            selected_policies = scan_form.cleaned_data['policies']
+
+            # Check if the scan requires an OpenAI key
+            policies_and_rules = []
+
+            for policy in selected_policies:
+                for rule in policy.current_version.rules.all():
+                    policies_and_rules.append((policy, rule))
+
+            # Check if any non-template policies don't have an associated embedding for their rule's query_string
+            rule_strings = [rule.query_string for policy, rule in policies_and_rules if not policy.is_template]
+            rule_count = len(rule_strings)
+
+            rule_embedding_count = Embedding.objects.filter(text__in=rule_strings).count()
+            missing_embeddings = rule_embedding_count != rule_count
+
+            # an OpenAI key is required to generate embeddings if any are missing
+            if missing_embeddings:
+                # If the user hasn't configured their OpenAI key, show an error message and redirect
+                if not request.user.profile.openai_key:
+                    messages.error(request, 'User has not configured their OpenAI key')
+                    return redirect('scan_create')
 
             # Convert the scan form into a scan model
             scan = scan_form.save(commit=False)
@@ -110,13 +135,10 @@ def create(request):
 
             scan_form.save_m2m()
 
-            # Set the selected policies to the scan
-            selected_policies = scan_form.cleaned_data['policies']
             scan.policies.set(selected_policies)
 
             # For every asset that was selected, kick off a task
             for asset in scan_form.cleaned_data['assets']:
-
                 scan_asset = ScanAsset.objects.create(scan=scan, asset=asset)
 
                 # Kick off the scan task

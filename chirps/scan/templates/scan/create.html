@@ -5,46 +5,57 @@
 
 <div>
   <h1 class="text-success">New Scan</h1>
+  {% if messages %}
+  <div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
   <hr>
   <div class="card my-4">
     <div class="card-body cardbody-color p-4">
-        <div class="form-group">
-            <form method="POST" action="{% url 'scan_create' %}">
-                {% csrf_token %}
+      <div class="form-group">
+        <form method="POST" action="{% url 'scan_create' %}">
+          {% csrf_token %}
 
-                {% for error in form.non_field_errors %}
-                  <span class="text-danger">{{error}}</span><br/>
+          {% for error in form.non_field_errors %}
+          <span class="text-danger">{{error}}</span><br />
+          {% endfor %}
+
+          <label for="{{form.description.id_for_label}}" class="form-label">Description</label>
+          <input class="form-control" type="text" name="{{form.description.html_name}}"
+            id="{{form.description.id_for_label}}" placeholder="Description" required>
+
+          <div class="row">
+            <div class="col-6">
+              <label for="policies" class="form-label">Policies</label>
+              <select class="selectpicker form-control" id="{{ form.policies.auto_id }}"
+                name="{{ form.policies.html_name }}" multiple data-actions-box="true" data-live-search="true">
+                {% for policy in form.policies.field.queryset %}
+                <option value="{{ policy.id }}">{{ policy }}</option>
                 {% endfor %}
+              </select>
+            </div>
 
-                <label for="{{form.description.id_for_label}}" class="form-label">Description</label>
-                <input class="form-control" type="text" name="{{form.description.html_name}}" id="{{form.description.id_for_label}}" placeholder="Description" required>
+            <div class="col-6">
+              <label for="assets" class="form-label">Asset(s)</label>
+              <select class="selectpicker form-control" id="assets" name="assets" multiple>
+                {% for asset in assets %}
+                <option value="{{ asset.id }}"
+                  data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{asset.logo_url}}'> {{ asset.name }}">
+                  {{ asset.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
 
-                <div class="row">
-                  <div class="col-6">
-                    <label for="policies" class="form-label">Policies</label>
-                    <select class="selectpicker form-control" id="{{ form.policies.auto_id }}" name="{{ form.policies.html_name }}" multiple data-actions-box="true" data-live-search="true">
-                      {% for policy in form.policies.field.queryset %}
-                        <option value="{{ policy.id }}">{{ policy }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-
-                  <div class="col-6">
-                    <label for="assets" class="form-label">Asset(s)</label>
-                    <select class="selectpicker form-control" id="assets" name="assets" multiple>
-                      {% for asset in assets %}
-                        <option value="{{ asset.id }}" data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{asset.logo_url}}'> {{ asset.name }}">{{ asset.name }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                </div>
-
-                <div class="d-flex mt-3">
-                  <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
-                  <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
-                </div>
-            </form>
-        </div>
+          <div class="d-flex mt-3">
+            <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
+            <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
