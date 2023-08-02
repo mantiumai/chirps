@@ -73,12 +73,12 @@ def create(request, html_name):
         asset = asset_from_html_name(html_name=html_name)
         form = asset['form']()
 
-    default_service = Embedding.Service.OPEN_AI  # Add this line
-    service_model_choices = Embedding.get_models_for_service(default_service)  # Update this line
+    default_service = Embedding.Service.OPEN_AI
+    service_model_choices = Embedding.get_models_for_service(default_service)
     context = {
         'form': form,
         'asset': asset,
-        'service_model_choices': service_model_choices,  # Add this line
+        'service_model_choices': service_model_choices,
     }
     return render(request, 'asset/create.html', context)
 
