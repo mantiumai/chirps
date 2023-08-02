@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from embedding.models import Embedding
 from redis import exceptions
 
 from .forms import asset_from_html_name, assets
@@ -72,7 +73,22 @@ def create(request, html_name):
         asset = asset_from_html_name(html_name=html_name)
         form = asset['form']()
 
-    return render(request, 'asset/create.html', {'form': form, 'asset': asset})
+    default_service = Embedding.Service.OPEN_AI
+    service_model_choices = Embedding.get_models_for_service(default_service)
+    context = {
+        'form': form,
+        'asset': asset,
+        'service_model_choices': service_model_choices,
+    }
+    return render(request, 'asset/create.html', context)
+
+
+@login_required
+def get_embedding_models(request):
+    """Get available embedding models based on selected service"""
+    service = request.GET.get('service', None)
+    models = Embedding.get_models_for_service(service)
+    return JsonResponse(models, safe=False)
 
 
 @login_required

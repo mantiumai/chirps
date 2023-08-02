@@ -15,7 +15,12 @@
         </div>
         <form class="my-3" method="POST" action="{% url 'asset_create' asset.model.html_name %}">
           {% csrf_token %}
-          {{ form }}
+          {% for field in form %}
+            <div class="form-group">
+              <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+          {% endfor %}
           <div class="d-flex mt-3">
             <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'asset_dashboard' %}">Cancel</a>
             <button class="btn btn-success ml-2 mr-0" type="submit">Create</button>
@@ -25,5 +30,34 @@
     </div>
   </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let serviceSelector = document.getElementById('id_embedding_model_service');
+  let modelSelector = document.getElementById('id_embedding_model');
+
+  serviceSelector.addEventListener('change', function() {
+    let selectedService = serviceSelector.value;
+
+    // AJAX request to get the model choices for the selected service
+    fetch(`/asset/get_embedding_models?service=${selectedService}`)
+      .then((response) => response.json())
+      .then((models) => {
+        // Clear the existing options
+        modelSelector.innerHTML = '';
+
+        // Add the new options
+        models.forEach((model) => {
+          let option = document.createElement('option');
+          option.value = model[0];
+          option.text = model[1];
+          modelSelector.add(option);
+        });
+      });
+  });
+});
+</script>
+{% endblock %}
 
 {% endblock %}
