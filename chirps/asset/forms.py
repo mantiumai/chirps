@@ -1,6 +1,7 @@
 """Forms for rendering and validating the asset models."""
 from django import forms
 from django.forms import ModelForm
+from embedding.models import Embedding
 
 from .providers.mantium import MantiumAsset
 from .providers.pinecone import PineconeAsset
@@ -9,6 +10,12 @@ from .providers.redis import RedisAsset
 
 class RedisAssetForm(ModelForm):
     """Form for the RedisAsset model."""
+
+    embedding_model_service = forms.ChoiceField(
+        choices=Embedding.Service.choices,
+        widget=forms.SelectMultiple(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+        required=True,
+    )
 
     class Meta:
         """Django Meta options for the RedisAssetForm."""
@@ -46,9 +53,6 @@ class RedisAssetForm(ModelForm):
             ),
             'embedding_model': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
-            ),
-            'embedding_model_service': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'The host of the model that generated the embeddings'}
             ),
         }
 
@@ -95,6 +99,12 @@ class PineconeAssetForm(ModelForm):
         ('us-east-1-aws', 'us-east-1-aws'),
     ]
 
+    embedding_model_service = forms.ChoiceField(
+        choices=Embedding.Service.choices,
+        widget=forms.SelectMultiple(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+        required=True,
+    )
+
     class Meta:
         """Django Meta options for the PineconeAssetForm."""
 
@@ -128,9 +138,6 @@ class PineconeAssetForm(ModelForm):
         )
         self.fields['embedding_model'].widget = forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
-        )
-        self.fields['embedding_model_service'].widget = forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': 'The host of the model that generated the embeddings'}
         )
 
 
