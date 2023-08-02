@@ -83,6 +83,7 @@ def create(request, html_name):
     return render(request, 'asset/create.html', context)
 
 
+@login_required
 def get_embedding_models(request):
     """Get available embedding models based on selected service"""
     service = request.GET.get('service', None)
