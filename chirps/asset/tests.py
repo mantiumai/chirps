@@ -118,7 +118,7 @@ class AssetTests(TestCase):
             'environment': 'us-west4-gcp-free',
             'index_name': 'pinecone-index',
             'project_name': 'pinecone-project',
-            'text_field': 'text',
+            'metadata_text_field': 'text',
             'embedding_model': 'model',
             'embedding_model_service': Embedding.Service.OPEN_AI,
         }
