@@ -12,8 +12,8 @@ class Embedding(models.Model):
     class Service(models.TextChoices):
         """Enumerations to define services available for generating embeddings."""
 
+        LOCAL = 'localhost', 'Locally Hosted: NOT IMPLEMENTED'
         OPEN_AI = 'OpenAI', 'OpenAI'
-        LOCAL = 'Localhost', 'Locally Hosted: NOT IMPLEMENTED'
 
         @classmethod
         def get_provider_from_service_name(cls, name: str) -> BaseEmbeddingProvider:

@@ -3,11 +3,13 @@ from unittest import mock
 
 import fakeredis
 import pytest
+from asset.forms import PineconeAssetForm, RedisAssetForm
 from asset.providers.mantium import MantiumAsset
 from asset.providers.redis import RedisAsset
 from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
+from embedding.models import Embedding
 from redis import exceptions
 
 
@@ -68,6 +70,61 @@ class AssetTests(TestCase):
         self.assertRedirects(response, '/', status_code=302)
         response = self.client.get(reverse('asset_dashboard'))
         self.assertNotContains(response, 'Mantium Asset', status_code=200)
+
+    def test_redis_asset_creation(self):
+        """Test the creation of a Redis asset with the dropdown."""
+        self.client.post(
+            reverse('login'),
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+        )
+
+        form_data = {
+            'name': 'Redis Asset',
+            'host': 'localhost',
+            'port': 6379,
+            'database_name': 'redis-db',
+            'username': 'guest',
+            'password': 'guestpassword',
+            'index_name': 'redis-index',
+            'text_field': 'text',
+            'embedding_field': 'embedding',
+            'embedding_model': 'model',
+            'embedding_model_service': Embedding.Service.OPEN_AI,
+        }
+        form = RedisAssetForm(data=form_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+        response = self.client.post(reverse('asset_create', args=['Redis']), form_data)
+        self.assertRedirects(response, reverse('asset_dashboard'))
+
+    def test_pinecone_asset_creation(self):
+        """Test the creation of a Pinecone asset with the dropdown."""
+        self.client.post(
+            reverse('login'),
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+        )
+
+        form_data = {
+            'name': 'Pinecone Asset',
+            'api_key': 'pinecone-api-key',
+            'environment': 'us-west4-gcp-free',
+            'index_name': 'pinecone-index',
+            'project_name': 'pinecone-project',
+            'metadata_text_field': 'text',
+            'embedding_model': 'model',
+            'embedding_model_service': Embedding.Service.OPEN_AI,
+        }
+        form = PineconeAssetForm(data=form_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+        response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
+        self.assertRedirects(response, reverse('asset_dashboard'))
 
 
 class AssetPaginationTests(TestCase):
