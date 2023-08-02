@@ -12,7 +12,6 @@ class Embedding(models.Model):
     class Service(models.TextChoices):
         """Enumerations to define services available for generating embeddings."""
 
-        # COHERE = 'cohere', 'cohere'
         LOCAL = 'localhost', 'Locally Hosted: NOT IMPLEMENTED'
         OPEN_AI = 'OpenAI', 'OpenAI'
 
