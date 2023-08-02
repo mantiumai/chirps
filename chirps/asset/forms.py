@@ -8,14 +8,28 @@ from .providers.pinecone import PineconeAsset
 from .providers.redis import RedisAsset
 
 
-class RedisAssetForm(ModelForm):
-    """Form for the RedisAsset model."""
+class VectorDatabaseAssetForm(ModelForm):
+    """Base form class for assets with shared fields."""
 
     embedding_model_service = forms.ChoiceField(
         choices=Embedding.Service.choices,
         widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
         required=True,
+        initial=Embedding.Service.OPEN_AI,
     )
+
+    class Meta:
+        abstract = True
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
+            'embedding_model': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
+            ),
+        }
+
+
+class RedisAssetForm(VectorDatabaseAssetForm):
+    """Form for the RedisAsset model."""
 
     class Meta:
         """Django Meta options for the RedisAssetForm."""
@@ -36,7 +50,7 @@ class RedisAssetForm(ModelForm):
         ]
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
+            **VectorDatabaseAssetForm.Meta.widgets,
             'host': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hostname or IP address'}),
             'port': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '6379'}),
             'database_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Database name'}),
@@ -50,9 +64,6 @@ class RedisAssetForm(ModelForm):
             ),
             'embedding_field': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'The document field in which embeddings are stored'}
-            ),
-            'embedding_model': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
             ),
         }
 
@@ -79,7 +90,7 @@ class MantiumAssetForm(ModelForm):
         }
 
 
-class PineconeAssetForm(ModelForm):
+class PineconeAssetForm(VectorDatabaseAssetForm):
     """Form for the PineconeAsset model."""
 
     ENV_CHOICES = [
@@ -99,12 +110,6 @@ class PineconeAssetForm(ModelForm):
         ('us-east-1-aws', 'us-east-1-aws'),
     ]
 
-    embedding_model_service = forms.ChoiceField(
-        choices=Embedding.Service.choices,
-        widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
-        required=True,
-    )
-
     class Meta:
         """Django Meta options for the PineconeAssetForm."""
 
@@ -122,9 +127,6 @@ class PineconeAssetForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['name'].widget = forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}
-        )
         self.fields['api_key'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'})
         self.fields['environment'].widget = forms.Select(choices=self.ENV_CHOICES, attrs={'class': 'form-control'})
         self.fields['index_name'].widget = forms.TextInput(
@@ -135,9 +137,6 @@ class PineconeAssetForm(ModelForm):
         )
         self.fields['metadata_text_field'].widget = forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': 'Metadata field in which text is stored'}
-        )
-        self.fields['embedding_model'].widget = forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
         )
 
 
