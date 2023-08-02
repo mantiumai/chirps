@@ -86,7 +86,7 @@ def create(request, html_name):
 @login_required
 def get_embedding_models(request):
     """Get available embedding models based on selected service"""
-    service = request.GET.get('service', None)
+    service = request.GET.get('service', Embedding.Service.OPEN_AI)
     models = Embedding.get_models_for_service(service)
     return JsonResponse(models, safe=False)
 

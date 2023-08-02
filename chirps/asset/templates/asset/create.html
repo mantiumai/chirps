@@ -32,31 +32,40 @@
 </div>
 
 {% block extra_js %}
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  let serviceSelector = document.getElementById('id_embedding_model_service');
-  let modelSelector = document.getElementById('id_embedding_model');
+  $(document).ready(function () {
+    // Get the service and model dropdown elements
+    var serviceDropdown = $("#id_embedding_model_service");
+    var modelDropdown = $("#id_embedding_model");
 
-  serviceSelector.addEventListener('change', function() {
-    let selectedService = serviceSelector.value;
+    // Function to update the model dropdown options based on the selected service
+    function updateModelOptions() {
+      var selectedService = serviceDropdown.val();
 
-    // AJAX request to get the model choices for the selected service
-    fetch(`/asset/get_embedding_models?service=${selectedService}`)
-      .then((response) => response.json())
-      .then((models) => {
+      // AJAX request to get the model choices for the selected service
+      $.getJSON(`/asset/get_embedding_models?service=${selectedService}`, function (models) {
         // Clear the existing options
-        modelSelector.innerHTML = '';
+        modelDropdown.empty();
 
         // Add the new options
-        models.forEach((model) => {
-          let option = document.createElement('option');
-          option.value = model[0];
-          option.text = model[1];
-          modelSelector.add(option);
+        $.each(models, function (index, model) {
+          modelDropdown.append(
+            $("<option></option>")
+              .attr("value", model[0])
+              .text(model[1])
+          );
         });
       });
+    }
+
+    // Call the updateModelOptions function when the service dropdown value changes
+    serviceDropdown.on("change", updateModelOptions);
+
+    // Call the updateModelOptions function on page load
+    updateModelOptions();
   });
-});
 </script>
 {% endblock %}
 

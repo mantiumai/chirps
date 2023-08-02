@@ -31,6 +31,14 @@ class VectorDatabaseAssetForm(ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'})
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.is_bound:
+            service = self.data.get('embedding_model_service', self.default_service)
+        else:
+            service = self.initial.get('embedding_model_service', self.default_service)
+        self.fields['embedding_model'].choices = Embedding.get_models_for_service(service)
+
 
 class RedisAssetForm(VectorDatabaseAssetForm):
     """Form for the RedisAsset model."""
