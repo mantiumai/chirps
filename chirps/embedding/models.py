@@ -27,7 +27,8 @@ class Embedding(models.Model):
             if name not in embedding_service_providers:
                 raise NotImplementedError
 
-            return embedding_service_providers[name]
+            provider = embedding_service_providers[name]
+            return provider()
 
     created_at = models.DateTimeField(auto_now_add=True)
 
