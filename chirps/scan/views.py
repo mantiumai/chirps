@@ -106,10 +106,12 @@ def create(request):
             policies_and_rules = [
                 (policy, rule) for policy in selected_policies for rule in policy.current_version.rules.all()
             ]
-            if any(
-                not policy.is_template and not Embedding.objects.filter(text=rule.query_string).exists()
-                for policy, rule in policies_and_rules
-            ):
+            # Check if any non-template policies don't have an associated embedding for their rule's query_string
+            rule_strings = [rule.query_string for policy, rule in policies_and_rules if not policy.is_template]
+            missing_embeddings = not Embedding.objects.filter(text__in=rule_strings).count() == len(rule_strings)
+
+            if missing_embeddings:
+                # If the user hasn't configured their OpenAI key, show an error message and redirect
                 if not request.user.profile.openai_key:
                     messages.error(request, 'User has not configured their OpenAI key')
                     return redirect('scan_create')
