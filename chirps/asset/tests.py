@@ -95,9 +95,7 @@ class AssetTests(TestCase):
             'embedding_model_service': Embedding.Service.OPEN_AI,
         }
         form = RedisAssetForm(data=form_data)
-        if not form.is_valid():
-            print('RedisAssetForm errors:', form.errors)
-        self.assertTrue(form.is_valid())
+        self.assertTrue(form.is_valid(), form.errors)
 
         response = self.client.post(reverse('asset_create', args=['Redis']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
@@ -123,9 +121,7 @@ class AssetTests(TestCase):
             'embedding_model_service': Embedding.Service.OPEN_AI,
         }
         form = PineconeAssetForm(data=form_data)
-        if not form.is_valid():
-            print('PineconeAssetForm errors:', form.errors)
-        self.assertTrue(form.is_valid())
+        self.assertTrue(form.is_valid(), form.errors)
 
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
