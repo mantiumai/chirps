@@ -127,6 +127,9 @@ class PineconeAssetForm(VectorDatabaseAssetForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        for widget_name, value in VectorDatabaseAssetForm.Meta.widgets.items():
+            self.fields[widget_name].widget = value
+
         self.fields['api_key'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'})
         self.fields['environment'].widget = forms.Select(choices=self.ENV_CHOICES, attrs={'class': 'form-control'})
         self.fields['index_name'].widget = forms.TextInput(
