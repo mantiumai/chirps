@@ -4,7 +4,6 @@ from logging import getLogger
 import numpy as np
 from asset.models import BaseAsset, SearchResult
 from django.db import models
-from embedding.models import Embedding
 from redis import Redis
 from redis.commands.search.query import Query
 
@@ -24,9 +23,7 @@ class RedisAsset(BaseAsset):
     text_field = models.CharField(max_length=256)
     embedding_field = models.CharField(max_length=256)
     embedding_model = models.CharField(max_length=256, default='text-embedding-ada-002')
-    embedding_model_service = models.CharField(
-        max_length=256, default=Embedding.Service.OPEN_AI, choices=Embedding.Service.choices
-    )
+    embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     # Name of the file in the ./asset/static/ directory to use as a logo
     html_logo = 'asset/redis-logo.png'
