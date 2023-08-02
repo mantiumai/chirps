@@ -11,20 +11,24 @@ from .providers.redis import RedisAsset
 class VectorDatabaseAssetForm(ModelForm):
     """Base form class for assets with shared fields."""
 
+    default_service = Embedding.Service.OPEN_AI
+
     embedding_model_service = forms.ChoiceField(
         choices=Embedding.Service.choices,
         widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
         required=True,
-        initial=Embedding.Service.OPEN_AI,
+        initial=default_service,
+    )
+    embedding_model = forms.ChoiceField(
+        choices=Embedding.get_models_for_service(default_service),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
     )
 
     class Meta:
         abstract = True
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
-            'embedding_model': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'The model that generated the embeddings'}
-            ),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'})
         }
 
 
@@ -45,8 +49,8 @@ class RedisAssetForm(VectorDatabaseAssetForm):
             'index_name',
             'text_field',
             'embedding_field',
-            'embedding_model',
             'embedding_model_service',
+            'embedding_model',
         ]
 
         widgets = {
@@ -121,8 +125,8 @@ class PineconeAssetForm(VectorDatabaseAssetForm):
             'index_name',
             'project_name',
             'metadata_text_field',
-            'embedding_model',
             'embedding_model_service',
+            'embedding_model',
         ]
 
     def __init__(self, *args, **kwargs):
