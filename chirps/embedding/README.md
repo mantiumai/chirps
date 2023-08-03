@@ -1,6 +1,6 @@
 # Add a New Embedding Model Service
 
-This guide explains the steps required to add a new embedding model service and associated embedding models to the application.
+This guide explains the steps required to add a new embedding model service and associated embedding model(s) to the application.
 
 ## Step 1: Add a new service enumeration
 
@@ -12,9 +12,9 @@ MY_NEW_SERVICE = 'my_new_service', 'My New Service'
 
 ## Step 2: Create a new provider class
 
-Create a new provider class for your service in the embedding/providers directory. The new provider class should inherit from BaseEmbeddingProvider and implement the required methods.
+Create a new provider class for your service in the `embedding/providers` directory. The new provider class should inherit from `BaseEmbeddingProvider` and implement the required methods.
 
-For example, create a file named my_new_service.py with the following content:
+For example, create a file named `my_new_service.py` with the following content:
 ```python
 class MyNewServiceEmbeddingProvider(BaseEmbeddingProvider):
     """MyNewService implementation for embedding provider."""
@@ -24,9 +24,9 @@ class MyNewServiceEmbeddingProvider(BaseEmbeddingProvider):
         ...implement the function
 ```
 
-## Step 3: Update the get_provider_from_service_name method
+## Step 3: Update the `get_provider_from_service_name` method
 
-In the embedding/models.py file, update the get_provider_from_service_name method inside the Service class to include your new service and its provider class.
+Return to the `embedding/models.py` file and update the `get_provider_from_service_name` method inside the `Service` class to include your new service and its provider class.
 
 ```python
 @classmethod
@@ -41,7 +41,7 @@ def get_provider_from_service_name(cls, name: str) -> BaseEmbeddingProvider:
 
 ## Step 4: Add available models for your service
 
-In the embedding/models.py file, update the get_models_for_service method inside the Embedding model to include the available models for your new service.
+While still in the `embedding/models.py` file, update the `get_models_for_service` method inside the `Embedding` model to include the available model(s) for your new service.
 
 ```python
 @staticmethod
@@ -58,4 +58,4 @@ def get_models_for_service(service):
 
 ## Step 5: Test your new service
 
-Make sure to test your new service and associated embedding models by creating test cases in the tests.py file for your app.
+Make sure to test your new service and associated embedding models by creating test cases in `embedding/tests.py`.
