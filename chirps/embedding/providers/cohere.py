@@ -34,4 +34,4 @@ class CohereEmbeddingProvider(BaseEmbeddingProvider):
         logger.debug('Embedding complete', extra={'text': text})
 
         # Since we're only embedding one text, return the first embedding in the response
-        return response['embeddings'][0]
+        return response.embeddings[0]

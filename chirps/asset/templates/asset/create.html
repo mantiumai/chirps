@@ -45,7 +45,7 @@
       var selectedService = serviceDropdown.val();
 
       // AJAX request to get the model choices for the selected service
-      $.getJSON(`/get_embedding_models?service=${selectedService}`, function (models) {
+      $.getJSON(`/asset/get_embedding_models?service=${selectedService}`, function (models) {
         // Clear the existing options
         modelDropdown.empty();
 
