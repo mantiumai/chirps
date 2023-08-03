@@ -119,25 +119,24 @@ def create(request):
 
             selected_assets = scan_form.cleaned_data['assets']
             # an API key is required to generate embeddings if any are missing
-            if missing_embeddings:
-                fail_scan_create = False
-                for asset in selected_assets:
-                    if hasattr(asset, 'embedding_model_service'):
-                        if (
-                            asset.embedding_model_service == Embedding.Service.OPEN_AI
-                            and not request.user.profile.openai_key
-                        ):
-                            fail_scan_create = True
-                            messages.error(request, 'User has not configured their OpenAI API key')
-                        elif (
-                            asset.embedding_model_service == Embedding.Service.COHERE
-                            and not request.user.profile.cohere_key
-                        ):
-                            fail_scan_create = True
-                            messages.error(request, 'User has not configured their cohere API key')
+            fail_scan_create = False
+            for asset in selected_assets:
+                if missing_embeddings and hasattr(asset, 'embedding_model_service'):
+                    if (
+                        asset.embedding_model_service == Embedding.Service.OPEN_AI
+                        and not request.user.profile.openai_key
+                    ):
+                        fail_scan_create = True
+                        messages.error(request, 'User has not configured their OpenAI API key')
+                    elif (
+                        asset.embedding_model_service == Embedding.Service.COHERE
+                        and not request.user.profile.cohere_key
+                    ):
+                        fail_scan_create = True
+                        messages.error(request, 'User has not configured their cohere API key')
 
-                if fail_scan_create is True:
-                    return redirect('scan_create')
+            if fail_scan_create is True:
+                return redirect('scan_create')
 
             # Convert the scan form into a scan model
             scan = scan_form.save(commit=False)
