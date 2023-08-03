@@ -59,8 +59,11 @@ class PineconeAsset(BaseAsset):
         """Ensure that the Pinecone asset can be connected to."""
         try:
             pinecone_lib.init(api_key=self.api_key, environment=self.environment)
-            pinecone_lib.list_indexes()
-            return PingResult(success=True)
-        except Exception as err:   # pylint: disable=broad-exception-caught
-            logger.error('Pinecone connection test failed', extra={'error': err})
-            return PingResult(success=False, error=str(err))
+            pinecone_lib.describe_index(self.index_name)
+            return PingResult(success=True)        
+        except pinecone_lib.core.client.exceptions.NotFoundException as err:
+            logger.error('Pinecone connection test failed', extra={'error': err.body})
+            return PingResult(success=False, error='Index not found')
+        except pinecone_lib.core.client.exceptions.UnauthorizedException as err:
+            logger.error('Pinecone connection test failed', extra={'error': err.body})
+            return PingResult(success=False, error=err.body)
