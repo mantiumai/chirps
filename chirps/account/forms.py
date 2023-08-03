@@ -1,20 +1,22 @@
 """Form classes for the account app."""
 from django import forms
-from django.forms import ModelForm
 
 from .models import Profile
 
 
-class ProfileForm(ModelForm):
-    """Form for the Profile model."""
+class ProfileForm(forms.ModelForm):
+    """User profile form"""
+
+    openai_key = forms.CharField(
+        max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    cohere_key = forms.CharField(
+        max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
-        """Meta class for ProfileForm."""
-
         model = Profile
-        fields = ['openai_key']
-
-        widgets = {'openai_key': forms.TextInput(attrs={'class': 'form-control'})}
+        fields = ['openai_key', 'cohere_key']
 
 
 class LoginForm(forms.Form):

@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 from account.models import Profile
+from asset.providers.pinecone import PineconeAsset
 from celery import shared_task
 from celery.contrib.testing.app import TestApp
 from celery.contrib.testing.worker import start_worker
@@ -69,23 +70,27 @@ class ScanTest(TestCase):
     def test_scan_requires_openai_key(self):
         """Test that a scan requires the user's OpenAI key"""
         # Create a new policy with a rule
-        policy = Policy.objects.create(name='Test Policy', user=User.objects.get(username='admin'))
+        user = User.objects.get(username='admin')
+        policy = Policy.objects.create(name='Test Policy', user=user)
         policy_version = PolicyVersion.objects.create(number=1, policy=policy)
         policy.current_version = policy_version
         policy.save()
         Rule.objects.create(query_string='some query', policy=policy_version, severity=1)
 
+        asset = PineconeAsset.objects.create(user=user, api_key='foo')
+        asset.save()
+
         # Trigger a scan for the new policy
         with patch('scan.views.scan_task', dummy_task):
             response = self.client.post(
                 reverse('scan_create'),
-                {'policies': [policy.id], 'assets': [1], 'description': 'test scan requiring OpenAI key'},
+                {'policies': [policy.id], 'assets': [asset.id], 'description': 'test scan requiring OpenAI key'},
             )
 
         # The scan should fail as the user doesn't have an OpenAI key configured
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), 'User has not configured their OpenAI key')
+        self.assertEqual(str(messages[0]), 'User has not configured their OpenAI API key')
 
         # Check if ScanAsset object was not created
         self.assertFalse(ScanAsset.objects.filter(scan__description='test scan requiring OpenAI key').exists())

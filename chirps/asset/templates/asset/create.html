@@ -33,30 +33,45 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  let serviceSelector = document.getElementById('id_embedding_model_service');
-  let modelSelector = document.getElementById('id_embedding_model');
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the service and model dropdown elements
+    var serviceDropdown = document.querySelector("#id_embedding_model_service");
+    var modelDropdown = document.querySelector("#id_embedding_model");
 
-  serviceSelector.addEventListener('change', function() {
-    let selectedService = serviceSelector.value;
+    // Function to update the model dropdown options based on the selected service
+    function updateModelOptions() {
+      var selectedService = serviceDropdown.value;
 
-    // AJAX request to get the model choices for the selected service
-    fetch(`/asset/get_embedding_models?service=${selectedService}`)
-      .then((response) => response.json())
-      .then((models) => {
-        // Clear the existing options
-        modelSelector.innerHTML = '';
+      // AJAX request to get the model choices for the selected service
+      fetch(`/asset/get_embedding_models?service=${selectedService}`)
+        .then(response => response.json())
+        .then(models => {
+          // Create a new select element
+          var newModelDropdown = document.createElement("select");
+          newModelDropdown.id = "id_embedding_model";
+          newModelDropdown.name = "embedding_model";
+          newModelDropdown.classList.add("form-control");
 
-        // Add the new options
-        models.forEach((model) => {
-          let option = document.createElement('option');
-          option.value = model[0];
-          option.text = model[1];
-          modelSelector.add(option);
+          // Add the new options
+          models.forEach(function (model) {
+            var option = document.createElement("option");
+            option.value = model[0];
+            option.text = model[1];
+            newModelDropdown.add(option);
+          });
+
+          // Replace the existing model dropdown with the new one
+          modelDropdown.parentNode.replaceChild(newModelDropdown, modelDropdown);
+          modelDropdown = newModelDropdown;
         });
-      });
+    }
+
+    // Call the updateModelOptions function when the service dropdown value changes
+    serviceDropdown.addEventListener("change", updateModelOptions);
+
+    // Call the updateModelOptions function on page load
+    updateModelOptions();
   });
-});
 </script>
 {% endblock %}
 

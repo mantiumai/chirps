@@ -7,13 +7,20 @@
 
 <div class="form-group">
     <form method="POST" action="{% url 'profile'%}">
-        <div>
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="{{ form.openai_key.id_for_label }}">OpenAI Key:</label>
-                <input type="text" class="form-control" id="{{ form.openai_key.auto_id }}" name="{{ form.openai_key.html_name }}" value="{{ user.profile.masked_openai_key }}">
-            </div>
+        {% csrf_token %}
+
+        <!-- OpenAI Key -->
+        <div class="form-group">
+            <label for="{{ form.openai_key.id_for_label }}">OpenAI Key:</label>
+            <input type="text" class="form-control" id="{{ form.openai_key.auto_id }}" name="{{ form.openai_key.html_name }}" value="{{ user.profile.masked_openai_key }}" placeholder="Enter OpenAI key or leave it blank">
         </div>
+
+        <!-- Cohere Key -->
+        <div class="form-group">
+            <label for="{{ form.cohere_key.id_for_label }}">Cohere Key:</label>
+            <input type="text" class="form-control" id="{{ form.cohere_key.auto_id }}" name="{{ form.cohere_key.html_name }}" value="{{ user.profile.masked_cohere_key }}" placeholder="Enter Cohere key or leave it blank">
+        </div>
+
         <div class="mt-3 d-flex">
             <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
         </div>

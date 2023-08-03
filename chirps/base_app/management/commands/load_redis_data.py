@@ -18,6 +18,7 @@ class Command(BaseCommand):
         """Add command arguments"""
         parser.add_argument('file_path', type=str, help='Path to the fixtures JSON file')
         parser.add_argument('--index', default='test', type=str, help='Index name to use as a prefix for Redis keys')
+        parser.add_argument('--dimension', default=1536, help='Vector embedding count')
         parser.add_argument('--host', default='127.0.0.1', help='Redis host (default: 127.0.0.1)')
         parser.add_argument('--port', default=6379, type=int, help='Redis port (default: 6379)')
         parser.add_argument('--db', default=0, type=int, help='Redis database number (default: 0)')
@@ -38,6 +39,7 @@ class Command(BaseCommand):
         """Handle command"""
         file_path = options['file_path']
         index_name = options['index']
+        dimension = options['dimension']
         vector_field_name = 'embeddings'
         host = options['host']
         port = options['port']
@@ -62,7 +64,7 @@ class Command(BaseCommand):
                 'FLAT',
                 {
                     'TYPE': 'FLOAT32',
-                    'DIM': 1536,
+                    'DIM': dimension,
                     'DISTANCE_METRIC': 'cosine',
                 },
             ),

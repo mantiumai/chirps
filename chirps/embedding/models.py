@@ -1,6 +1,7 @@
 """Models for the embedding app"""
 from django.contrib.auth.models import User
 from django.db import models
+from embedding.providers.cohere import CohereEmbeddingProvider
 
 from .providers.base import BaseEmbeddingProvider
 from .providers.openai import OpenAIEmbeddingProvider
@@ -12,16 +13,22 @@ class Embedding(models.Model):
     class Service(models.TextChoices):
         """Enumerations to define services available for generating embeddings."""
 
+        COHERE = 'cohere', 'cohere'
         LOCAL = 'localhost', 'Locally Hosted: NOT IMPLEMENTED'
         OPEN_AI = 'OpenAI', 'OpenAI'
 
         @classmethod
         def get_provider_from_service_name(cls, name: str) -> BaseEmbeddingProvider:
             """Get the provider for the service."""
-            if name == Embedding.Service.OPEN_AI:
-                return OpenAIEmbeddingProvider()
+            embedding_service_providers = {
+                Embedding.Service.OPEN_AI: OpenAIEmbeddingProvider,
+                Embedding.Service.COHERE: CohereEmbeddingProvider,
+            }
+            if name not in embedding_service_providers:
+                raise NotImplementedError
 
-            raise NotImplementedError
+            provider = embedding_service_providers[name]
+            return provider()
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -54,7 +61,15 @@ class Embedding(models.Model):
     @staticmethod
     def get_models_for_service(service):
         """Get available embedding models based on selected service"""
-        if service == Embedding.Service.OPEN_AI:
-            return [('text-embedding-ada-002', 'text-embedding-ada-002')]
-        # Add more services here as needed
-        return []
+        embedding_service_models = {
+            Embedding.Service.OPEN_AI: [('text-embedding-ada-002', 'text-embedding-ada-002')],
+            Embedding.Service.COHERE: [
+                ('embed-english-light-v2.0', 'embed-english-light-v2.0'),
+                ('embed-english-v2.0', 'embed-english-v2.0'),
+                ('embed-multilingual-v2.0', 'embed-multilingual-v2.0'),
+            ],
+        }
+        if service not in embedding_service_models:
+            return []
+
+        return embedding_service_models[service]
