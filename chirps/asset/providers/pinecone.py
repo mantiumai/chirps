@@ -2,7 +2,7 @@
 from logging import getLogger
 
 import pinecone as pinecone_lib
-from asset.models import BaseAsset, SearchResult
+from asset.models import BaseAsset, PingResult, SearchResult
 from django.db import models
 from fernet_fields import EncryptedCharField
 
@@ -26,6 +26,7 @@ class PineconeAsset(BaseAsset):
     html_description = 'Pinecone Vector Database'
 
     REQUIRES_EMBEDDINGS = True
+    HAS_PING = True
 
     @property
     def decrypted_api_key(self):
@@ -54,12 +55,15 @@ class PineconeAsset(BaseAsset):
 
         return result_content
 
-    def test_connection(self) -> bool:
+    def test_connection(self) -> PingResult:
         """Ensure that the Pinecone asset can be connected to."""
         try:
             pinecone_lib.init(api_key=self.api_key, environment=self.environment)
-            pinecone_lib.deinit()
-            return True
-        except Exception as err:   # pylint: disable=broad-exception-caught
-            logger.error('Pinecone connection test failed', extra={'error': err})
-            return False
+            pinecone_lib.describe_index(self.index_name)
+            return PingResult(success=True)
+        except pinecone_lib.core.client.exceptions.NotFoundException as err:
+            logger.error('Pinecone connection test failed', extra={'error': err.body})
+            return PingResult(success=False, error='Index not found')
+        except pinecone_lib.core.client.exceptions.UnauthorizedException as err:
+            logger.error('Pinecone connection test failed', extra={'error': err.body})
+            return PingResult(success=False, error=err.body)

@@ -2,7 +2,6 @@
 from unittest import mock
 
 import fakeredis
-import pytest
 from asset.forms import PineconeAssetForm, RedisAssetForm
 from asset.providers.mantium import MantiumAsset
 from asset.providers.redis import RedisAsset
@@ -10,7 +9,6 @@ from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
 from embedding.models import Embedding
-from redis import exceptions
 
 
 class AssetTests(TestCase):
@@ -218,5 +216,5 @@ class RedisAssetTests(TestCase):
 
         with mock.patch('asset.providers.redis.Redis', return_value=self.redis):
             asset = RedisAsset(host='localhost', port=12000)
-            with pytest.raises(exceptions.ConnectionError):
-                assert asset.test_connection()
+            result = asset.test_connection()
+            assert result.success is False

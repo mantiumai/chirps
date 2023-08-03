@@ -7,11 +7,9 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from embedding.models import Embedding
-from redis import exceptions
 
 from .forms import asset_from_html_name, assets, form_from_model
-from .models import BaseAsset
-from .providers.redis import RedisAsset
+from .models import BaseAsset, PingResult
 
 
 @login_required
@@ -109,15 +107,25 @@ def edit(request, asset_id):
 def ping(request, asset_id):
     """Ping a RedisAsset database using the test_connection() function."""
     asset = get_object_or_404(BaseAsset, pk=asset_id)
-    if isinstance(asset, RedisAsset):
-        try:
-            result = asset.test_connection()
-            return JsonResponse({'success': result})
-        except exceptions.ConnectionError:
-            return HttpResponseBadRequest(
-                json.dumps({'success': False, 'error': 'Unable to connect to Redis'}), content_type='application/json'
-            )
-    return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Not a RedisAsset'}))
+
+    # Double check to make sure the asset supports the ping operation
+    if asset.HAS_PING is False:
+        return HttpResponseBadRequest(
+            json.dumps({'success': False, 'error': 'Asset does not support a ping operation'}),
+            content_type='application/json',
+        )
+
+    # Attempt to ping the asset
+    result: PingResult = asset.test_connection()
+
+    # If the ping was unsuccessful, return the error message
+    if result.success is False:
+        return HttpResponseBadRequest(
+            json.dumps({'success': False, 'error': result.error}), content_type='application/json'
+        )
+
+    # All is well, it's party time!
+    return JsonResponse({'success': True})
 
 
 @login_required

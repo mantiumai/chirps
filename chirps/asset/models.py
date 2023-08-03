@@ -20,6 +20,14 @@ class SearchResult:
     source_id: Any | None = None
 
 
+@dataclass
+class PingResult:
+    """Dataclass for a ping result."""
+
+    success: bool
+    error: str | None = None
+
+
 class BaseAsset(PolymorphicModel):
     """Base class that all assets will inherit from."""
 
@@ -27,6 +35,7 @@ class BaseAsset(PolymorphicModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     html_logo = None
     REQUIRES_EMBEDDINGS = False
+    HAS_PING = False
 
     def scan_is_active(self) -> bool:
         """Return True if the asset is currently being scanned."""
@@ -35,7 +44,7 @@ class BaseAsset(PolymorphicModel):
     def search(self, query: str, max_results: int) -> list[SearchResult]:
         """Perform a query against the specified asset, returning the max_results number of matches."""
 
-    def test_connection(self) -> bool:
+    def test_connection(self) -> PingResult:
         """Verify that the asset can be connected to."""
 
     def logo_url(self) -> str:

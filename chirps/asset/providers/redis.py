@@ -2,9 +2,9 @@
 from logging import getLogger
 
 import numpy as np
-from asset.models import BaseAsset, SearchResult
+from asset.models import BaseAsset, PingResult, SearchResult
 from django.db import models
-from redis import Redis
+from redis import Redis, exceptions
 from redis.commands.search.query import Query
 
 logger = getLogger(__name__)
@@ -31,6 +31,7 @@ class RedisAsset(BaseAsset):
     html_description = 'Redis Vector Database'
 
     REQUIRES_EMBEDDINGS = True
+    HAS_PING = True
 
     def search(self, query: list, max_results: int) -> list[SearchResult]:
         """Search the Redis asset with the specified query."""
@@ -62,7 +63,7 @@ class RedisAsset(BaseAsset):
         finally:
             client.close()
 
-    def test_connection(self) -> bool:
+    def test_connection(self) -> PingResult:
         """Ensure that the Redis asset can be connected to."""
         client = Redis(
             host=self.host,
@@ -72,6 +73,9 @@ class RedisAsset(BaseAsset):
             username=self.username,
         )
         try:
-            return client.ping()
-        finally:
+            result = client.ping()
             client.close()
+            return PingResult(success=result)
+        except exceptions.ConnectionError as err:
+            client.close()
+            return PingResult(success=False, error=str(err))
