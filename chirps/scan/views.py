@@ -117,11 +117,29 @@ def create(request):
             rule_embedding_count = Embedding.objects.filter(text__in=rule_strings).count()
             missing_embeddings = rule_embedding_count != rule_count
 
-            # an OpenAI key is required to generate embeddings if any are missing
+            selected_assets = scan_form.cleaned_data['assets']
+            # an API key is required to generate embeddings if any are missing
+            import pdb
+
+            pdb.set_trace()
             if missing_embeddings:
-                # If the user hasn't configured their OpenAI key, show an error message and redirect
-                if not request.user.profile.openai_key:
-                    messages.error(request, 'User has not configured their OpenAI key')
+                fail_scan_create = False
+                for asset in selected_assets:
+                    if hasattr(asset, 'embedding_model_service'):
+                        if (
+                            asset.embedding_model_service == Embedding.Service.OPEN_AI
+                            and not request.user.profile.openai_key
+                        ):
+                            fail_scan_create = True
+                            messages.error(request, 'User has not configured their OpenAI API key')
+                        elif (
+                            asset.embedding_model_service == Embedding.Service.COHERE
+                            and not request.user.profile.cohere_key
+                        ):
+                            fail_scan_create = True
+                            messages.error(request, 'User has not configured their cohere API key')
+
+                if fail_scan_create is True:
                     return redirect('scan_create')
 
             # Convert the scan form into a scan model
@@ -138,7 +156,7 @@ def create(request):
             scan.policies.set(selected_policies)
 
             # For every asset that was selected, kick off a task
-            for asset in scan_form.cleaned_data['assets']:
+            for asset in selected_assets:
                 scan_asset = ScanAsset.objects.create(scan=scan, asset=asset)
 
                 # Kick off the scan task
