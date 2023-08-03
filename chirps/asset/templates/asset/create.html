@@ -33,7 +33,7 @@
 
 {% block extra_js %}
 {% load static %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6en8XCp+HHAAK5GSLf2xlYtvJ8U2Q4U+9cuEnJoa3" crossorigin="anonymous"></script>
 <script>
   $(document).ready(function () {
     // Get the service and model dropdown elements
@@ -45,7 +45,7 @@
       var selectedService = serviceDropdown.val();
 
       // AJAX request to get the model choices for the selected service
-      $.getJSON(`/asset/get_embedding_models?service=${selectedService}`, function (models) {
+      $.getJSON(`/get_embedding_models?service=${selectedService}`, function (models) {
         // Clear the existing options
         modelDropdown.empty();
 
