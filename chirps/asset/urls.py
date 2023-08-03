@@ -10,5 +10,5 @@ urlpatterns = [
     path('get_embedding_models', views.get_embedding_models, name='get_embedding_models'),
     path('ping/<int:asset_id>/', views.ping, name='asset_ping'),
     path('delete/<int:asset_id>', views.delete, name='asset_delete'),
-    path('decrypted_keys/', views.decrypted_keys, name='decrypted_keys'),
+    path('edit/<int:asset_id>', views.edit, name='asset_edit'),
 ]

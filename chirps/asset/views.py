@@ -1,6 +1,7 @@
 """View handlers for assets."""
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -8,18 +9,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from embedding.models import Embedding
 from redis import exceptions
 
-from .forms import asset_from_html_name, assets
+from .forms import asset_from_html_name, assets, form_from_model
 from .models import BaseAsset
-from .providers.pinecone import PineconeAsset
 from .providers.redis import RedisAsset
-
-
-def decrypted_keys(request):
-    """Return a list of decrypted API keys for all Pinecone assets."""
-    keys = []
-    for asset in PineconeAsset.objects.all():
-        keys.append(asset.decrypted_api_key)
-    return JsonResponse({'keys': keys})
 
 
 @login_required
@@ -89,6 +81,28 @@ def get_embedding_models(request):
     service = request.GET.get('service', None)
     models = Embedding.get_models_for_service(service)
     return JsonResponse(models, safe=False)
+
+
+@login_required
+def edit(request, asset_id):
+    """Display the asset with its creation fields - but populated and ready to edit."""
+    asset = get_object_or_404(BaseAsset, pk=asset_id, user=request.user)
+
+    if request.method == 'POST':
+        form = form_from_model(asset)(request.POST, instance=asset)
+        if form.is_valid():
+
+            # Quick double check to make sure the asset isn't being used by a scan
+            if asset.scan_is_active():
+                messages.error(request, 'Unable to edit asset while a scan is active.')
+            else:
+                form.save()
+                messages.info(request, 'Asset changes saved.')
+                return redirect('asset_dashboard')
+    else:
+        form = form_from_model(asset)(instance=asset)
+
+    return render(request, 'asset/edit.html', {'form': form, 'asset': asset})
 
 
 @login_required

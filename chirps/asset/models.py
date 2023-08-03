@@ -5,6 +5,7 @@ from typing import Any
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.templatetags.static import static
 from polymorphic.models import PolymorphicModel
 
@@ -26,6 +27,10 @@ class BaseAsset(PolymorphicModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     html_logo = None
     REQUIRES_EMBEDDINGS = False
+
+    def scan_is_active(self) -> bool:
+        """Return True if the asset is currently being scanned."""
+        return self.scan_assets.filter(~Q(scan__status='Complete')).exists()
 
     def search(self, query: str, max_results: int) -> list[SearchResult]:
         """Perform a query against the specified asset, returning the max_results number of matches."""

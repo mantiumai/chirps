@@ -76,7 +76,7 @@ class ScanAsset(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_assets')
-    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE)
+    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE, related_name='scan_assets')
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
 
