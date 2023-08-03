@@ -100,7 +100,7 @@
             const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             if (response.status === 200) {
                 showToast('Success: Connection established', 'success');
-            } else {                
+            } else {
                 const data = await response.json();
                 showToast(data.error, 'danger');
             }

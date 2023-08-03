@@ -60,7 +60,7 @@ class PineconeAsset(BaseAsset):
         try:
             pinecone_lib.init(api_key=self.api_key, environment=self.environment)
             pinecone_lib.describe_index(self.index_name)
-            return PingResult(success=True)        
+            return PingResult(success=True)
         except pinecone_lib.core.client.exceptions.NotFoundException as err:
             logger.error('Pinecone connection test failed', extra={'error': err.body})
             return PingResult(success=False, error='Index not found')
