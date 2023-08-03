@@ -119,9 +119,6 @@ def create(request):
 
             selected_assets = scan_form.cleaned_data['assets']
             # an API key is required to generate embeddings if any are missing
-            import pdb
-
-            pdb.set_trace()
             if missing_embeddings:
                 fail_scan_create = False
                 for asset in selected_assets:
