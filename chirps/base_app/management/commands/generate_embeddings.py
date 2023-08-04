@@ -42,7 +42,12 @@ class Command(BaseCommand):
 
         # retrieve the API key from the User object
         service_keys = {Embedding.Service.OPEN_AI: 'openai_key', Embedding.Service.COHERE: 'cohere_key'}
-        api_key = getattr(user.profile, service_keys[service])
+        try:
+            api_key = getattr(user.profile, service_keys[service])
+        except KeyError:
+            raise CommandError(
+                'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
+            )
 
         # Check if the provided service is valid
         if service not in Embedding.Service.values:
