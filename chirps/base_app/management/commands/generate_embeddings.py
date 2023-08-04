@@ -3,7 +3,6 @@
 import getpass
 import json
 import os
-import sys
 
 import cohere
 import openai as openai_client
@@ -73,28 +72,9 @@ class Command(BaseCommand):
         service_keys: dict[str, str] = {
             v: v.lower() + '_key' for v in Embedding.Service.values
         }    # {'OpenAI': 'openai_key'}
-        try:
-            # Retrieve the API key from the User object
-            api_key = getattr(user.profile, service_keys[selected_service])
-        except KeyError as exc:
-            raise CommandError(
-                'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
-            ) from exc
 
-        # Check if the provided service is valid
-        if selected_service not in Embedding.Service.values:
-            raise CommandError(
-                'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
-            )
-
-        # Check if the provided model is valid for the selected service
-        available_models = Embedding.get_models_for_service(selected_service)
-        available_model_names = [model[0] for model in available_models]
-        if model_name not in available_model_names:
-            sys.exit(
-                'Invalid model. Please choose one of the following for the selected service: '
-                + ', '.join(available_model_names)
-            )
+        # Retrieve the API key from the User object
+        api_key = getattr(user.profile, service_keys[selected_service])
 
         if selected_service == 'OpenAI':
             client = openai_client
