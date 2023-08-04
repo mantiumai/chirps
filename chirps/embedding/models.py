@@ -14,7 +14,6 @@ class Embedding(models.Model):
         """Enumerations to define services available for generating embeddings."""
 
         COHERE = 'cohere', 'cohere'
-        LOCAL = 'localhost', 'Locally Hosted: NOT IMPLEMENTED'
         OPEN_AI = 'OpenAI', 'OpenAI'
 
         @classmethod
@@ -57,6 +56,16 @@ class Embedding(models.Model):
             'text': self.text,
             'vectors': self.vectors,
         }
+
+    @staticmethod
+    def get_service_names() -> list[str]:
+        """Get available embedding service names"""
+        return [name[0] for name in Embedding.Service.choices]
+
+    @staticmethod
+    def get_model_names(service: str) -> list[str]:
+        """Get available embedding model names"""
+        return [name[0] for name in Embedding.get_models_for_service(service)]
 
     @staticmethod
     def get_models_for_service(service):

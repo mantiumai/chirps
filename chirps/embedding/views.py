@@ -4,7 +4,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from .forms import CreateEmbeddingForm
 from .models import Embedding
@@ -52,3 +52,12 @@ def show(request):
     page_obj = paginator.get_page(page_number)
 
     return JsonResponse({'embeddings': [embedding.to_dict() for embedding in page_obj.object_list]})
+
+
+@login_required
+def get_embedding_models(request):
+    """Get available embedding models based on selected service"""
+    service = request.GET.get('embedding_model_service', Embedding.Service.OPEN_AI)
+    models = Embedding.get_model_names(service)
+
+    return render(request, 'embedding/model_choices.html', {'service_model_choices': models})
