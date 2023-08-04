@@ -199,9 +199,6 @@ class GenerateEmbeddingsTests(TestCase):
         )
         self.user.save()
 
-        print(f'User created: {self.user}')
-        print(f'User password: {self.user.password}')
-
         # Create a profile for the test user
         self.profile = Profile.objects.create(user=self.user)
 
