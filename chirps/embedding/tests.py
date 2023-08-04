@@ -208,11 +208,9 @@ class GenerateEmbeddingsTests(TestCase):
 
     def test_generate_embeddings_invalid_service(self):
         """Test generate_embeddings command with an invalid service."""
-        with patch('builtins.input', return_value=self.test_username):
-            with patch('getpass.getpass', return_value=self.test_password):
-                with patch('builtins.input', side_effect=['999', '1', '1']):
-                    with self.assertRaises(CommandError) as cm:
-                        call_command('generate_embeddings')
+        with patch('builtins.input', side_effect=['999', '1', '1']):
+            with self.assertRaises(CommandError) as cm:
+                call_command('generate_embeddings')
 
         self.assertEqual(
             str(cm.exception),
