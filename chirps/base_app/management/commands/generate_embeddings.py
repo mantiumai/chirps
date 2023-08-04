@@ -55,7 +55,7 @@ class Command(BaseCommand):
         base_path = settings.BASE_DIR.as_posix()
         subdirectory = f'{base_path}/{app_name}/fixtures/{app_name}'
 
-        for root, dirs, files in os.walk(subdirectory):
+        for root, _, files in os.walk(subdirectory):
             for file in files:
                 if file.endswith('.json'):
                     file_path = os.path.join(root, file)
@@ -63,49 +63,59 @@ class Command(BaseCommand):
                     with open(file_path, 'r') as json_file:
                         data = json.load(json_file)
 
-                        embeddings_data = []
-                        for datum in data:
-                            if 'query_string' in datum['fields']:
-                                query_string = datum['fields']['query_string']
+                        embeddings_data = self.process_data(data, service, model_name, Embedding)
+                        if embeddings_data:
+                            new_file_name = self.create_new_file_name(service, file)
+                            new_file_path = os.path.join(base_path, 'embedding', 'fixtures', 'embedding', new_file_name)
+                            with open(new_file_path, 'w') as f:
+                                json.dump(embeddings_data, f, indent=4)
 
-                                # Check if an embedding already exists
-                                existing_embedding = Embedding.objects.filter(
-                                    service=Embedding.Service(service).label, model=model_name, text=query_string
-                                ).first()
+                            # Run the loaddata command
+                            call_command('loaddata', new_file_path)
 
-                                if existing_embedding:
-                                    print(f'Embedding already exists for {query_string}')
-                                    continue
-                                if service == 'openai':
-                                    response = openai.Embedding.create(engine=model_name, input=query_string)
-                                    embeddings = response.data[0].embedding
-                                elif service == 'cohere':
-                                    response = cohere_client.embed(texts=[query_string], model=model_name)
-                                    embeddings = response.embeddings[0]
+    def process_data(self, data, service, model_name, Embedding):
+        """Process the input data, generate embeddings, and return the embeddings_data."""
+        embeddings_data = []
+        for datum in data:
+            if 'query_string' in datum['fields']:
+                query_string = datum['fields']['query_string']
 
-                                embedding_array = np.array(embeddings)
-                                print(embedding_array)
+                # Check if an embedding already exists
+                existing_embedding = Embedding.objects.filter(
+                    service=Embedding.Service(service).label, model=model_name, text=query_string
+                ).first()
 
-                                data_to_write = {
-                                    'model': 'embedding.embedding',
-                                    'pk': next_pk,
-                                    'fields': {
-                                        'created_at': '2022-01-01T00:00:00Z',
-                                        'model': model_name,
-                                        'service': Embedding.Service(service).label,
-                                        'text': query_string,
-                                        'vectors': [f'{value:.15f}' for value in embedding_array],
-                                    },
-                                }
-                                embeddings_data.append(data_to_write)
-                                next_pk += 1
+                if existing_embedding:
+                    print(f'Embedding already exists for {query_string}')
+                    continue
+                if service == 'openai':
+                    response = openai.Embedding.create(engine=model_name, input=query_string)
+                    embeddings = response.data[0].embedding
+                elif service == 'cohere':
+                    response = cohere_client.embed(texts=[query_string], model=model_name)
+                    embeddings = response.embeddings[0]
 
-                            if embeddings_data:
-                                file_name_without_type = file.split('.')[0].strip('_')
-                                new_file_name = f'{service}_{file_name_without_type}_rules.json'
-                                new_file_path = f'{base_path}/embedding/fixtures/embedding/' + new_file_name
-                                with open(new_file_path, 'w') as f:
-                                    json.dump(embeddings_data, f, indent=4)
+                embedding_array = np.array(embeddings)
+                print(embedding_array)
 
-                                # Run the loaddata command
-                                call_command('loaddata', new_file_path)
+                data_to_write = {
+                    'model': 'embedding.embedding',
+                    'pk': next_pk,
+                    'fields': {
+                        'created_at': '2022-01-01T00:00:00Z',
+                        'model': model_name,
+                        'service': Embedding.Service(service).label,
+                        'text': query_string,
+                        'vectors': [f'{value:.15f}' for value in embedding_array],
+                    },
+                }
+                embeddings_data.append(data_to_write)
+                next_pk += 1
+
+        return embeddings_data
+
+    def create_new_file_name(self, service, file):
+        """Create a new file name based on the service and original file name."""
+        file_name_without_type = file.split('.')[0].strip('_')
+        new_file_name = f'{service}_{file_name_without_type}_rules.json'
+        return new_file_name
