@@ -194,7 +194,13 @@ class GenerateEmbeddingsTests(TestCase):
         self.test_openai_key = 'fake_openai_key'
         self.test_cohere_key = 'fake_cohere_key'
 
-        self.user = User.objects.create_user(username=self.test_username, password=self.test_password)
+        self.user = User.objects.create_user(
+            username=self.test_username, password=self.test_password, email='testuser@example.com'
+        )
+        self.user.save()
+
+        print(f'User created: {self.user}')
+        print(f'User password: {self.user.password}')
 
         # Create a profile for the test user
         self.profile = Profile.objects.create(user=self.user)
@@ -209,12 +215,13 @@ class GenerateEmbeddingsTests(TestCase):
         """Test generate_embeddings command with an invalid service."""
         with patch('builtins.input', return_value=self.test_username):
             with patch('getpass.getpass', return_value=self.test_password):
-                with self.assertRaises(CommandError) as cm:
-                    call_command('generate_embeddings', 'InvalidService', 'fake_model_name', app_name='embedding')
+                with patch('builtins.input', side_effect=['999', '1']):
+                    with self.assertRaises(CommandError) as cm:
+                        call_command('generate_embeddings', 'OpenAI')
 
         self.assertEqual(
             str(cm.exception),
-            'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values),
+            'Invalid selection. Please enter a valid number.',
         )
 
     @patch('openai.Embedding.create', side_effect=mock_openai_embedding_create)
@@ -239,10 +246,10 @@ class GenerateEmbeddingsTests(TestCase):
         temp_fixture.close()
 
         # Mock the input and getpass functions to return the test user's credentials
-        with patch('builtins.input', return_value=self.test_username):
+        with patch('builtins.input', side_effect=['1', self.test_username]):
             with patch('getpass.getpass', return_value=self.test_password):
                 # Run the generate_embeddings command
-                call_command('generate_embeddings', 'OpenAI', 'text-embedding-ada-002')
+                call_command('generate_embeddings', 'OpenAI')
 
         # Check if the embedding was created
         new_embedding_count = Embedding.objects.count()

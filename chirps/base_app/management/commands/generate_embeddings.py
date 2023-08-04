@@ -21,17 +21,29 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         """Define and add the required arguments for the command."""
-        parser.add_argument('service', type=str, help='Service to use for embeddings (either "OpenAI" or "cohere")')
-        parser.add_argument('model_name', type=str, help='Model name for the selected service')
-        parser.add_argument('-a', '--app_name', type=str, default='policy', help='Django app name (default: "policy")')
+        service_options = Embedding.Service.values
+        parser.add_argument('service', type=str, choices=service_options, help='Service to use to generate embeddings')
 
     def handle(self, *args, **options):
         """Handle generate embeddings command"""
         service = options['service']
-        app_name = options['app_name']
-        model_name = options['model_name']
+        app_name = 'policy'
 
-        # prompt the user for their username and password
+        # Display the available models with an index number
+        available_model_options = [model[0] for model in Embedding.get_models_for_service(service)]
+        for idx, model_name in enumerate(available_model_options, start=1):
+            print(f'{idx}. {model_name}')
+
+        # Prompt the user to select a model by entering the corresponding index number
+        selected_index = int(input('Enter the number corresponding to your preferred model: '))
+
+        # Ensure the user input is valid
+        if 0 < selected_index <= len(available_model_options):
+            model_name = available_model_options[selected_index - 1]
+            print(f'Selected model: {model_name}')
+        else:
+            raise CommandError('Invalid selection. Please enter a valid number.')
+
         username = input('Enter your Chirps username: ')
         password = getpass.getpass('Enter your password: ')
 
