@@ -1,3 +1,5 @@
+"""Generate embeddings for policy rules from policy fixtures"""
+
 import json
 import os
 import sys
@@ -9,6 +11,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
+from embedding.models import Embedding
 
 
 class Command(BaseCommand):
@@ -61,20 +64,20 @@ class Command(BaseCommand):
                 if file.endswith('.json'):
                     file_path = os.path.join(root, file)
 
-                    with open(file_path, 'r') as json_file:
+                    with open(file_path, 'r', encoding='utf-8') as json_file:
                         data = json.load(json_file)
 
                     embeddings_data = self.process_data(data, service, client, model_name, Embedding)
                     if embeddings_data:
                         new_file_name = self.create_new_file_name(service, file)
                         new_file_path = os.path.join(base_path, 'embedding', 'fixtures', 'embedding', new_file_name)
-                        with open(new_file_path, 'w') as f:
+                        with open(new_file_path, 'w', encoding='utf-8') as f:
                             json.dump(embeddings_data, f, indent=4)
 
                         # Run the loaddata command
                         call_command('loaddata', new_file_path)
 
-    def process_data(self, data, service, client, model_name, Embedding):
+    def process_data(self, data, service, client, model_name):
         """Process the input data, generate embeddings, and return the embeddings_data."""
         embeddings_data = []
         processed_combinations = set()
