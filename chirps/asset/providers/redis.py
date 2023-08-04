@@ -73,7 +73,34 @@ class RedisAsset(BaseAsset):
             username=self.username,
         )
         try:
+            # Basic ping
             result = client.ping()
+
+            # Make sure the index exists
+            try:
+                info = client.ft(self.index_name).info()
+
+                # Build a list of the available attributes
+                # The second item in each element is the attribute name, as a byte value.
+                # Also, decode it to a string while we're at it.
+                attribute_names = [attr[1].decode() for attr in info['attributes']]
+
+                # Ensure that the content and embeddings field names are present as attributes for the index
+                if self.text_field not in attribute_names:
+                    return PingResult(
+                        success=False, error=f"Index '{self.index_name}' does not have a '{self.text_field}' field."
+                    )
+
+                if self.embedding_field not in attribute_names:
+                    return PingResult(
+                        success=False,
+                        error=f"Index '{self.index_name}' does not have a '{self.embedding_field}' field.",
+                    )
+
+            except exceptions.ResponseError as err:
+                if 'Unknown Index name' in str(err):
+                    return PingResult(success=False, error=f"Index '{self.index_name}' does not exist.")
+
             client.close()
             return PingResult(success=result)
         except exceptions.ConnectionError as err:
