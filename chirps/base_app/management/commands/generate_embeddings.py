@@ -152,5 +152,3 @@ class Command(BaseCommand):
                     vectors=embed_result,
                     user=user,
                 )
-
-                print(f'Created embedding: {query_string}')
