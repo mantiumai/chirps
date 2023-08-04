@@ -7,6 +7,7 @@ import numpy as np
 import openai
 from django.apps import apps
 from django.conf import settings
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 
@@ -19,11 +20,11 @@ class Command(BaseCommand):
         """Define and add the required arguments for the command."""
         parser.add_argument('service', type=str, help='Service to use for embeddings (either "OpenAI" or "cohere")')
         parser.add_argument('api_key', type=str, help='API key for the selected service')
-        parser.add_argument('app_name', type=str, default='policy', help='Django app name')
         parser.add_argument('model_name', type=str, help='Model name for the selected service')
+        parser.add_argument('-a', '--app_name', type=str, default='policy', help='Django app name (default: "policy")')
 
     def handle(self, *args, **options):
-        """Process the input data, generate embeddings using the specified service and model, and save the results."""
+        """Handle generate embeddings command"""
         service = options['service'].lower()
         api_key = options['api_key']
         app_name = options['app_name']
@@ -75,7 +76,6 @@ class Command(BaseCommand):
                                 if existing_embedding:
                                     print(f'Embedding already exists for {query_string}')
                                     continue
-
                                 if service == 'openai':
                                     response = openai.Embedding.create(engine=model_name, input=query_string)
                                     embeddings = response.data[0].embedding
@@ -100,7 +100,12 @@ class Command(BaseCommand):
                                 embeddings_data.append(data_to_write)
                                 next_pk += 1
 
-                        file_name_without_type = file.split('.')[0].strip('_')
-                        new_file_name = f'{service}_{file_name_without_type}_rules.json'
-                        with open(f'{base_path}/embedding/fixtures/embedding/' + new_file_name, 'w') as f:
-                            json.dump(embeddings_data, f, indent=4)
+                            if embeddings_data:
+                                file_name_without_type = file.split('.')[0].strip('_')
+                                new_file_name = f'{service}_{file_name_without_type}_rules.json'
+                                new_file_path = f'{base_path}/embedding/fixtures/embedding/' + new_file_name
+                                with open(new_file_path, 'w') as f:
+                                    json.dump(embeddings_data, f, indent=4)
+
+                                # Run the loaddata command
+                                call_command('loaddata', new_file_path)
