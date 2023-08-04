@@ -19,7 +19,7 @@ class Command(BaseCommand):
         """Define and add the required arguments for the command."""
         parser.add_argument('service', type=str, help='Service to use for embeddings (either "OpenAI" or "cohere")')
         parser.add_argument('api_key', type=str, help='API key for the selected service')
-        parser.add_argument('app_name', type=str, help='Django app name')
+        parser.add_argument('app_name', type=str, default='policy', help='Django app name')
         parser.add_argument('model_name', type=str, help='Model name for the selected service')
 
     def handle(self, *args, **options):
@@ -100,6 +100,7 @@ class Command(BaseCommand):
                                 embeddings_data.append(data_to_write)
                                 next_pk += 1
 
-                        new_file_name = f'{service}_rules.json'
-                        with open(f'{base_path}/{app_name}/fixtures/embedding/' + new_file_name, 'w') as f:
+                        file_name_without_type = file.split('.')[0].strip('_')
+                        new_file_name = f'{service}_{file_name_without_type}_rules.json'
+                        with open(f'{base_path}/embedding/fixtures/embedding/' + new_file_name, 'w') as f:
                             json.dump(embeddings_data, f, indent=4)
