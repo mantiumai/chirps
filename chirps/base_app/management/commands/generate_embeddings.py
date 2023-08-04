@@ -70,9 +70,11 @@ class Command(BaseCommand):
         # Authenticate the user
         user = self.authenticate_user()
 
-        # Retrieve the API key from the User object
-        service_keys = {Embedding.Service.OPEN_AI: 'openai_key', Embedding.Service.COHERE: 'cohere_key'}
+        service_keys: dict[str, str] = {
+            v: v.lower() + '_key' for v in Embedding.Service.values
+        }    # {'OpenAI': 'openai_key'}
         try:
+            # Retrieve the API key from the User object
             api_key = getattr(user.profile, service_keys[selected_service])
         except KeyError as exc:
             raise CommandError(
