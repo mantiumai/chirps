@@ -32,8 +32,8 @@ class Command(BaseCommand):
             selected_option = options_list[selected_index - 1]
             print(f'Selected option: {selected_option}')
             return selected_option
-        else:
-            raise CommandError('Invalid selection. Please enter a valid number.')
+
+        raise CommandError('Invalid selection. Please enter a valid number.')
 
     def prompt_service_selection(self):
         """Prompt the user to select a service."""
