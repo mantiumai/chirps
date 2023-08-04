@@ -1,17 +1,47 @@
 """Tests for the embedding app."""
 # pylint: disable=consider-using-with
 import json
+import os
+import shutil
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
 import openai
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from django.urls import reverse
+
+from chirps import settings
 
 from .models import Embedding
 
 # Build the path to the fixtures directory
 fixture_path = Path(__file__).parent.resolve() / Path('./fixtures/embedding')
+
+
+class MockOpenAIResponse:
+    """Mock the response from OpenAI"""
+
+    def __init__(self, data):
+        self.data = data
+
+    def __getitem__(self, key):
+        """Override __getitem__"""
+        return self.data[key]
+
+
+class MockEmbeddingData:
+    """Mock embedding data contained in OpenAI response"""
+
+    def __init__(self, embedding):
+        self.embedding = embedding
+
+
+def mock_openai_embedding_create(*args, **kwargs):
+    """Mock response from OpenAI's embedding create endpoint"""
+    return MockOpenAIResponse([MockEmbeddingData([0.1, 0.2, 0.3])])
 
 
 class TestEmbedding(TestCase):
@@ -30,6 +60,8 @@ class TestEmbedding(TestCase):
 
         # Set a dummy OpenAI key
         self.client.post(reverse('profile'), {'openai_key': 'test_openai_key'})
+
+        self.test_query = 'What is the capital of France?'
 
     def test_create_invalid(self):
         """Test creating an embedding with invalid URL parameters."""
@@ -138,3 +170,55 @@ class TestEmbedding(TestCase):
         # Ensure that each model is returned in the response
         for model in models:
             self.assertContains(response, model[0])
+
+    def test_generate_embeddings_invalid_service(self):
+        """Test generate_embeddings command with an invalid service."""
+        with self.assertRaises(CommandError) as cm:
+            call_command(
+                'generate_embeddings', 'InvalidService', 'fake_api_key', 'fake_model_name', app_name='embedding'
+            )
+
+        self.assertEqual(
+            str(cm.exception),
+            'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values),
+        )
+
+    @patch('openai.Embedding.create', side_effect=mock_openai_embedding_create)
+    def test_generate_embeddings_valid_service(self, _mock_openai_embedding_create):
+        """Test generate_embeddings command with a valid service and model."""
+        # Create a temporary JSON fixture
+        temp_fixture = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        temp_fixture.write(
+            json.dumps(
+                [
+                    {
+                        'model': 'embedding.rule',
+                        'pk': 1,
+                        'fields': {
+                            'query_string': self.test_query,
+                        },
+                    }
+                ]
+            )
+        )
+        temp_fixture.close()
+
+        # Set up the app and fixture path
+        app_path = os.path.join(settings.BASE_DIR, 'embedding')
+        fixtures_path = os.path.join(app_path, 'fixtures', 'embedding')
+        os.makedirs(fixtures_path, exist_ok=True)
+        shutil.copy(temp_fixture.name, os.path.join(fixtures_path, 'rules.json'))
+
+        # Run the generate_embeddings command
+        call_command('generate_embeddings', 'OpenAI', 'fake_api_key', 'text-embedding-ada-002', app_name='embedding')
+
+        # Check if the embedding was created
+        embedding = Embedding.objects.filter(
+            service='OpenAI', model='text-embedding-ada-002', text=self.test_query
+        ).first()
+        self.assertIsNotNone(embedding)
+
+        # Clean up the temp fixture and generated file
+        os.remove(temp_fixture.name)
+        os.remove(os.path.join(fixtures_path, 'rules.json'))
+        os.remove(os.path.join(fixtures_path, 'openai_rules_rules.json'))

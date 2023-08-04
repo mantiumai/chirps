@@ -8,7 +8,7 @@ import openai as openai_client
 from django.apps import apps
 from django.conf import settings
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -34,7 +34,9 @@ class Command(BaseCommand):
 
         # Check if the provided service is valid
         if service not in Embedding.Service.values:
-            sys.exit('Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values))
+            raise CommandError(
+                'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
+            )
 
         # Check if the provided model is valid for the selected service
         available_models = Embedding.get_models_for_service(service)
@@ -81,7 +83,7 @@ class Command(BaseCommand):
         next_pk = current_pk + 1
 
         for datum in data:
-            if 'query_string' in datum['fields']:
+            if isinstance(datum, dict) and 'query_string' in datum['fields']:
                 query_string = datum['fields']['query_string']
 
                 # Skip if the combination has already been processed
@@ -107,8 +109,6 @@ class Command(BaseCommand):
                     embeddings = response.embeddings[0]
 
                 embedding_array = np.array(embeddings)
-                print(embedding_array)
-
                 data_to_write = {
                     'model': 'embedding.embedding',
                     'pk': next_pk,
