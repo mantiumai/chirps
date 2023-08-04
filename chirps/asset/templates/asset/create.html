@@ -15,12 +15,7 @@
         </div>
         <form class="my-3" method="POST" action="{% url 'asset_create' asset.model.html_name %}">
           {% csrf_token %}
-          {% for field in form %}
-            <div class="form-group">
-              <label for="{{ field.auto_id }}">{{ field.label }}</label>
-              {{ field }}
-            </div>
-          {% endfor %}
+          {{form}}
           <div class="d-flex mt-3">
             <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'asset_dashboard' %}">Cancel</a>
             <button class="btn btn-success ml-2 mr-0" type="submit">Create</button>
@@ -30,49 +25,5 @@
     </div>
   </div>
 </div>
-
-{% block extra_js %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Get the service and model dropdown elements
-    var serviceDropdown = document.querySelector("#id_embedding_model_service");
-    var modelDropdown = document.querySelector("#id_embedding_model");
-
-    // Function to update the model dropdown options based on the selected service
-    function updateModelOptions() {
-      var selectedService = serviceDropdown.value;
-
-      // AJAX request to get the model choices for the selected service
-      fetch(`/asset/get_embedding_models?service=${selectedService}`)
-        .then(response => response.json())
-        .then(models => {
-          // Create a new select element
-          var newModelDropdown = document.createElement("select");
-          newModelDropdown.id = "id_embedding_model";
-          newModelDropdown.name = "embedding_model";
-          newModelDropdown.classList.add("form-control");
-
-          // Add the new options
-          models.forEach(function (model) {
-            var option = document.createElement("option");
-            option.value = model[0];
-            option.text = model[1];
-            newModelDropdown.add(option);
-          });
-
-          // Replace the existing model dropdown with the new one
-          modelDropdown.parentNode.replaceChild(newModelDropdown, modelDropdown);
-          modelDropdown = newModelDropdown;
-        });
-    }
-
-    // Call the updateModelOptions function when the service dropdown value changes
-    serviceDropdown.addEventListener("change", updateModelOptions);
-
-    // Call the updateModelOptions function on page load
-    updateModelOptions();
-  });
-</script>
-{% endblock %}
 
 {% endblock %}

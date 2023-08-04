@@ -125,3 +125,16 @@ class TestEmbedding(TestCase):
 
         # Verify the embedding is deleted from the database
         self.assertEqual(0, Embedding.objects.all().count())
+
+    def test_get_embedding_models_view(self):
+        """Ensure expected models are returned"""
+        service = Embedding.Service.OPEN_AI
+        response = self.client.get(reverse('embedding_models'), {'service': service})
+
+        self.assertEqual(response.status_code, 200)
+
+        models = Embedding.get_models_for_service(service)
+
+        # Ensure that each model is returned in the response
+        for model in models:
+            self.assertContains(response, model[0])

@@ -68,17 +68,10 @@ def create(request, html_name):
     context = {
         'form': form,
         'asset': asset,
+        'embedding_services': Embedding.get_service_names(),
         'service_model_choices': service_model_choices,
     }
     return render(request, 'asset/create.html', context)
-
-
-@login_required
-def get_embedding_models(request):
-    """Get available embedding models based on selected service"""
-    service = request.GET.get('service', Embedding.Service.OPEN_AI)
-    models = Embedding.get_models_for_service(service)
-    return JsonResponse(models, safe=False)
 
 
 @login_required

@@ -2,6 +2,7 @@
 from asset.models import BaseAsset
 from django import forms
 from django.forms import ModelForm
+from django.urls import reverse_lazy
 from embedding.models import Embedding
 
 from .providers.mantium import MantiumAsset
@@ -16,7 +17,14 @@ class VectorDatabaseAssetForm(ModelForm):
 
     embedding_model_service = forms.ChoiceField(
         choices=Embedding.Service.choices,
-        widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+                'hx-get': reverse_lazy('embedding_models'),
+                'hx-target': '#id_embedding_model',
+                'hx-indicator': '.htmx-indicator',
+            }
+        ),
         required=True,
         initial=default_service,
     )
