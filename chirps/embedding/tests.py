@@ -215,9 +215,9 @@ class GenerateEmbeddingsTests(TestCase):
         """Test generate_embeddings command with an invalid service."""
         with patch('builtins.input', return_value=self.test_username):
             with patch('getpass.getpass', return_value=self.test_password):
-                with patch('builtins.input', side_effect=['999', '1']):
+                with patch('builtins.input', side_effect=['999', '1', '1']):
                     with self.assertRaises(CommandError) as cm:
-                        call_command('generate_embeddings', 'OpenAI')
+                        call_command('generate_embeddings')
 
         self.assertEqual(
             str(cm.exception),
@@ -246,10 +246,10 @@ class GenerateEmbeddingsTests(TestCase):
         temp_fixture.close()
 
         # Mock the input and getpass functions to return the test user's credentials
-        with patch('builtins.input', side_effect=['1', self.test_username]):
+        with patch('builtins.input', side_effect=['2', '1', self.test_username]):
             with patch('getpass.getpass', return_value=self.test_password):
                 # Run the generate_embeddings command
-                call_command('generate_embeddings', 'OpenAI')
+                call_command('generate_embeddings')
 
         # Check if the embedding was created
         new_embedding_count = Embedding.objects.count()

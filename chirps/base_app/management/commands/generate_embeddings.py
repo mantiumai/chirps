@@ -19,18 +19,25 @@ class Command(BaseCommand):
 
     help = 'Generate embeddings for the input data'
 
-    def add_arguments(self, parser):
-        """Define and add the required arguments for the command."""
-        service_options = Embedding.Service.values
-        parser.add_argument('service', type=str, choices=service_options, help='Service to use to generate embeddings')
-
     def handle(self, *args, **options):
         """Handle generate embeddings command"""
-        service = options['service']
-        app_name = 'policy'
+        # Display the available services with an index number
+        available_service_options = list(Embedding.Service.values)
+        for idx, service_name in enumerate(available_service_options, start=1):
+            print(f'{idx}. {service_name}')
+
+        # Prompt the user to select a service by entering the corresponding index number
+        selected_service_index = int(input('Enter the number corresponding to your preferred service: '))
+
+        # Ensure the user input is valid
+        if 0 < selected_service_index <= len(available_service_options):
+            selected_service = available_service_options[selected_service_index - 1]
+            print(f'Selected service: {selected_service}')
+        else:
+            raise CommandError('Invalid selection. Please enter a valid number.')
 
         # Display the available models with an index number
-        available_model_options = [model[0] for model in Embedding.get_models_for_service(service)]
+        available_model_options = [model[0] for model in Embedding.get_models_for_service(selected_service)]
         for idx, model_name in enumerate(available_model_options, start=1):
             print(f'{idx}. {model_name}')
 
@@ -55,20 +62,20 @@ class Command(BaseCommand):
         # retrieve the API key from the User object
         service_keys = {Embedding.Service.OPEN_AI: 'openai_key', Embedding.Service.COHERE: 'cohere_key'}
         try:
-            api_key = getattr(user.profile, service_keys[service])
+            api_key = getattr(user.profile, service_keys[selected_service])
         except KeyError as exc:
             raise CommandError(
                 'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
             ) from exc
 
         # Check if the provided service is valid
-        if service not in Embedding.Service.values:
+        if selected_service not in Embedding.Service.values:
             raise CommandError(
                 'Invalid service. Please choose one of the following: ' + ', '.join(Embedding.Service.values)
             )
 
         # Check if the provided model is valid for the selected service
-        available_models = Embedding.get_models_for_service(service)
+        available_models = Embedding.get_models_for_service(selected_service)
         available_model_names = [model[0] for model in available_models]
         if model_name not in available_model_names:
             sys.exit(
@@ -76,14 +83,14 @@ class Command(BaseCommand):
                 + ', '.join(available_model_names)
             )
 
-        if service == 'OpenAI':
+        if selected_service == 'OpenAI':
             client = openai_client
             client.api_key = api_key
-        elif service == 'cohere':
+        elif selected_service == 'cohere':
             client = cohere.Client(api_key)
 
         base_path = settings.BASE_DIR.as_posix()
-        subdirectory = os.path.join(base_path, app_name, 'fixtures', app_name)
+        subdirectory = os.path.join(base_path, 'policy', 'fixtures', 'policy')
 
         for root, _, files in os.walk(subdirectory):
             for file in files:
@@ -93,7 +100,7 @@ class Command(BaseCommand):
                     with open(file_path, 'r', encoding='utf-8') as json_file:
                         data = json.load(json_file)
 
-                    self.process_data(user, data, service, model_name)
+                    self.process_data(user, data, selected_service, model_name)
 
     def process_data(self, user, data, service, model_name):
         """Process the input data, generate embeddings, and return the embeddings_data."""
