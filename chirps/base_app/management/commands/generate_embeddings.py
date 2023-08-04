@@ -19,38 +19,39 @@ class Command(BaseCommand):
 
     help = 'Generate embeddings for the input data'
 
-    def handle(self, *args, **options):
-        """Handle generate embeddings command"""
-        # Display the available services with an index number
+    def prompt_selection(self, prompt_message, options_list):
+        """Prompt the user to select an option from the given options_list."""
+        # Display the options with an index number
+        for idx, option_name in enumerate(options_list, start=1):
+            print(f'{idx}. {option_name}')
+
+        # Prompt the user to select an option by entering the corresponding index number
+        selected_index = int(input(prompt_message))
+
+        # Ensure the user input is valid
+        if 0 < selected_index <= len(options_list):
+            selected_option = options_list[selected_index - 1]
+            print(f'Selected option: {selected_option}')
+            return selected_option
+        else:
+            raise CommandError('Invalid selection. Please enter a valid number.')
+
+    def prompt_service_selection(self):
+        """Prompt the user to select a service."""
         available_service_options = list(Embedding.Service.values)
-        for idx, service_name in enumerate(available_service_options, start=1):
-            print(f'{idx}. {service_name}')
+        return self.prompt_selection(
+            'Enter the number corresponding to your preferred service: ', available_service_options
+        )
 
-        # Prompt the user to select a service by entering the corresponding index number
-        selected_service_index = int(input('Enter the number corresponding to your preferred service: '))
-
-        # Ensure the user input is valid
-        if 0 < selected_service_index <= len(available_service_options):
-            selected_service = available_service_options[selected_service_index - 1]
-            print(f'Selected service: {selected_service}')
-        else:
-            raise CommandError('Invalid selection. Please enter a valid number.')
-
-        # Display the available models with an index number
+    def prompt_model_selection(self, selected_service):
+        """Prompt the user to select a model."""
         available_model_options = [model[0] for model in Embedding.get_models_for_service(selected_service)]
-        for idx, model_name in enumerate(available_model_options, start=1):
-            print(f'{idx}. {model_name}')
+        return self.prompt_selection(
+            'Enter the number corresponding to your preferred model: ', available_model_options
+        )
 
-        # Prompt the user to select a model by entering the corresponding index number
-        selected_index = int(input('Enter the number corresponding to your preferred model: '))
-
-        # Ensure the user input is valid
-        if 0 < selected_index <= len(available_model_options):
-            model_name = available_model_options[selected_index - 1]
-            print(f'Selected model: {model_name}')
-        else:
-            raise CommandError('Invalid selection. Please enter a valid number.')
-
+    def authenticate_user(self):
+        """Authenticate the user and return the user object."""
         username = input('Enter your Chirps username: ')
         password = getpass.getpass('Enter your password: ')
 
@@ -58,8 +59,18 @@ class Command(BaseCommand):
         user = authenticate(username=username, password=password)
         if user is None:
             raise CommandError('Invalid username or password')
+        return user
 
-        # retrieve the API key from the User object
+    def handle(self, *args, **options):
+        """Handle generate embeddings command"""
+        # Prompt the user to select a service and model
+        selected_service = self.prompt_service_selection()
+        model_name = self.prompt_model_selection(selected_service)
+
+        # Authenticate the user
+        user = self.authenticate_user()
+
+        # Retrieve the API key from the User object
         service_keys = {Embedding.Service.OPEN_AI: 'openai_key', Embedding.Service.COHERE: 'cohere_key'}
         try:
             api_key = getattr(user.profile, service_keys[selected_service])
@@ -141,9 +152,3 @@ class Command(BaseCommand):
                 )
 
                 print(f'Created embedding: {query_string}')
-
-    def create_new_file_name(self, service, file):
-        """Create a new file name based on the service and original file name."""
-        file_name_without_type = file.split('.')[0].strip('_')
-        new_file_name = f'{service.lower()}_{file_name_without_type}_rules.json'
-        return new_file_name
