@@ -6,7 +6,9 @@ This Django management command allows you to generate embeddings for policy rule
 
 To use the `generate_embeddings` command, follow these steps:
 
-1. Make sure to read and complete the steps outlined in [Getting Started](getting_started.md). The API key for the selected service will be retrieved from the user's profile, so this key should be saved before running this management command.
+1. Make sure to read and complete the steps outlined in [Getting Started](getting_started.md).
+
+2. Save the API key for the selected service. It will be retrieved from your profile after providing login credentials. The API key should be saved before running this management command.
 
 2. Open a terminal and run the following command:
 
@@ -20,25 +22,25 @@ python manage.py generate_embeddings
 
 6. Enter your Chirps username and password when prompted. The command will authenticate your credentials and use your API key.
 
-7. The command will generate embeddings for the input data using the selected service and model. If an embedding already exists for a specific input, the command will skip it.
+Embeddings are then generated for the input data using the selected service and model. An embedding is generated if one does not already exist for any combination of service/model/rules. The command will skip the rule if an embedding already exists.
 
 ## Example
 
 Here's an example of using the `generate_embeddings` command:
 
 ```sh
-python manage.py generate_embeddings
-
-Output:
-
-1. OpenAI
-2. cohere
-Enter the number corresponding to your preferred service: 1
-1. gpt-3
-2. gpt-2
+chirps $ ./manage.py generate_embeddings
+1. cohere
+2. OpenAI
+Enter the number corresponding to your preferred service: 2
+Selected option: OpenAI
+1. text-embedding-ada-002
 Enter the number corresponding to your preferred model: 1
-Enter your Chirps username: testuser
-Enter your password: ********
+Selected option: text-embedding-ada-002
+Enter your Chirps username:
+Enter your password:
+
+...
 
 The command will then generate embeddings using the selected service (OpenAI) and model (gpt-3).
 ```
