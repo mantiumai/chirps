@@ -13,8 +13,8 @@ class ProfileForm(forms.ModelForm):
     cohere_key = forms.CharField(
         max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    finding_preview_size = forms.CharField(
-        max_length=100,
+    finding_preview_size = forms.IntegerField(
+        initial=20,
         required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '20'}),
     )
