@@ -1,4 +1,3 @@
-{% load custom_filters %}
 {% extends 'base.html' %}
 {% block title %}Result Details{% endblock %}
 
@@ -21,7 +20,7 @@ Findings
   <tbody>
     {% for finding in findings %}
     <tr>
-      <td>{{ finding.surrounding_text|with_args:finding_preview_size }} <a href="{% url 'finding_detail' finding.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
+      <td>{{ finding.surrounding_text }} <a href="{% url 'finding_detail' finding.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
       <td>{{ finding }}</td>
     </tr>
     {% empty %}
