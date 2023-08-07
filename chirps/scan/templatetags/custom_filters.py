@@ -1,3 +1,4 @@
+"""Custom filters for Scan application"""
 from django import template
 
 register = template.Library()
