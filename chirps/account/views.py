@@ -1,5 +1,7 @@
 """Views for the account application."""
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User  # noqa: E5142
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -8,6 +10,7 @@ from .forms import LoginForm, ProfileForm, SignupForm
 from .models import Profile
 
 
+@login_required
 def profile(request):
     """Render the user profile page and handle updates"""
     if request.method == 'POST':
@@ -18,6 +21,8 @@ def profile(request):
             profile_form = form.save(commit=False)
             profile_form.user = request.user
             profile_form.save()
+
+            messages.info(request, 'API Key(s) saved successfully.')
 
             # Redirect the user back to the dashboard
             return redirect('profile')
@@ -86,3 +91,17 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
+
+
+@login_required
+def get_openai_key(request):
+    """Fetch the value for the specified API key."""
+    form = ProfileForm({'openai_key': request.user.profile.openai_key})
+    return render(request, 'account/api_key.html', {'field': form['openai_key']})
+
+
+@login_required
+def get_cohere_key(request):
+    """Fetch the value for the specified API key."""
+    form = ProfileForm({'cohere_key': request.user.profile.cohere_key})
+    return render(request, 'account/api_key.html', {'field': form['cohere_key']})
