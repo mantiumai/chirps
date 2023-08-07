@@ -84,6 +84,9 @@ def view_scan(request, scan_id):
                 # This will be used to render the pie-chart in the UI
                 finding_severities[rule.severity] += count
 
+    # Retrieve finding_preview_size from the user's profile
+    finding_preview_size = request.user.profile.finding_preview_size
+
     return render(
         request,
         'scan/scan.html',
@@ -93,6 +96,7 @@ def view_scan(request, scan_id):
             'unique_rules': unique_rules,  # List of unique rules hit by findings
             'severities': list(finding_severities.keys()),  # List of all the severities encountered
             'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
+            'finding_preview_size': finding_preview_size,
         },
     )
 
