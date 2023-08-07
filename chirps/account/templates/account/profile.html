@@ -21,6 +21,13 @@
             <input type="text" class="form-control" id="{{ form.cohere_key.auto_id }}" name="{{ form.cohere_key.html_name }}" value="{{ user.profile.masked_cohere_key }}" placeholder="Enter Cohere key or leave it blank">
         </div>
 
+        <!-- Finding Preview Size -->
+        <div class="form-group">
+            <label for="{{ form.finding_preview_size.id_for_label }}">Finding Preview Size:</label>
+            {{ form.finding_preview_size }}
+            <small class="form-text text-muted">Configure the size of the Scan finding preview window</small>
+        </div>
+
         <div class="mt-3 d-flex">
             <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
         </div>

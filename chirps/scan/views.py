@@ -32,8 +32,13 @@ def result_detail(request, scan_id, policy_id, rule_id):
         raise Http404('Results not found')
 
     findings = Finding.objects.filter(result__in=results)
+    finding_preview_size = request.user.profile.finding_preview_size
 
-    return render(request, 'scan/result_detail.html', {'results': results, 'findings': findings})
+    return render(
+        request,
+        'scan/result_detail.html',
+        {'results': results, 'findings': findings, 'finding_preview_size': finding_preview_size},
+    )
 
 
 @login_required
