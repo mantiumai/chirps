@@ -98,12 +98,14 @@
         btn.addEventListener('click', async function () {
             const assetId = btn.getAttribute('data-asset-id');
             const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
             if (response.status === 200) {
                 showToast('Success: Connection established', 'success');
             } else {
                 const data = await response.json();
                 showToast(data.error, 'danger');
             }
+            btn.innerHTML = 'Ping'
         });
     });
 });
