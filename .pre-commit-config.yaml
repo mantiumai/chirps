@@ -61,21 +61,21 @@ repos:
 
   # mypy validates the python typing as per PEP 484
   # See https://jaredkhan.com/blog/mypy-pre-commit for the source of this
-  # - repo: local
-  #    # We do not use pre-commit/mirrors-mypy,
-  #    # as it comes with opinionated defaults
-  #    # (like --ignore-missing-imports)
-  #    # and is difficult to configure to run
-  #    # with the dependencies correctly installed.
-  #    hooks:
-  #      - id: mypy
-  #        name: mypy
-  #        entry: "./scripts/run-mypy"
-  #        # A script hook uses the active virtual environment, so it must be up-to-date with `poetry install --sync`
-  #        language: script
-  #        types_or: [python, toml]
-  #        # use require_serial so that script
-  #        # is only called once per commit
-  #        require_serial: true
-  #        # Print the number of files as a sanity-check
-  #        verbose: true
+  - repo: local
+     # We do not use pre-commit/mirrors-mypy,
+     # as it comes with opinionated defaults
+     # (like --ignore-missing-imports)
+     # and is difficult to configure to run
+     # with the dependencies correctly installed.
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: "./scripts/run-mypy"
+        # A script hook uses the active virtual environment, so it must be up-to-date with `poetry install --sync`
+        language: script
+        types_or: [python, toml]
+        # use require_serial so that script
+        # is only called once per commit
+        require_serial: true
+        # Print the number of files as a sanity-check
+        verbose: true
