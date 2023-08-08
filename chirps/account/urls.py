@@ -2,7 +2,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from .views import get_cohere_key, get_openai_key, login_view
+from .views import api_key_edit, api_key_masked, api_key_unmasked, login_view
 from .views import profile as profile_view
 from .views import signup
 
@@ -11,8 +11,9 @@ urlpatterns = [
     path(
         'logout/', auth_views.LogoutView.as_view(template_name='account/logout.html', next_page='login'), name='logout'
     ),
-    path('openai_key', get_openai_key, name='get_openai_key'),
-    path('cohere_key', get_cohere_key, name='get_cohere_key'),
+    path('api_key_masked/<str:key_name>', api_key_masked, name='api_key_masked'),
+    path('api_key_unmasked/<str:key_name>', api_key_unmasked, name='api_key_unmasked'),
+    path('api_key_edit/<str:key_name>', api_key_edit, name='api_key_edit'),
     path('profile/', profile_view, name='profile'),
     path(
         'password_reset/',
