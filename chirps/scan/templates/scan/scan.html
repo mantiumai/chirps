@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 {% load static %}
 {% block title %}Scans{% endblock %}
 
@@ -109,7 +110,7 @@
                                             <tbody>
                                                 {% for finding in rule.findings %}
                                                 <tr>
-                                                    <td>{{ finding.surrounding_text }}</td>
+                                                    <td>{{ finding|surrounding_text_with_preview_size:finding_preview_size }}</td>
                                                     <td>{{ finding.source_id }}</td>
                                                     <td>{{ finding.result.scan_asset.asset.name }}</td>
                                                 </tr>
