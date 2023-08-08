@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 
 from .forms import PolicyForm
 from .models import Policy, PolicyVersion, Rule
@@ -53,6 +54,9 @@ def create(request):
                 severity=rule['rule_severity'],
                 policy=policy_version,
             )
+        
+        # Add a success message
+        messages.success(request, 'Policy created successfully.')
 
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
@@ -130,6 +134,9 @@ def edit(request, policy_id):
         policy.description = form.cleaned_data['description']
         policy.save()
 
+        # Add an info message
+        messages.info(request, 'Policy changes saved.')
+
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
@@ -161,10 +168,13 @@ def delete_rule(request, rule_id):
 
 
 @login_required
-@require_http_methods(['DELETE'])
 def archive(request, policy_id):
     """Archive a policy."""
     policy = get_object_or_404(Policy, id=policy_id, user=request.user)
     policy.archived = True
     policy.save()
-    return HttpResponse('', status=200)
+
+    # Add an info message
+    messages.info(request, 'Policy has been archived.')
+    
+    return redirect('policy_dashboard')

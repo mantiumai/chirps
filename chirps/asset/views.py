@@ -56,6 +56,9 @@ def create(request, html_name):
             # Off to the DB we go!
             asset.save()
 
+            # Add a success message
+            messages.success(request, 'Asset created successfully.')
+
             # Redirect the user back to the dashboard
             return redirect('asset_dashboard')
 
@@ -88,7 +91,10 @@ def edit(request, asset_id):
                 messages.error(request, 'Unable to edit asset while a scan is active.')
             else:
                 form.save()
+
+                # Add an info message
                 messages.info(request, 'Asset changes saved.')
+
                 return redirect('asset_dashboard')
     else:
         form = form_from_model(asset)(instance=asset)
@@ -125,4 +131,8 @@ def ping(request, asset_id):
 def delete(request, asset_id):   # pylint: disable=unused-argument
     """Delete an asset from the database."""
     get_object_or_404(BaseAsset, pk=asset_id).delete()
+
+    # Add an info message
+    messages.info(request, 'Asset has been removed.')
+    
     return redirect('asset_dashboard')
