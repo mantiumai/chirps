@@ -96,9 +96,9 @@
     const pingButtons = document.querySelectorAll('.ping-btn');
     pingButtons.forEach(btn => {
         btn.addEventListener('click', async function () {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
             const assetId = btn.getAttribute('data-asset-id');
             const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
             if (response.status === 200) {
                 showToast('Success: Connection established', 'success');
             } else {
