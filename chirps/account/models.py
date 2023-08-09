@@ -10,6 +10,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     openai_key = EncryptedCharField(max_length=100, blank=True)
     cohere_key = EncryptedCharField(max_length=100, blank=True)
+    finding_preview_size = models.IntegerField(default=20, null=True)
 
     @property
     def masked_openai_key(self):

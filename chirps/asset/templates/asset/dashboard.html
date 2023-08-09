@@ -100,6 +100,7 @@
     const pingButtons = document.querySelectorAll('.ping-btn');
     pingButtons.forEach(btn => {
         btn.addEventListener('click', async function () {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
             const assetId = btn.getAttribute('data-asset-id');
             const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             if (response.status === 200) {
@@ -108,6 +109,7 @@
                 const data = await response.json();
                 showToast(data.error, 'danger');
             }
+            btn.innerHTML = 'Ping'
         });
     });
 });

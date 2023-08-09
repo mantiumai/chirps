@@ -170,13 +170,13 @@ class Finding(models.Model):
         """Return the text of the finding."""
         return self.result.text[self.offset : self.offset + self.length]
 
-    def surrounding_text(self):
+    def surrounding_text(self, preview_size: int = 20):
         """return the text of the finding, with some surrounding context."""
-        buffer = self.result.text[self.offset - 20 : self.offset - 1]
+        buffer = self.result.text[self.offset - preview_size : self.offset - 1]
         buffer += "<span class='text-danger'>"
         buffer += self.result.text[self.offset : self.offset + self.length]
         buffer += '</span>'
-        buffer += self.result.text[self.offset + self.length + 1 : self.offset + self.length + 19]
+        buffer += self.result.text[self.offset + self.length + 1 : self.offset + self.length + preview_size - 1]
         return mark_safe(buffer)
 
     def with_highlight(self):

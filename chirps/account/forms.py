@@ -13,10 +13,15 @@ class ProfileForm(forms.ModelForm):
     cohere_key = forms.CharField(
         max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    finding_preview_size = forms.IntegerField(
+        initial=20,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '20'}),
+    )
 
     class Meta:
         model = Profile
-        fields = ['openai_key', 'cohere_key']
+        fields = ['openai_key', 'cohere_key', 'finding_preview_size']
 
 
 class LoginForm(forms.Form):
