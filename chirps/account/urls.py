@@ -1,8 +1,8 @@
 """URLs for the account app."""
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, reverse_lazy
 
-from .views import api_key_edit, api_key_masked, api_key_unmasked, login_view
+from .views import CustomPasswordChangeView, api_key_edit, api_key_masked, api_key_unmasked, login_view
 from .views import profile as profile_view
 from .views import signup
 
@@ -19,6 +19,13 @@ urlpatterns = [
         'password_reset/',
         auth_views.PasswordResetView.as_view(template_name='account/password_reset.html'),
         name='password_reset',
+    ),
+    path(
+        'change-password/',
+        CustomPasswordChangeView.as_view(
+            template_name='account/change_password.html', success_url=reverse_lazy('profile')
+        ),
+        name='change_password',
     ),
     path('signup/', signup, name='signup'),
 ]
