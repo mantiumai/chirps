@@ -17,12 +17,7 @@ def profile(request):
         form = ProfileForm(request.POST, instance=request.user.profile)
 
         if form.is_valid():
-
-            # profile_form = form.save(commit=False)
-            # profile_form.user = request.user
-            # profile_form.save()
             form.save()
-
             messages.info(request, 'Account profile saved successfully.')
 
             # Redirect the user back to the dashboard
@@ -96,7 +91,7 @@ def login_view(request):
 
 @login_required
 def api_key_edit(request, key_name):
-    """Render the edit page for the OpenAI API key."""
+    """Render the API key edit page."""
     if request.method == 'POST':
         form = KeyEditForm(request.POST)
         if form.is_valid():
@@ -141,10 +136,8 @@ def api_key_unmasked(request, key_name):
 def api_key_masked(request, key_name):
     """Fetch the masked key widget for the specified API key."""
     if key_name == 'cohere':
-        key_name = 'cohere'
         masked_value = request.user.profile.masked_cohere_key
     elif key_name == 'openai':
-        key_name = 'openai'
         masked_value = request.user.profile.masked_openai_key
     else:
         raise ValueError('No key specified.')
