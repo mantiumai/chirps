@@ -7,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import KeyEditForm, LoginForm, ProfileForm, SignupForm
+from .forms import CustomPasswordChangeForm, KeyEditForm, LoginForm, ProfileForm, SignupForm
 from .models import Profile
 
 
@@ -148,6 +148,8 @@ def api_key_masked(request, key_name):
 
 class CustomPasswordChangeView(PasswordChangeView):
     """Custom auth view"""
+
+    form_class = CustomPasswordChangeForm
 
     def form_valid(self, form):
         """Override the form_valid method to add a success message"""
