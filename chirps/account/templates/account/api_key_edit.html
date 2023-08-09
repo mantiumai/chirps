@@ -1,0 +1,29 @@
+<div id="modal-backdrop" class="modal-backdrop fade show" style="display:block;"></div>
+
+<div id="edit-key-modal" class="modal fade show" tabindex="-1" style="display:block;">
+	<div class="modal-dialog modal-dialog-centered">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">Set {{keyi_name}} key</h5>
+		</div>
+		<form method="post" hx-post="{% url 'api_key_edit' key_name %}">
+			{% csrf_token %}
+			<div class="modal-body">
+			<p>Key Value</p>
+			<input type="text"
+					class="form-control"
+					id="{{ form.key.auto_id }}"
+					name="{{ form.key.html_name }}"
+					placeholder="{{key_name}} secret key">
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success"
+						hx-post="{% url 'api_key_edit' key_name %}" hx-target="#{{key_name}}_group"
+						_="on htmx:afterOnLoad call closeModal()">Save</button>
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+			</div>
+		</form>
+	  </div>
+	</div>
+</div>

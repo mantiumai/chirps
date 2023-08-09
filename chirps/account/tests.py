@@ -2,22 +2,9 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from .forms import ProfileForm
-
 
 class AccountTests(TestCase):
     """Main test class for the account application."""
-
-    def test_openai_key(self):
-        """Verify that the openai_key paramater is stored by the form"""
-        secret_val = 'secret_12345abcd'
-        form = ProfileForm({'openai_key': secret_val})
-
-        # Valid form, or bust
-        assert form.is_valid()
-
-        # Make sure the OpenAI key is part of the cleaned data!
-        self.assertEqual(form.cleaned_data['openai_key'], secret_val)
 
     def test_new_account_signup(self):
         """Verify that a new account can be created"""

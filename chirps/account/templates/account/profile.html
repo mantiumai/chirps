@@ -1,37 +1,131 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 <h1 class="text-success">Account Settings</h1>
 <hr>
 
-<div class="form-group">
-    <form method="POST" action="{% url 'profile'%}">
-        {% csrf_token %}
-
-        <!-- OpenAI Key -->
-        <div class="form-group">
-            <label for="{{ form.openai_key.id_for_label }}">OpenAI Key:</label>
-            <input type="text" class="form-control" id="{{ form.openai_key.auto_id }}" name="{{ form.openai_key.html_name }}" value="{{ user.profile.masked_openai_key }}" placeholder="Enter OpenAI key or leave it blank">
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{message.tags}}" role="alert">
+            {{message}}
         </div>
+    {% endfor %}
+{% endif %}
 
-        <!-- Cohere Key -->
-        <div class="form-group">
-            <label for="{{ form.cohere_key.id_for_label }}">Cohere Key:</label>
-            <input type="text" class="form-control" id="{{ form.cohere_key.auto_id }}" name="{{ form.cohere_key.html_name }}" value="{{ user.profile.masked_cohere_key }}" placeholder="Enter Cohere key or leave it blank">
-        </div>
+<div id="modals-block"> </div>
 
-        <!-- Finding Preview Size -->
-        <div class="form-group">
-            <label for="{{ form.finding_preview_size.id_for_label }}">Finding Preview Size:</label>
-            {{ form.finding_preview_size }}
-            <small class="form-text text-muted">Configure the size of the Scan finding preview window</small>
-        </div>
+<form method="POST" action="{% url 'profile'%}">
+{% csrf_token %}
 
-        <div class="mt-3 d-flex">
-            <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
+    <!-- Finding Preview Size -->
+    <div class="form-group">
+        <label for="{{ form.finding_preview_size.id_for_label }}">Finding Preview Size:</label>
+        {{ form.finding_preview_size }}
+        <small class="form-text text-muted">Configure the size of the Scan finding preview window</small>
+    </div>
+
+    <div class="card my-4">
+        <div class="card-body cardbody-color p-4">
+            <h5 class="card-title">API Keys</h5>
+            <div class="form-group">
+
+                <div class="mt-3 d-flex">
+
+                    <!-- OpenAI Key -->
+                    <div class="form-group col">
+                        <label for="{{ form.openai_key.id_for_label }}">
+                            <img src="{% static 'account/openai_logo.png' %}" alt="OpenAI Logo" class="img-fluid" style="height: 1.5rem;">
+                        </label>
+
+                        <div class="input-group mb-3" id="openai_group"
+                             hx-get="{% url 'api_key_masked' 'openai' %}" hx-trigger="load">
+                            <i id="spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+
+                    <!-- Cohere Key -->
+                    <div class="form-group col">
+                        <label for="{{ form.cohere_key.id_for_label }}">
+                            <img src="{% static 'account/cohere_logo.png' %}" alt="Cohere Logo" class="img-fluid" style="height: 1.5rem;">
+                        </label>
+
+                        <div class="input-group mb-3" id="cohere_group"
+                             hx-get="{% url 'api_key_masked' 'cohere' %}" hx-trigger="load">
+                            <i id="spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
+    <div class="mt-3 d-flex">
+        <button class="btn btn-success ml-auto mr-0" type="submit">Save</button>
+    </div>
+
+</form>
+
+<!-- Toast notification -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 10px; right: 10px; z-index: 0;">
+    <div class="toast bg-success" id="toast-notification" style="position: fixed; top: 10px; right: 10px;" data-bs-autohide="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto">Success!</strong>
+            <button type="button" class="btn" data-bs-dismiss="toast" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="toast-body">
+            API Key coiped to clipboard.
+        </div>
+    </div>
 </div>
+<!-- End of Toast notification -->
 
+<script>
+    function CopyToClipboard(elementId) {
+
+        let elementToCopy = document.getElementById(elementId);
+
+        elementToCopy.removeAttribute("disabled");
+        elementToCopy.select();
+
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+        elementToCopy.setAttribute("disabled", "");
+        window.getSelection().removeAllRanges();
+
+        const toastElement = document.getElementById("toast-notification");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+
+    function closeModal() {
+        var container = document.getElementById("modals-block")
+        var backdrop = document.getElementById("modal-backdrop")
+        var modal = document.getElementById("edit-key-modal")
+
+        modal.classList.remove("show")
+        backdrop.classList.remove("show")
+
+        setTimeout(function() {
+            container.removeChild(backdrop)
+            container.removeChild(modal)
+        }, 200)
+    }
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+
+<style>
+.api-key-icon:hover .fa-eye-slash,
+.api-key-icon .fa-eye {
+    display: none;
+}
+
+.api-key-icon:hover .fa-eye {
+    display: inline;
+}
+</style>
 {% endblock %}

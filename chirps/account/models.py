@@ -15,11 +15,15 @@ class Profile(models.Model):
     @property
     def masked_openai_key(self):
         """Return the masked OpenAI key."""
+        if self.openai_key == '':
+            return 'Not Configured'
         return self._masked_key(self.openai_key)
 
     @property
     def masked_cohere_key(self):
         """Return the masked Cohere key."""
+        if self.cohere_key == '':
+            return 'Not Configured'
         return self._masked_key(self.cohere_key)
 
     @staticmethod
