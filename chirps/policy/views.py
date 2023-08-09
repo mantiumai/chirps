@@ -1,9 +1,9 @@
 """Views for the policy app."""
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
-from django.contrib import messages
 
 from .forms import PolicyForm
 from .models import Policy, PolicyVersion, Rule
@@ -54,7 +54,7 @@ def create(request):
                 severity=rule['rule_severity'],
                 policy=policy_version,
             )
-        
+
         # Add a success message
         messages.success(request, 'Policy created successfully.')
 
@@ -176,5 +176,5 @@ def archive(request, policy_id):
 
     # Add an info message
     messages.info(request, 'Policy has been archived.')
-    
+
     return redirect('policy_dashboard')

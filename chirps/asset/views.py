@@ -134,5 +134,5 @@ def delete(request, asset_id):   # pylint: disable=unused-argument
 
     # Add an info message
     messages.info(request, 'Asset has been removed.')
-    
+
     return redirect('asset_dashboard')
