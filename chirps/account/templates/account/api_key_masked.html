@@ -1,0 +1,18 @@
+<button class="btn btn-success"
+        hx-get="{% url 'api_key_edit' key_name%}"
+        hx-target="#modals-block"
+        hx-trigger="click">
+    <i class="fa-solid fa-pen-to-square"></i>
+</button>
+
+<input type="text" class="form-control"
+    id="{{ key_name }}-masked"
+    name="{{ key_name }}-masked"
+    value="{{ masked_value }}" disabled>
+
+<div class="input-group-append" hx-get="{% url 'api_key_unmasked' key_name %}" hx-target="#{{key_name}}_group">
+    <span class="input-group-text api-key-icon">
+        <i class="fa fa-eye" aria-hidden="true"></i>
+        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+    </span>
+</div>

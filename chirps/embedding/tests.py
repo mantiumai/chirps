@@ -70,7 +70,7 @@ class TestEmbedding(TestCase):
         )
 
         # Set a dummy OpenAI key
-        self.client.post(reverse('profile'), {'openai_key': 'test_openai_key'})
+        self.client.post(reverse('api_key_edit', kwargs={'key_name': 'openai'}), {'key': 'junk_key'})
 
     def test_create_invalid(self):
         """Test creating an embedding with invalid URL parameters."""
@@ -151,6 +151,7 @@ class TestEmbedding(TestCase):
         response = self.client.get(
             reverse('embedding_create'), {'text': 'test text', 'model': 'invalid-model-001', 'service': 'OpenAI'}
         )
+
         self.assertContains(response, text='-0.016634132713079453', count=2, status_code=200)
 
         # List all of the embeddings (there should be only one)

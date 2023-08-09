@@ -7,12 +7,6 @@ from .models import Profile
 class ProfileForm(forms.ModelForm):
     """User profile form"""
 
-    openai_key = forms.CharField(
-        max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    cohere_key = forms.CharField(
-        max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
     finding_preview_size = forms.IntegerField(
         initial=20,
         required=False,
@@ -21,7 +15,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['openai_key', 'cohere_key', 'finding_preview_size']
+        fields = ['finding_preview_size']
 
 
 class LoginForm(forms.Form):
@@ -38,3 +32,9 @@ class SignupForm(forms.Form):
     email = forms.EmailField(max_length=256)
     password1 = forms.CharField(max_length=256, widget=forms.PasswordInput)
     password2 = forms.CharField(max_length=256, widget=forms.PasswordInput)
+
+
+class KeyEditForm(forms.Form):
+    """Form for editing keys."""
+
+    key = forms.CharField(max_length=256)
