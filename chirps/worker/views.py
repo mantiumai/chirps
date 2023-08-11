@@ -1,18 +1,16 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from chirps.celery import app
 
 
 def worker_status(request):
-    """Get the worker's status"""
-    inspection = app.control.inspect()  # Use app.control.inspect() instead of app.inspect()
+    """Get the status of the Celery worker"""
+    inspection = app.control.inspect()
     result = inspection.ping()
 
     if result:
-        color = 'green'
+        status = 'green'
     else:
-        color = 'red'
+        status = 'red'
 
-    return HttpResponse(
-        f'<div style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; background-color: {color};"></div>'
-    )
+    return JsonResponse({'status': status})

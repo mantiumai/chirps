@@ -16,10 +16,6 @@
     <body>
         <div>
             {% include 'header.html' %}
-            <!-- Add the worker status indicator in the navbar -->
-            <div id="worker-status" hx-get="/worker/status/" hx-trigger="every 5s" style="float: right; margin-right: 20px;">
-            <!-- Initial status indicator will be loaded here -->
-            </div>
             <div class="container mt-3">
                 {% block content%}{%endblock%}
             </div>
