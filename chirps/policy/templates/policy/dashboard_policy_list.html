@@ -45,7 +45,7 @@
         <div class="row">
             <div class="col">
                 <a class="btn btn-outline-primary m-3" href="{% url 'policy_edit' policy.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                <button type="button" class="btn btn-outline-danger m-3" hx-delete="{% url 'policy_archive' policy.id %}"><i class="fa-solid fa-trash"></i> Archive</button>
+                <a href="{% url 'policy_archive' policy.id %}" class="btn btn-outline-danger m-3"><i class="fa-solid fa-trash"></i> Archive</a>
             </div>
             <div class="col align-self-end">
                 <p class="text-right m-3">version: {{policy.current_version.number}}</p>
