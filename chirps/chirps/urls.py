@@ -26,4 +26,5 @@ urlpatterns = [
     path('policy/', include('policy.urls')),
     path('scan/', include('scan.urls')),
     path('asset/', include('asset.urls')),
+    path('worker/', include('worker.urls')),
 ]

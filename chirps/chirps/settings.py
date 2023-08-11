@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'account',
     'policy',
     'embedding',
+    'worker',
 ]
 
 MIDDLEWARE = [
