@@ -17,9 +17,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle redis command"""
+        workspace_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', ".."))
         if options['start']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml up -d redis')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml up -d redis')
         elif options['stop']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml down')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml down')
         elif options['status']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml ps')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml ps')
