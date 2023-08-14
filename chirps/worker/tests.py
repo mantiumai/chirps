@@ -1,3 +1,4 @@
+"""worker application tests"""
 from unittest.mock import patch
 
 from django.test import Client, TestCase

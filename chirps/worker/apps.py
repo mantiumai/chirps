@@ -1,3 +1,4 @@
+"""Worker application apps"""
 from django.apps import AppConfig
 
 

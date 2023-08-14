@@ -1,3 +1,4 @@
+"""Worker application views"""
 import os
 
 from django.http import JsonResponse
