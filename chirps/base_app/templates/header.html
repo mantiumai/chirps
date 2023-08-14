@@ -1,74 +1,85 @@
 {% load static %}
 <style>
-.worker-status-indicator {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-}
+  .worker-status-indicator {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+  }
 </style>
 <div>
-    <nav class="navbar navbar-light navbar-expand-lg bg-light w-100">
-        <div class="container-fluid d-flex justify-content-between">
-            <div>
-                <a class="navbar-brand" href="/"><img src="{% static 'account/chirps_logo.png' %}" width="32"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
+  <nav class="navbar navbar-light navbar-expand-lg bg-light w-100">
+    <div class="container-fluid d-flex justify-content-between">
+      <div>
+        <a class="navbar-brand" href="/"><img src="{% static 'account/chirps_logo.png' %}" width="32"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
 
-            <!-- Status indicator -->
-            <div id="worker-status">
-                <div class="worker-status-indicator" style="background-color: green;"></div>
-            </div>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'asset_dashboard' %}"><i
+                class="fa-solid fa-bullseye"></i> Assets</i></a>
+          </li>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'asset_dashboard' %}"><i class="fa-solid fa-bullseye"></i> Assets</i></a>
-                  </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'policy_dashboard' %}"><i class="fa-solid fa-map"></i>
+              Policies</a>
+          </li>
 
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page"href="{% url 'policy_dashboard' %}"><i class="fa-solid fa-map"></i> Policies</a>
-                  </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'scan_dashboard' %}"><i
+                class="fa-solid fa-magnifying-glass"></i> Scans</a>
+          </li>
 
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'scan_dashboard' %}"><i class="fa-solid fa-magnifying-glass"></i> Scans</a>
-                  </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'profile' %}"><i class="fa-regular fa-circle-user"></i>
+              Account</a>
+          </li>
 
-                  {% if user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'profile' %}"><i class="fa-regular fa-circle-user"></i> Account</a>
-                  </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'logout' %}"><i
+                class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+          </li>
+          {% endif %}
 
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'logout' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
-                  </li>
-                  {% endif %}
-
-                  {% if user.is_superuser %}
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'admin:index' %}"><i class="fa-solid fa-user-ninja"></i> Admin</a>
-                  </li>
-                  {% endif %}
-                </ul>
-            </div>
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'admin:index' %}"><i
+                class="fa-solid fa-user-ninja"></i> Admin</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <!-- Status indicator -->
+      <div class="ms-auto">
+        <div id="worker-status" hx-get="/worker/status/" hx-trigger="every 5s" hx-swap="none">Worker status:
+          <div class="worker-status-indicator" style="background-color: green;"></div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 </div>
 
 <script>
-  function updateStatusIndicator() {
-    fetch('/worker/status/')
-      .then(response => response.json())
-      .then(data => {
-        let status = data.status;
+  document.body.addEventListener('htmx:configRequest', function (event) {
+    if (event.target.id === 'worker-status') {
+      event.detail.headers['HX-Response-Content-Type'] = 'application/json';
+    }
+  });
+
+  document.body.addEventListener('htmx:afterSwap', function (event) {
+    if (event.target.id === 'worker-status') {
+      let xhr = event.detail.xhr;
+      if (xhr) {
+        let status = JSON.parse(xhr.responseText).status;
         let indicator = document.querySelector("#worker-status .worker-status-indicator");
         indicator.style.backgroundColor = status;
-      })
-      .catch(error => console.error(error));
-  }
-
-  // Update the status indicator every 5 seconds
-  setInterval(updateStatusIndicator, 5000);
-  </script>
+      }
+    }
+  });
+</script>
