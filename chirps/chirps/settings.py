@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'account',
     'policy',
     'embedding',
-    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
