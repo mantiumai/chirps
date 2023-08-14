@@ -75,7 +75,7 @@ class AccountTests(TestCase):
             },
         )
         self.assertRedirects(response, '/', status_code=302)
-    
+
     def test_password_change_validation(self):
         """Verify that a password is validated when changed"""
         username = 'test_user'
