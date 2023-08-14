@@ -1,16 +1,24 @@
+import os
+
 from django.http import JsonResponse
+from requests import Request
 
 from chirps.celery import app
 
 
-def worker_status(request):
+def worker_status(request: Request) -> JsonResponse:
     """Get the status of the Celery worker"""
-    inspection = app.control.inspect()
-    result = inspection.ping()
+    celery_inspection = app.control.inspect()
+    celery_statuses = celery_inspection.ping()
+    is_celery_running = all(v['ok'] == 'pong' for k, v in celery_statuses.items())
 
-    if result:
+    is_rabbit_running = os.system('rabbitmqctl ping') == 0
+
+    service_statuses = {'celery': is_celery_running, 'rabbitmq': is_rabbit_running}
+
+    if all(result is True for result in service_statuses.values()):
         status = 'green'
     else:
         status = 'red'
 
-    return JsonResponse({'status': status})
+    return JsonResponse({'overall_status': status, 'service_statuses': service_statuses})
