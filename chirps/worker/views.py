@@ -10,7 +10,10 @@ def worker_status(request: Request) -> JsonResponse:
     """Get the status of the Celery worker"""
     celery_inspection = app.control.inspect()
     celery_statuses = celery_inspection.ping()
-    is_celery_running = all(v['ok'] == 'pong' for k, v in celery_statuses.items())
+
+    is_celery_running = False
+    if celery_statuses:
+        is_celery_running = all(v['ok'] == 'pong' for v in celery_statuses.values())
 
     is_rabbit_running = os.system('rabbitmqctl ping') == 0
 
