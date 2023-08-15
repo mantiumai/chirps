@@ -12,14 +12,14 @@ def is_redis_running() -> bool:
     """Check redis status"""
     cmd = 'docker-compose -f /workspace/.devcontainer/docker-compose.yml ps | grep redis'
     try:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-    except Exception:
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True, check=True)
+    except Exception:   # type: ignore
         return False
-    else:
-        if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
-            return True
-        else:
-            return False
+
+    if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
+        return True
+
+    return False
 
 
 def worker_status(request: Request) -> JsonResponse:
