@@ -11,12 +11,15 @@ from chirps.celery import app
 def is_redis_running() -> bool:
     """Check redis status"""
     cmd = 'docker-compose -f /workspace/.devcontainer/docker-compose.yml ps | grep redis'
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-
-    if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
-        return True
-    else:
+    try:
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    except Exception:
         return False
+    else:
+        if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
+            return True
+        else:
+            return False
 
 
 def worker_status(request: Request) -> JsonResponse:
