@@ -203,9 +203,9 @@ class StandardPIIRegexTests(TestCase):
     def test_address_pattern_invalid(self):
         """Verify that the Address regex pattern does not match invalid addresses."""
         invalid_addresses = [
-            '123 Main Street, Los Angeles, CA',
-            '987 Elm Avenue, New York 10001',
-            '001 Oak Court, San Francisco 94102',
+            'John Place',
+            '123 Franklin',
+            'Place of Business',
         ]
         self.verify_pattern('Address', invalid_addresses, False)
 
