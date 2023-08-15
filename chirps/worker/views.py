@@ -13,7 +13,7 @@ def is_redis_running() -> bool:
     cmd = 'docker-compose -f /workspace/.devcontainer/docker-compose.yml ps | grep redis'
     try:
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True, check=True)
-    except Exception:   # type: ignore
+    except subprocess.CalledProcessError:
         return False
 
     if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
