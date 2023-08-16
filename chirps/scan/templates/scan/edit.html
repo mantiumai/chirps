@@ -4,7 +4,7 @@
 {% block content %}
 
 <div>
-  <h1 class="text-success">New Scan</h1>
+  <h1 class="text-success">Edit Scan</h1>
   {% if messages %}
   <div class="alert alert-danger" role="alert">
     {% for message in messages %}
@@ -19,9 +19,9 @@
         <form method="POST" action="{% url 'scan_create' %}">
           {% csrf_token %}
 
-          {% for error in form.non_field_errors %}
+          {% comment %} {% for error in form.non_field_errors %}
           <span class="text-danger">{{error}}</span><br />
-          {% endfor %}
+          {% endfor %} {% endcomment %}
 
           {{form.name.label_tag}}
           {{form.name}}

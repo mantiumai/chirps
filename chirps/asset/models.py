@@ -39,7 +39,7 @@ class BaseAsset(PolymorphicModel):
 
     def scan_is_active(self) -> bool:
         """Return True if the asset is currently being scanned."""
-        return self.scan_assets.filter(~Q(scan__status='Complete')).exists()
+        return self.scan_run_assets.filter(~Q(scan__status='Complete')).exists()
 
     def search(self, query: str, max_results: int) -> list[SearchResult]:
         """Perform a query against the specified asset, returning the max_results number of matches."""

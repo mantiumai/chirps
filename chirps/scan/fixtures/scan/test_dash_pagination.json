@@ -1,12 +1,20 @@
 [
     {
-        "model": "scan.scan",
+        "model": "scan.scantemplate",
         "pk": 4,
         "fields": {
-            "started_at": "2023-07-07T20:09:15.998Z",
-            "finished_at": "2023-07-07T20:09:48.990Z",
+            "name": "test scan",
             "description": "Test",
-            "user": 1
+            "user": 1,
+            "current_version": 4
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 4,
+        "fields": {
+            "number": 1,
+            "scan": 4
         }
     },
     {
@@ -21,13 +29,20 @@
         }
     },
     {
-        "model": "scan.scan",
+        "model": "scan.scantemplate",
         "pk": 5,
         "fields": {
-            "started_at": "2023-07-11T00:52:49.365Z",
-            "finished_at": "2023-07-11T00:53:24.915Z",
+            "name": "second test scan",
             "description": "Second Scan",
             "user": 1
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 5,
+        "fields": {
+            "number": 1,
+            "scan": 5
         }
     },
     {
@@ -42,7 +57,7 @@
         }
     },
     {
-        "model": "scan.scan",
+        "model": "scan.scantemplate",
         "pk": 6,
         "fields": {
             "started_at": "2023-07-11T00:54:31.010Z",

@@ -9,32 +9,56 @@ from fernet_fields import EncryptedTextField
 from policy.models import Rule
 
 
-class Scan(models.Model):
+class ScanTemplate(models.Model):
     """Model for a single scan run against an asset."""
 
-    started_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(null=True)
+    name = models.CharField(max_length=256)
     description = models.TextField()
-    policies = models.ManyToManyField('policy.Policy')
-    celery_task_id = models.CharField(max_length=256, null=True)
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    status = models.CharField(
-        max_length=32,
-        default='Queued',
-        choices=[('Queued', 'Queued'), ('Running', 'Running'), ('Complete', 'Complete'), ('Failed', 'Failed')],
+
+    # The current version of the scan
+    current_version = models.ForeignKey(
+        'ScanVersion', on_delete=models.CASCADE, related_name='current_version', null=True, blank=True
     )
 
     def __str__(self) -> str:
         """Stringify the description"""
         return self.description
 
+    def policy_count(self):
+        """Fetch the number of policies associated with this scan."""
+        return self.current_version.policies.count()
+
+    def asset_count(self):
+        """Fetch the number of assets associated with this scan."""
+        return self.current_version.assets.count()
+
+    def assets(self):
+        """Fetch a list of all the assets associated with this scan."""
+        return self.current_version.assets.all()
+
+    def policies(self):
+        """Fetch a list of all the policies associated with this scan."""
+        return self.current_version.policies.all()
+
+    def run_count(self):
+        """Fetch the number of runs associated with this scan."""
+        return self.current_version.scan_runs.count()
+
+    def is_running(self):
+        """Detect if the scan has any ScanRun objects in the Running state."""
+        for scan_run in self.current_version.scan_runs.all():
+            if scan_run.is_running():
+                return True
+
+        return False
+
     def progress(self):
         """Compute the progress of the scan."""
         value_count = 0
         value = 0
 
-        for scan_asset in self.scan_assets.all():
+        for scan_asset in self.current_version.scan_run_assets.all():
             value += scan_asset.progress
             value_count += 1
 
@@ -42,6 +66,36 @@ class Scan(models.Model):
             return int(value / value_count)
         except ZeroDivisionError:
             return 0
+
+
+class ScanVersion(models.Model):
+    """Models a single version of a scan."""
+
+    number = models.IntegerField(default=1)
+    scan = models.ForeignKey(ScanTemplate, on_delete=models.CASCADE, related_name='versions')
+    policies = models.ManyToManyField('policy.Policy')
+    assets = models.ManyToManyField(BaseAsset, related_name='scan_assets')
+
+
+class ScanRun(models.Model):
+    """Models a singular run of a versioned scan."""
+
+    started_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True)
+    scan_version = models.ForeignKey(ScanVersion, on_delete=models.CASCADE, related_name='scan_runs')
+
+    status = models.CharField(
+        max_length=32,
+        default='Queued',
+        choices=[('Queued', 'Queued'), ('Running', 'Running'), ('Complete', 'Complete'), ('Failed', 'Failed')],
+    )
+
+    def is_running(self):
+        """Determine if the scan is either running or queued."""
+        if self.status in ['Running', 'Queued']:
+            return True
+
+        return False
 
     def duration(self):
         """Calculate the duration the scan has run."""
@@ -52,10 +106,6 @@ class Scan(models.Model):
             return timezone.now() - self.started_at
 
         return 'N/A'
-
-    def asset_count(self):
-        """Fetch the number of scan assets associated with this scan."""
-        return ScanAsset.objects.filter(scan=self).count()
 
     def findings_count(self) -> int:
         """Fetch the number of findings associated with this scan."""
@@ -75,8 +125,8 @@ class ScanAsset(models.Model):
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
-    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='scan_assets')
-    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE, related_name='scan_assets')
+    scan = models.ForeignKey(ScanRun, on_delete=models.CASCADE, related_name='run_assets')
+    asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE, related_name='scan_run_assets')
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
 

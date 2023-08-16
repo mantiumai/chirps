@@ -1,9 +1,13 @@
 """Utility functions for the embedding app."""
+from logging import getLogger
+
 from django.contrib.auth.models import User
 from django.db.models import Q
 
 from .models import Embedding
 from .providers.base import BaseEmbeddingProvider
+
+logger = getLogger(__name__)
 
 
 def create_embedding(text: str, model: str, service: str, user: User | None) -> Embedding:
@@ -17,7 +21,11 @@ def create_embedding(text: str, model: str, service: str, user: User | None) -> 
         if user:
             query = query & (Q(user=user) | Q(user=None))
 
-        embedding = Embedding.objects.get(query)
+        try:
+            embedding = Embedding.objects.get(query)
+        except Embedding.MultipleObjectsReturned as exc:
+            logger.error('Multiple embeddings found for query: %s', query)
+            raise exc
 
     except Embedding.DoesNotExist:
         # We need to generate a new embedding!

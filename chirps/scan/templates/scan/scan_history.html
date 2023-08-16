@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}Scan History: {{scan.name}}{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <h1 class="my-auto ml-0 mr-auto text-success">Scan History: {{scan.name}}</h1>
+</div>
+<small>{{scan.description}}</small>
+
+<hr/>
+
+{% if paginator.count == 0%}
+<h3 class="display-3 text-center">No scan history found</h3>
+<hr/>
+{% else %}
+
+<table class="table mt-3">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Started At</th>
+        <th scope="col">Finished At</th>
+        <th scope="col">Duration</th>
+        <th scope="col">Status</th>
+        <th scope="col">Assets</th>
+        <th scope="col">Policies</th>
+        <th scope="col">Version</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for scan_run in page_obj %}
+      <tr id="chirps-scan-{{scan_run.id}}">
+        <td>{{ scan_run.id }}</td>
+        <td>{{ scan_run.started_at }}</td>
+        <td>{{ scan_run.finished_at }}</td>
+        <td>{{ scan_run.duration }}</td>
+        <td>{{ scan_run.status }} </td>
+        <td>{{ scan_run.scan_version.assets.count }}</td>
+        <td>{{ scan_run.scan_version.policies.count }}</td>
+        <td>{{ scan.current_version.number }}</td>
+        <td>
+          <a class="btn btn-primary" href="{% url 'view_scan_run' scan_run.id %}"><i class="fa-solid fa-magnifying-glass"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'pagination.html' with page_obj=page_obj %}
+  {% endif %}
+
+  {% endblock %}
