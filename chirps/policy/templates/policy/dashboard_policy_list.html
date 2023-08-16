@@ -29,11 +29,11 @@
                 <tbody>
                 {% for rule in policy.current_version.rules.all %}
                 <tr>
-                    <td>{{rule.name}}</td>
-                    <td>{{rule.description}}</td>
-                    <td>{{rule.query_string}}</td>
+                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.name}}</td>
+                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.description}}</td>
+                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.query_string}}</td>
                     <td style="word-wrap: break-word; max-width: 100%;">{{rule.regex_test}}</td>
-                    <td>{{rule.severity}}</td>
+                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.severity}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
