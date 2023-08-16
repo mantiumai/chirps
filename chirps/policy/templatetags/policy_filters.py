@@ -1,3 +1,4 @@
+"""Template tags for the policy app."""
 from django import template
 
 register = template.Library()

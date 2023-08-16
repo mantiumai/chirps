@@ -211,8 +211,8 @@ def create_severity(request):
         else:
             messages.error(request, 'Error creating severity.')
         return redirect('policy_dashboard')
-    else:
-        return HttpResponseNotAllowed(['POST'])
+
+    return HttpResponseNotAllowed(['POST'])
 
 
 @user_passes_test(is_superuser)
@@ -228,8 +228,8 @@ def edit_severity(request, severity_id):
         else:
             messages.error(request, 'Error updating severity.')
         return redirect('policy_dashboard')
-    else:
-        return HttpResponseNotAllowed(['POST'])
+
+    return HttpResponseNotAllowed(['POST'])
 
 
 @user_passes_test(is_superuser)
