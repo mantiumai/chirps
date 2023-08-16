@@ -22,6 +22,7 @@ def dashboard(request):
     severities = Severity.objects.filter(archived=False).order_by('id')
     edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
     create_severity_form = CreateSeverityForm()
+
     return render(
         request,
         'policy/dashboard.html',
@@ -30,7 +31,7 @@ def dashboard(request):
             'templates': templates,
             'severities': severities,
             'edit_severity_forms': edit_severity_forms,
-            'CreateSeverityForm': create_severity_form,
+            'create_severity_form': create_severity_form,
         },
     )
 
@@ -191,24 +192,6 @@ def archive(request, policy_id):
     messages.info(request, 'Policy has been archived.')
 
     return redirect('policy_dashboard')
-
-
-@login_required
-def severity_management(request):
-    """Render the severity management dashboard."""
-    severities = Severity.objects.filter(archived=False).order_by('id')
-    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
-    create_severity_form = CreateSeverityForm()
-
-    return render(
-        request,
-        'policy/severity_management.html',
-        {
-            'severities': severities,
-            'edit_severity_forms': edit_severity_forms,
-            'CreateSeverityForm': create_severity_form,
-        },
-    )
 
 
 @login_required

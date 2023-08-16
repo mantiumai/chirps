@@ -68,10 +68,5 @@ class CreateSeverityForm(forms.ModelForm):
         widgets = {'color': forms.widgets.TextInput(attrs={'type': 'color'})}
 
 
-class EditSeverityForm(forms.ModelForm):
+class EditSeverityForm(CreateSeverityForm):
     """Form for editing an existing severity."""
-
-    class Meta:
-        model = Severity
-        fields = ['name', 'value', 'color']
-        widgets = {'color': forms.widgets.TextInput(attrs={'type': 'color'})}
