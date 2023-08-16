@@ -42,6 +42,7 @@ class Severity(models.Model):
     name = models.CharField(max_length=64)
     value = models.IntegerField()
     color = models.CharField(max_length=7)
+    archived = models.BooleanField(default=False)
 
     def __str__(self):
         """Stringify the name"""

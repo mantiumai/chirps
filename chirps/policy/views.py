@@ -1,7 +1,7 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -183,7 +183,7 @@ def archive(request, policy_id):
 @login_required
 def severity_management(request):
     """Render the severity management dashboard."""
-    severities = Severity.objects.all()
+    severities = Severity.objects.filter(archived=False).order_by('id')
     edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
     create_severity_form = CreateSeverityForm()
 
@@ -234,9 +234,10 @@ def archive_severity(request, severity_id):
     """Archive a severity."""
     try:
         severity = Severity.objects.get(id=severity_id)
-        severity.delete()  # You can also use a soft-delete method if you prefer
-        response_data = {'status': 'success', 'message': f"Severity '{severity.name}' has been archived."}
+        severity.archived = True
+        severity.save()
+        messages.success(request, f"Severity '{severity.name}' has been archived.")
     except Severity.DoesNotExist:
-        response_data = {'status': 'error', 'message': 'Severity not found.'}
+        messages.error(request, 'Severity not found.')
 
-    return JsonResponse(response_data)
+    return redirect('severity_management')

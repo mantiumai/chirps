@@ -3,6 +3,18 @@
 {% load policy_filters %}
 
 {% block content %}
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <h1>Severity Management</h1>
 <div class="container">
     <table class="table">
@@ -14,9 +26,9 @@
                 <th scope="col">Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="severity-list">
             {% for severity in severities %}
-            <tr>
+            <tr id="severity-list-{{ severity.id }}">
                 <td>{{ severity.name }}</td>
                 <td>{{ severity.value }}</td>
                 <td style="background-color: {{ severity.color }};">{{ severity.color }}</td>
@@ -96,11 +108,15 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
                     hx-delete="{% url 'archive_severity' severity_id=severity.id %}" hx-trigger="click"
-                    hx-swap="outerHTML">Archive</button>
+                    hx-target="#severity-list-{{ severity.id }}" hx-swap="delete">Archive</button>
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
-
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+</script>
 {% endblock %}
