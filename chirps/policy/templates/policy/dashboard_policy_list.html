@@ -15,8 +15,9 @@
     <div id="collapse-{{policy.id}}" class="accordion-collapse collapse">
         <div class="accordion-body">
             <h5>Rules</h5>
-            <table class="table">
-                <thead>
+            <div class="table-responsive">
+                <table class="table" style="width: 100%;">
+                    <thead>
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
@@ -39,6 +40,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
         {% if edit_mode %}
         {% if policy.is_template == False %}
