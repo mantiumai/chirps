@@ -199,24 +199,6 @@ def archive(request, policy_id):
     return redirect('policy_dashboard')
 
 
-@login_required
-def severity_management(request):
-    """Render the severity management dashboard."""
-    severities = Severity.objects.filter(archived=False).order_by('id')
-    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
-    create_severity_form = CreateSeverityForm()
-
-    return render(
-        request,
-        'policy/severity_management.html',
-        {
-            'severities': severities,
-            'edit_severity_forms': edit_severity_forms,
-            'create_severity_form': create_severity_form,
-        },
-    )
-
-
 @user_passes_test(is_superuser)
 @login_required
 def create_severity(request):
