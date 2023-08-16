@@ -81,11 +81,14 @@
                             <th scope="col"></th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {% for rule in unique_rules %}
                         <tr>
-                            <td>{{rule.severity}}</td>
+                            <td>
+                                <span style="color:{{ rule.severity.color }};">
+                                    {{ rule.severity.name }} ({{ rule.severity.value }})
+                                </span>
+                            </td>
                             <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
                             <td>{{rule.finding_count}}</td>
                             <td>
@@ -110,7 +113,9 @@
                                             <tbody>
                                                 {% for finding in rule.findings %}
                                                 <tr>
-                                                    <td>{{ finding|surrounding_text_with_preview_size:finding_preview_size }}</td>
+                                                    <td>{{
+                                                        finding|surrounding_text_with_preview_size:finding_preview_size
+                                                        }}</td>
                                                     <td>{{ finding.source_id }}</td>
                                                     <td>{{ finding.result.scan_asset.asset.name }}</td>
                                                 </tr>
