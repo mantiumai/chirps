@@ -15,9 +15,8 @@
     <div id="collapse-{{policy.id}}" class="accordion-collapse collapse">
         <div class="accordion-body">
             <h5>Rules</h5>
-            <div class="table-responsive">
-                <table class="table" style="width: 100%;">
-                    <thead>
+            <table class="table">
+                <thead>
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
@@ -30,17 +29,36 @@
                 <tbody>
                 {% for rule in policy.current_version.rules.all %}
                 <tr>
-                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.name}}</td>
-                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.description}}</td>
-                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.query_string}}</td>
-                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.regex_test}}</td>
-                    <td style="word-wrap: break-word; max-width: 100%;">{{rule.severity}}</td>
+                    <td>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.name}}">
+                            {{rule.name|truncatechars:50}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.description}}">
+                            {{rule.description|truncatechars:50}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.query_string}}">
+                            {{rule.query_string|truncatechars:50}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.regex_test}}">
+                            {{rule.regex_test|truncatechars:50}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.severity}}">
+                            {{rule.severity|truncatechars:50}}
+                        </span>
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
 
         {% if edit_mode %}
         {% if policy.is_template == False %}
