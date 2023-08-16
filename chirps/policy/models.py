@@ -40,7 +40,7 @@ class Severity(models.Model):
     """Model for severity levels."""
 
     name = models.CharField(max_length=64)
-    value = models.IntegerField()
+    value = models.PositiveIntegerField()
     color = models.CharField(max_length=7)
     archived = models.BooleanField(default=False)
 

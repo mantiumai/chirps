@@ -1,12 +1,17 @@
 """Views for the policy app."""
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from .forms import CreateSeverityForm, EditSeverityForm, PolicyForm
 from .models import Policy, PolicyVersion, Rule, Severity
+
+
+def is_superuser(user):
+    """Check if the user is a superuser."""
+    return user.is_superuser
 
 
 @login_required
@@ -195,6 +200,25 @@ def archive(request, policy_id):
 
 
 @login_required
+def severity_management(request):
+    """Render the severity management dashboard."""
+    severities = Severity.objects.filter(archived=False).order_by('id')
+    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
+    create_severity_form = CreateSeverityForm()
+
+    return render(
+        request,
+        'policy/severity_management.html',
+        {
+            'severities': severities,
+            'edit_severity_forms': edit_severity_forms,
+            'create_severity_form': create_severity_form,
+        },
+    )
+
+
+@user_passes_test(is_superuser)
+@login_required
 def create_severity(request):
     """Create a new severity."""
     if request.method == 'POST':
@@ -204,11 +228,12 @@ def create_severity(request):
             messages.success(request, 'Severity created successfully.')
         else:
             messages.error(request, 'Error creating severity.')
-        return redirect('severity_management')
+        return redirect('policy_dashboard')
     else:
         return HttpResponseNotAllowed(['POST'])
 
 
+@user_passes_test(is_superuser)
 @login_required
 def edit_severity(request, severity_id):
     """Edit an existing severity."""
@@ -220,11 +245,12 @@ def edit_severity(request, severity_id):
             messages.success(request, 'Severity updated successfully.')
         else:
             messages.error(request, 'Error updating severity.')
-        return redirect('severity_management')
+        return redirect('policy_dashboard')
     else:
         return HttpResponseNotAllowed(['POST'])
 
 
+@user_passes_test(is_superuser)
 @login_required
 def archive_severity(request, severity_id):
     """Archive a severity."""
@@ -236,4 +262,4 @@ def archive_severity(request, severity_id):
     except Severity.DoesNotExist:
         messages.error(request, 'Severity not found.')
 
-    return redirect('severity_management')
+    return redirect('policy_dashboard')
