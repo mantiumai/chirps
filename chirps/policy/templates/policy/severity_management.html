@@ -29,7 +29,7 @@
                 <td style="background-color: {{ severity.color }};">{{ severity.color }}</td>
                 <td>
                     <!-- Add buttons for editing and archiving severity -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#editSeverityModal-{{ severity.id }}">Edit</button>
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                         data-bs-target="#archiveSeverityModal-{{ severity.id }}">Archive</button>
@@ -38,7 +38,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSeverityModal">Create
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSeverityModal">New
         Severity</button>
 </div>
 
