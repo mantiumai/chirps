@@ -1,8 +1,4 @@
-{% extends 'base.html' %}
-
 {% load policy_filters %}
-
-{% block content %}
 
 {% if messages %}
 <div class="messages">
@@ -15,12 +11,11 @@
 </div>
 {% endif %}
 
-<h1>Severity Management</h1>
 <div class="container">
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Name</th>
+                <th scope="col">Severity Name</th>
                 <th scope="col">Value</th>
                 <th scope="col">Color</th>
                 <th scope="col">Actions</th>
@@ -53,12 +48,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Create Severity</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <form method="post" action="{% url 'create_severity' %}">
                     {% csrf_token %}
-                    {{ CreateSeverityForm }}
+                    <div class="mb-3">{{ CreateSeverityForm.name.label_tag }} {{ CreateSeverityForm.name }}</div>
+                    <div class="mb-3">{{ CreateSeverityForm.value.label_tag }} {{ CreateSeverityForm.value }}</div>
+                    <div class="mb-3">{{ CreateSeverityForm.color.label_tag }} {{ CreateSeverityForm.color }}</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -76,12 +75,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Severity</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <form method="post" action="{% url 'edit_severity' severity_id=severity.id %}">
                     {% csrf_token %}
-                    {{ edit_severity_forms|get_item:severity.id }}
+                    {% with edit_severity_forms|get_item:severity.id as form %}
+                    <div class="mb-3">{{ form.name.label_tag }} {{ form.name }}</div>
+                    <div class="mb-3">{{ form.value.label_tag }} {{ form.value }}</div>
+                    <div class="mb-3">{{ form.color.label_tag }} {{ form.color }}</div>
+                    {% endwith %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -99,7 +104,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="archiveSeverityModalLabel-{{ severity.id }}">Archive Severity</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 Are you sure you want to archive the {{ severity.name }} severity?
@@ -119,4 +126,3 @@
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
 </script>
-{% endblock %}
