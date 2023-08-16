@@ -3,10 +3,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User  # noqa: E5142
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import KeyEditForm, LoginForm, ProfileForm, SignupForm
+from .forms import CustomPasswordChangeForm, KeyEditForm, LoginForm, ProfileForm, SignupForm
 from .models import Profile
 
 
@@ -143,3 +144,15 @@ def api_key_masked(request, key_name):
         raise ValueError('No key specified.')
 
     return render(request, 'account/api_key_masked.html', {'key_name': key_name, 'masked_value': masked_value})
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    """Custom auth view"""
+
+    form_class = CustomPasswordChangeForm
+
+    def form_valid(self, form):
+        """Override the form_valid method to add a success message"""
+        response = super().form_valid(form)
+        messages.success(self.request, 'Your password was successfully updated!')
+        return response
