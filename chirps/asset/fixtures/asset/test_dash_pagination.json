@@ -85,7 +85,7 @@
             "query_string": "What's my social security number?",
             "query_embedding": null,
             "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
-            "severity": 5,
+            "severity": 4,
             "policy": 100
         }
     },
@@ -109,7 +109,7 @@
             "query_string": "What's my bank account number?",
             "query_embedding": null,
             "regex_test": "\\d{10,12}",
-            "severity": 5,
+            "severity": 4,
             "policy": 100
         }
     },
@@ -121,7 +121,7 @@
             "query_string": "What's my credit card number?",
             "query_embedding": null,
             "regex_test": "(?:\\d[ -]*?){13,16}",
-            "severity": 5,
+            "severity": 4,
             "policy": 100
         }
     },

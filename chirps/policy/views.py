@@ -1,12 +1,12 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from .forms import PolicyForm
-from .models import Policy, PolicyVersion, Rule
+from .forms import CreateSeverityForm, EditSeverityForm, PolicyForm
+from .models import Policy, PolicyVersion, Rule, Severity
 
 
 @login_required
@@ -178,3 +178,65 @@ def archive(request, policy_id):
     messages.info(request, 'Policy has been archived.')
 
     return redirect('policy_dashboard')
+
+
+@login_required
+def severity_management(request):
+    """Render the severity management dashboard."""
+    severities = Severity.objects.all()
+    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
+    create_severity_form = CreateSeverityForm()
+
+    return render(
+        request,
+        'policy/severity_management.html',
+        {
+            'severities': severities,
+            'edit_severity_forms': edit_severity_forms,
+            'CreateSeverityForm': create_severity_form,
+        },
+    )
+
+
+@login_required
+def create_severity(request):
+    """Create a new severity."""
+    if request.method == 'POST':
+        form = CreateSeverityForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Severity created successfully.')
+        else:
+            messages.error(request, 'Error creating severity.')
+        return redirect('severity_management')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+@login_required
+def edit_severity(request, severity_id):
+    """Edit an existing severity."""
+    severity = get_object_or_404(Severity, id=severity_id)
+    if request.method == 'POST':
+        form = EditSeverityForm(request.POST, instance=severity)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Severity updated successfully.')
+        else:
+            messages.error(request, 'Error updating severity.')
+        return redirect('severity_management')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+@login_required
+def archive_severity(request, severity_id):
+    """Archive a severity."""
+    try:
+        severity = Severity.objects.get(id=severity_id)
+        severity.delete()  # You can also use a soft-delete method if you prefer
+        response_data = {'status': 'success', 'message': f"Severity '{severity.name}' has been archived."}
+    except Severity.DoesNotExist:
+        response_data = {'status': 'error', 'message': 'Severity not found.'}
+
+    return JsonResponse(response_data)

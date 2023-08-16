@@ -36,6 +36,18 @@ class PolicyVersion(models.Model):
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
 
 
+class Severity(models.Model):
+    """Model for severity levels."""
+
+    name = models.CharField(max_length=64)
+    value = models.IntegerField()
+    color = models.CharField(max_length=7)
+
+    def __str__(self):
+        """Stringify the name"""
+        return self.name
+
+
 class Rule(models.Model):
     """A step to execute within a policy."""
 
@@ -50,8 +62,8 @@ class Rule(models.Model):
     # Regular expression to run against the response documents
     regex_test = models.TextField()
 
-    # If the regex test finds results in the response documents, how severe of a problem is it?
-    severity = models.IntegerField()
+    # ForeignKey relationship to the Severity model
+    severity = models.ForeignKey(Severity, on_delete=models.CASCADE)
 
     # Foreign Key to the policy this rule belongs to
     policy = models.ForeignKey(PolicyVersion, on_delete=models.CASCADE, related_name='rules')
