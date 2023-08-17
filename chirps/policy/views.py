@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from severity.forms import CreateSeverityForm, EditSeverityForm
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, Rule
+from .models import Policy, PolicyVersion, Rule, Severity
 
 
 @login_required
@@ -19,7 +20,21 @@ def dashboard(request):
     # Fetch a list of all the available template and custom user policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
     user_policies = Policy.objects.filter(user=request.user, archived=False).order_by('id')
-    return render(request, 'policy/dashboard.html', {'user_policies': user_policies, 'templates': templates})
+    severities = Severity.objects.filter(archived=False).order_by('id')
+    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
+    create_severity_form = CreateSeverityForm()
+
+    return render(
+        request,
+        'policy/dashboard.html',
+        {
+            'user_policies': user_policies,
+            'templates': templates,
+            'severities': severities,
+            'edit_severity_forms': edit_severity_forms,
+            'create_severity_form': create_severity_form,
+        },
+    )
 
 
 @login_required

@@ -46,12 +46,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_results',
     'fernet_fields',
-    'base_app',
-    'scan',
-    'asset',
     'account',
-    'policy',
+    'asset',
+    'base_app',
     'embedding',
+    'policy',
+    'scan',
+    'severity',
     'worker',
 ]
 
