@@ -1,0 +1,11 @@
+{% load static %}
+
+<div class="key-value-container">
+    <!-- Key-value pairs will be added here -->
+</div>
+
+<button type="button" class="btn btn-secondary add-key-value-pair">Add Key-Value Pair</button>
+
+<input type="hidden" name="{{ widget.name }}" id="{{ widget.auto_id }}" value="{{ widget.value|stringformat:'s' }}" {% include "django/forms/widgets/attrs.html" %}>
+
+<script src="{% static 'js/key_value_widget.js' %}"></script>

@@ -1,5 +1,6 @@
 """Forms for rendering and validating the asset models."""
 from asset.models import BaseAsset
+from asset.widgets import KeyValueWidget
 from django import forms
 from django.forms import ModelForm
 from django.urls import reverse_lazy
@@ -188,8 +189,7 @@ class APIEndpointAssetForm(ModelForm):
                 choices=[('Basic', 'Basic'), ('Bearer', 'Bearer')], attrs={'class': 'form-control'}
             ),
             'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
-            'headers': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Headers (JSON)', 'rows': 3}),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body (JSON)', 'rows': 3}),
+            'headers': KeyValueWidget(attrs={'class': 'form-control'}),
         }
 
 
