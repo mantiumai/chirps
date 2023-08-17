@@ -7,61 +7,77 @@
     <h1 class="text-success">Edit Policy: {{policy.name}}</h1>
     <hr>
     <div class="card my-4">
-    <div class="card-body cardbody-color p-4">
-        <div class="form-group">
-            <form method="POST" action="{% url 'policy_edit' policy.id %}">
-                {% csrf_token %}
+        <div class="card-body cardbody-color p-4">
+            <div class="form-group">
+                <form method="POST" action="{% url 'policy_edit' policy.id %}">
+                    {% csrf_token %}
 
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input class="form-control" type="text" name="name" id="name" placeholder="Name" required value="{{policy.name}}">
-                </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name" placeholder="Name" required
+                            value="{{policy.name}}">
+                    </div>
 
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input class="form-control" type="text" name="description" id="description" placeholder="Description" required value="{{policy.description}}"></input>
-                </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input class="form-control" type="text" name="description" id="description"
+                            placeholder="Description" required value="{{policy.description}}"></input>
+                    </div>
 
-                <div id="policy_rule_list">
+                    <div id="policy_rule_list">
 
-                    {% for rule in policy.current_version.rules.all %}
-                    <div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
-                        <div class="card-body cardbody-color p-4">
-                            <div class="row">
-                                <div class="col-6">
-                                    <input class="form-control" type="text" name="rule_name_{{rule.id}}" id="rule_name_{{rule.id}}" placeholder="Name" required value="{{rule.name}}"></input>
-                                </div>
-                                <div class="col-4">
-                                    <input class="form-control" type="text" name="rule_query_string_{{rule.id}}" id="rule_query_string_{{rule.id}}" placeholder="Query String" required value="{{rule.query_string}}"></input>
-                                </div>
-                                <div class="col-4">
-                                    <input class="form-control" type="text" name="rule_regex_{{rule.id}}" id="rule_regex_{{rule.id}}" placeholder="Regular Expression Test" required value="{{rule.regex_test}}"></input>
-                                </div>
-                                <div class="col-3">
-                                    <input class="form-control" type="number" name="rule_severity_{{rule.id}}" id="rule_severity_{{rule.id}}" placeholder="Severity" required value="{{rule.severity}}"></input>
-                                </div>
-                                <div class="col-1">
-                                    <button class="form-control btn btn-danger" hx-delete="{% url 'policy_delete_rule' 0 %}"><i class="fa-solid fa-trash"></i></button>
+                        {% for rule in policy.current_version.rules.all %}
+                        <div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
+                            <div class="card-body cardbody-color p-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input class="form-control" type="text" name="rule_name_{{rule.id}}"
+                                            id="rule_name_{{rule.id}}" placeholder="Name" required
+                                            value="{{rule.name}}"></input>
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="form-control" type="text" name="rule_query_string_{{rule.id}}"
+                                            id="rule_query_string_{{rule.id}}" placeholder="Query String" required
+                                            value="{{rule.query_string}}"></input>
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="form-control" type="text" name="rule_regex_{{rule.id}}"
+                                            id="rule_regex_{{rule.id}}" placeholder="Regular Expression Test" required
+                                            value="{{rule.regex_test}}"></input>
+                                    </div>
+                                    <div class="col-3">
+                                        <select class="form-control" name="rule_severity_{{rule.id}}"
+                                            id="rule_severity_{{rule.id}}" required>
+                                            {% for severity in severities %}
+                                            <option value="{{ severity.value }}">{{ severity.name }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                    <div class="col-1">
+                                        <button class="form-control btn btn-danger"
+                                            hx-delete="{% url 'policy_delete_rule' 0 %}"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
 
-                    <div id="rule_replace_me">
-                        <button class='btn btn-primary ml-2 mr-0' hx-get="{% url 'policy_create_rule' %}"
-                                                                  hx-target="#rule_replace_me"
-                                                                  hx-swap="outerHTML">Add Rule</button>
+                        <div id="rule_replace_me">
+                            <button class='btn btn-primary ml-2 mr-0' hx-get="{% url 'policy_create_rule' %}"
+                                hx-target="#rule_replace_me" hx-swap="outerHTML">Add Rule</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="d-flex mt-3">
-                    <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'policy_dashboard' %}">Cancel</a>
-                    <button class="btn btn-primary ml-2 mr-0" type="submit">Save</button>
-                </div>
-            </form>
+                    <div class="d-flex mt-3">
+                        <a class="btn btn-danger ml-auto mr-0" type="button"
+                            href="{% url 'policy_dashboard' %}">Cancel</a>
+                        <button class="btn btn-primary ml-2 mr-0" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 

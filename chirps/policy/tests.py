@@ -5,6 +5,7 @@ from unittest import skip
 
 from django.test import TestCase
 from django.urls import reverse
+from severity.models import Severity
 
 from .forms import PolicyForm
 from .models import Policy, Rule
@@ -475,6 +476,19 @@ class PolicyPaginationTests(TestCase):
 class PolicyCreateForm(TestCase):
     """Test the custom logic in the policy create form."""
 
+
+class CreateRuleViewTests(TestCase):
+    """Test the create_rule view."""
+
+    fixtures = ['severity/default_severities.json']
+
+    def setUp(self):
+        """Login the user before performing any tests."""
+        self.client.post(
+            reverse('signup'),
+            {'username': 'admin', 'email': 'admin@mantiumai.com', 'password1': 'admin', 'password2': 'admin'},
+        )
+
     def test_single_rule(self):
         """Verify that a single rule is parsed correctly."""
         rule_data = {
@@ -499,3 +513,11 @@ class PolicyCreateForm(TestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(len(form.cleaned_data['rules']), 1)
         self.assertEqual(form.cleaned_data['rules'][0], rule_data)
+
+    def test_create_rule_with_severities(self):
+        """Verify that the create_rule view returns a correct response with severities in the context."""
+        response = self.client.get(reverse('policy_create_rule'), {'rule_id': 0})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('severities' in response.context)
+        severities = Severity.objects.filter(archived=False)
+        self.assertEqual(list(response.context['severities']), list(severities))
