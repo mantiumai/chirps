@@ -68,7 +68,7 @@ This will fire up the Django development server. Connect to the URL that it outp
 
 ### Run Tests
 
-Once in a while, you might right a test (bravo!). Those can be executed by running `./manage.py test`.
+Once in a while, you might write a test (bravo!). Those can be executed by running `./manage.py test`.
 
 ### Run Documentation Server
 

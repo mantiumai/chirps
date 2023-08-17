@@ -1,4 +1,3 @@
-
 <div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
     <div class="card-body cardbody-color p-4">
         <div class="row">
@@ -12,7 +11,12 @@
                 <input class="form-control" type="text" name="rule_regex_{{rule_id}}" id="rule_regex_{{rule_id}}" placeholder="Regular Expression Test" required></input>
             </div>
             <div class="col-3">
-                <input class="form-control" type="number" name="rule_severity_{{rule_id}}" id="rule_severity_{{rule_id}}" placeholder="Severity" required></input>
+                <select class="form-control" name="rule_severity_{{rule_id}}" id="rule_severity_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Severity</option>
+                    {% for severity in severities %}
+                        <option value="{{ severity.value }}">{{ severity.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="col-1">
                 <button class="form-control btn btn-danger" hx-delete="{% url 'policy_delete_rule' 0 %}"><i class="fa-solid fa-trash"></i></button>

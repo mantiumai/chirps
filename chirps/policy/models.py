@@ -1,6 +1,7 @@
 """Models for the policy application."""
 from django.contrib.auth.models import User
 from django.db import models
+from severity.models import Severity
 
 
 class Policy(models.Model):
@@ -51,8 +52,8 @@ class Rule(models.Model):
     # Regular expression to run against the response documents
     regex_test = models.TextField()
 
-    # If the regex test finds results in the response documents, how severe of a problem is it?
-    severity = models.IntegerField()
+    # ForeignKey relationship to the Severity model
+    severity = models.ForeignKey(Severity, on_delete=models.CASCADE)
 
     # Foreign Key to the policy this rule belongs to
     policy = models.ForeignKey(PolicyVersion, on_delete=models.CASCADE, related_name='rules')

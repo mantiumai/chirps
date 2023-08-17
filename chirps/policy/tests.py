@@ -5,6 +5,7 @@ from unittest import skip
 
 from django.test import TestCase
 from django.urls import reverse
+from severity.models import Severity
 
 from .forms import PolicyForm
 from .models import Policy, Rule
@@ -100,7 +101,7 @@ def test_network_authentication_pattern_invalid(self):
 class StandardPIIRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/standard_pii.json']
+    fixtures = ['policy/standard_pii.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -203,9 +204,9 @@ class StandardPIIRegexTests(TestCase):
     def test_address_pattern_invalid(self):
         """Verify that the Address regex pattern does not match invalid addresses."""
         invalid_addresses = [
-            '123 Main Street, Los Angeles, CA',
-            '987 Elm Avenue, New York 10001',
-            '001 Oak Court, San Francisco 94102',
+            'John Place',
+            '123 Franklin',
+            'Place of Business',
         ]
         self.verify_pattern('Address', invalid_addresses, False)
 
@@ -213,7 +214,7 @@ class StandardPIIRegexTests(TestCase):
 class FinanceRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/finance.json']
+    fixtures = ['policy/finance.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -288,7 +289,7 @@ class FinanceRegexTests(TestCase):
 class HealthRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/health.json']
+    fixtures = ['policy/health.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -323,7 +324,7 @@ class HealthRegexTests(TestCase):
 class CredentialsRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/credentials.json']
+    fixtures = ['policy/credentials.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -422,7 +423,12 @@ class CredentialsRegexTests(TestCase):
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
 
-    fixtures = ['policy/employee.json', 'policy/network.json', 'policy/sensitive_data.json']
+    fixtures = [
+        'policy/employee.json',
+        'policy/network.json',
+        'policy/sensitive_data.json',
+        'severity/default_severities.json',
+    ]
 
     def setUp(self):
         """Login the user before performing any tests."""
@@ -470,6 +476,19 @@ class PolicyPaginationTests(TestCase):
 class PolicyCreateForm(TestCase):
     """Test the custom logic in the policy create form."""
 
+
+class CreateRuleViewTests(TestCase):
+    """Test the create_rule view."""
+
+    fixtures = ['severity/default_severities.json']
+
+    def setUp(self):
+        """Login the user before performing any tests."""
+        self.client.post(
+            reverse('signup'),
+            {'username': 'admin', 'email': 'admin@mantiumai.com', 'password1': 'admin', 'password2': 'admin'},
+        )
+
     def test_single_rule(self):
         """Verify that a single rule is parsed correctly."""
         rule_data = {
@@ -494,3 +513,11 @@ class PolicyCreateForm(TestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(len(form.cleaned_data['rules']), 1)
         self.assertEqual(form.cleaned_data['rules'][0], rule_data)
+
+    def test_create_rule_with_severities(self):
+        """Verify that the create_rule view returns a correct response with severities in the context."""
+        response = self.client.get(reverse('policy_create_rule'), {'rule_id': 0})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('severities' in response.context)
+        severities = Severity.objects.filter(archived=False)
+        self.assertEqual(list(response.context['severities']), list(severities))

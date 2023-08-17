@@ -14,13 +14,10 @@ from pathlib import Path
 
 import django
 from django.utils.encoding import force_str
-from dotenv import load_dotenv
 
 # HACK: (alexn) monkeypatching because django 4.0 does not have force_text
 # see https://stackoverflow.com/a/70833150
 django.utils.encoding.force_text = force_str
-
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,12 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_results',
     'fernet_fields',
-    'base_app',
-    'scan',
-    'asset',
     'account',
-    'policy',
+    'asset',
+    'base_app',
     'embedding',
+    'policy',
+    'scan',
+    'severity',
+    'worker',
 ]
 
 MIDDLEWARE = [

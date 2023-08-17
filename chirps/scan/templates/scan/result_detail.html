@@ -15,6 +15,7 @@ Findings
     <tr>
       <th scope="col">Text</th>
       <th scope="col">Coordinates</th>
+      <th scope="col">Severity</th>
     </tr>
   </thead>
   <tbody>
@@ -22,6 +23,11 @@ Findings
     <tr>
       <td>{{ finding.surrounding_text }} <a href="{% url 'finding_detail' finding.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
       <td>{{ finding }}</td>
+      <td>
+        <span style="color:{{ finding.result.rule.severity.color }};">
+          {{ finding.result.rule.severity.name }} ({{ finding.result.rule.severity.value }})
+        </span>
+      </td>
     </tr>
     {% empty %}
     <tr>

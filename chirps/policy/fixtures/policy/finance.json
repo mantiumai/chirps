@@ -57,7 +57,7 @@
         "policy": 500,
         "query_string": "What's my bank account number?",
         "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
-        "severity": 5
+        "severity": 4
       },
       "model": "policy.Rule",
       "pk": 503
@@ -68,7 +68,7 @@
         "policy": 500,
         "query_string": "What's my credit card number?",
         "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
-        "severity": 5
+        "severity": 4
       },
       "model": "policy.Rule",
       "pk": 504

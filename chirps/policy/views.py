@@ -1,8 +1,11 @@
 """Views for the policy app."""
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from severity.forms import CreateSeverityForm, EditSeverityForm
+from severity.models import Severity
 
 from .forms import PolicyForm
 from .models import Policy, PolicyVersion, Rule
@@ -18,7 +21,21 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     # Fetch a list of all the available template and custom user policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
     user_policies = Policy.objects.filter(user=request.user, archived=False).order_by('id')
-    return render(request, 'policy/dashboard.html', {'user_policies': user_policies, 'templates': templates})
+    severities = Severity.objects.filter(archived=False).order_by('id')
+    edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
+    create_severity_form = CreateSeverityForm()
+
+    return render(
+        request,
+        'policy/dashboard.html',
+        {
+            'user_policies': user_policies,
+            'templates': templates,
+            'severities': severities,
+            'edit_severity_forms': edit_severity_forms,
+            'create_severity_form': create_severity_form,
+        },
+    )
 
 
 @login_required
@@ -46,13 +63,19 @@ def create(request: HttpRequest) -> HttpResponse:
 
         # Create the rules
         for rule in form.cleaned_data['rules']:
+            # Retrieve the Severity instance from the database using the provided value
+            severity_instance = Severity.objects.get(value=rule['rule_severity'])
+
             Rule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
-                severity=rule['rule_severity'],
+                severity=severity_instance,
                 policy=policy_version,
             )
+
+        # Add a success message
+        messages.success(request, 'Policy created successfully.')
 
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
@@ -116,11 +139,14 @@ def edit(request: HttpRequest, policy_id: int) -> HttpResponse:
 
         # Persist all of the rules against the new version
         for rule in form.cleaned_data['rules']:
+            # Retrieve the Severity instance from the database using the provided value
+            severity_instance = Severity.objects.get(value=rule['rule_severity'])
+
             Rule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
-                severity=rule['rule_severity'],
+                severity=severity_instance,
                 policy=new_policy_version,
             )
 
@@ -130,21 +156,29 @@ def edit(request: HttpRequest, policy_id: int) -> HttpResponse:
         policy.description = form.cleaned_data['description']
         policy.save()
 
+        # Add an info message
+        messages.info(request, 'Policy changes saved.')
+
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
     form = PolicyForm.from_policy(policy=policy)
-
-    return render(request, 'policy/edit.html', {'policy': policy, 'form': form})
+    severities = Severity.objects.filter(archived=False)
+    return render(request, 'policy/edit.html', {'policy': policy, 'form': form, 'severities': severities})
 
 
 @login_required
 def create_rule(request: HttpRequest) -> HttpResponse:
     """Render a single row of a Rule for the create policy page."""
+    severities = Severity.objects.filter(archived=False)
     return render(
         request,
         'policy/create_rule.html',
-        {'rule_id': request.GET.get('rule_id', 0), 'next_rule_id': int(request.GET.get('rule_id', 0)) + 1},
+        {
+            'rule_id': request.GET.get('rule_id', 0),
+            'next_rule_id': int(request.GET.get('rule_id', 0)) + 1,
+            'severities': severities,
+        },
     )
 
 
@@ -167,4 +201,8 @@ def archive(request: HttpRequest, policy_id: int) -> HttpResponse:
     policy = get_object_or_404(Policy, id=policy_id, user=request.user)
     policy.archived = True
     policy.save()
-    return HttpResponse('', status=200)
+
+    # Add an info message
+    messages.info(request, 'Policy has been archived.')
+
+    return redirect('policy_dashboard')

@@ -128,7 +128,7 @@ class AssetTests(TestCase):
 class AssetPaginationTests(TestCase):
     """Test the scan application."""
 
-    fixtures = ['asset/test_dash_pagination.json']
+    fixtures = ['asset/test_dash_pagination.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Login the user before performing any tests."""

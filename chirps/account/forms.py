@@ -1,5 +1,6 @@
 """Form classes for the account app."""
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import Profile
 
@@ -38,3 +39,14 @@ class KeyEditForm(forms.Form):
     """Form for editing keys."""
 
     key = forms.CharField(max_length=256)
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    """Custom form for changing password"""
+
+    def __init__(self, *args, **kwargs):
+        """Style input fields with Bootstrap"""
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password1'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password2'].widget.attrs['class'] = 'form-control'
