@@ -5,9 +5,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from severity.forms import CreateSeverityForm, EditSeverityForm
+from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, Rule, Severity
+from .models import Policy, PolicyVersion, Rule
 
 
 @login_required
@@ -62,11 +63,14 @@ def create(request):
 
         # Create the rules
         for rule in form.cleaned_data['rules']:
+            # Retrieve the Severity instance from the database using the provided value
+            severity_instance = Severity.objects.get(value=rule['rule_severity'])
+
             Rule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
-                severity=rule['rule_severity'],
+                severity=severity_instance,
                 policy=policy_version,
             )
 
@@ -135,11 +139,14 @@ def edit(request, policy_id):
 
         # Persist all of the rules against the new version
         for rule in form.cleaned_data['rules']:
+            # Retrieve the Severity instance from the database using the provided value
+            severity_instance = Severity.objects.get(value=rule['rule_severity'])
+
             Rule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
-                severity=rule['rule_severity'],
+                severity=severity_instance,
                 policy=new_policy_version,
             )
 
@@ -156,8 +163,8 @@ def edit(request, policy_id):
         return redirect('policy_dashboard')
 
     form = PolicyForm.from_policy(policy=policy)
-
-    return render(request, 'policy/edit.html', {'policy': policy, 'form': form})
+    severities = Severity.objects.filter(archived=False)
+    return render(request, 'policy/edit.html', {'policy': policy, 'form': form, 'severities': severities})
 
 
 @login_required
