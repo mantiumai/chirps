@@ -17,10 +17,9 @@ class APIEndpointAsset(BaseAsset):
     )
     api_key = EncryptedCharField(max_length=256, editable=True)
     headers = models.JSONField(blank=True, null=True)
-    body = models.JSONField(blank=True, null=True)
 
     # Name of the file in the ./asset/static/ directory to use as a logo
-    html_logo = 'asset/api-endpoint-logo.png'
+    html_logo = 'asset/api-endpoint-logo.svg'
     html_name = 'API Endpoint'
     html_description = 'Generic API Endpoint Asset'
 

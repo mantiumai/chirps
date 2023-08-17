@@ -26,7 +26,7 @@ class RedisAsset(BaseAsset):
     embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     # Name of the file in the ./asset/static/ directory to use as a logo
-    html_logo = 'asset/redis-logo.png'
+    html_logo = 'asset/redis-logo.svg'
     html_name = 'Redis'
     html_description = 'Redis Vector Database'
 

@@ -179,7 +179,6 @@ class APIEndpointAssetForm(ModelForm):
             'authentication_method',
             'api_key',
             'headers',
-            'body',
         ]
 
         widgets = {
