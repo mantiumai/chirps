@@ -22,66 +22,59 @@
 <hr>
 
 {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" style="background: none; border: none; cursor: pointer; float: right;" data-bs-dismiss="alert" aria-label="Close">
-            <!--"X" Icon-->
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    {% endfor %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" style="background: none; border: none; cursor: pointer; float: right;" data-bs-dismiss="alert"
+        aria-label="Close">
+        <!--"X" Icon-->
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+{% endfor %}
 {% endif %}
 
 <div class="row">
     {% for asset in page_obj %}
-        <div class="col-md-12 col-lg-12">
-            <div class="card my-4" id="chirps-asset-{{asset.id}}">
-                <div class="d-flex card-header">
-                    <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{asset.logo_url}}">
-                    <h5 class="my-auto ml-0 mr-auto">{{ asset.name }}</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">
-                        {% if asset.html_name == 'Mantium' %}
-                        Application ID: {{ asset.app_id }}
-                        {% elif asset.html_name == 'Redis' %}
-                        Host: {{ asset.host }}<br/>
-                        Port: {{ asset.port }}<br/>
-                        Database Name: {{ asset.database_name }}<br/>
-                        Username: {{ asset.username }}
-                        {% endif %}
-                        {% if asset.html_name == 'Pinecone' %}
-                        API Key: {{ asset.decrypted_api_key }}<br/>
-                        Environment: {{ asset.environment }}<br/>
-                        Index Name: {{ asset.index_name }}<br/>
-                        Project Name: {{ asset.project_name }}
-                        {% endif %}
-                    </p>
-                    <div class="d-flex">
-                        <a href="{% url 'asset_delete' asset.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
+    <div class="col-md-12 col-lg-12">
+        <div class="card my-4" id="chirps-asset-{{asset.id}}">
+            <div class="d-flex card-header">
+                <img width=48 class="rounded float-end my-auto ml-0 mr-3" src="{{asset.logo_url}}">
+                <h5 class="my-auto ml-0 mr-auto">{{ asset.name }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    {% for attribute in asset.displayable_attributes %}
+                    <strong>{{ attribute.label }}:</strong> {{ attribute.value }}<br />
+                    {% endfor %}
+                </p>
+                <div class="d-flex">
+                    <a href="{% url 'asset_delete' asset.id %}" class="btn btn-danger ml-auto mr-0">Delete</a>
 
-                        {% if asset.scan_is_active %}
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="scan in progress (editing disabled)">
-                            <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0 disabled">Edit <i class="fa-solid fa-triangle-exclamation"></i></a>
-                        </span>
-                        {% else %}
-                            <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0">Edit</a>
-                        {% endif %}
+                    {% if asset.scan_is_active %}
+                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                        title="scan in progress (editing disabled)">
+                        <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0 disabled">Edit <i
+                                class="fa-solid fa-triangle-exclamation"></i></a>
+                    </span>
+                    {% else %}
+                    <a href="{% url 'asset_edit' asset.id %}" class="btn btn-primary ml-2 mr-0">Edit</a>
+                    {% endif %}
 
-                        {% if asset.HAS_PING %}
-                            <button data-asset-id="{{ asset.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
-                        {% endif %}
-                    </div>
+                    {% if asset.HAS_PING %}
+                    <button data-asset-id="{{ asset.id }}" class="btn btn-info ml-2 mr-0 ping-btn">Ping</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
+    </div>
     {% endfor %}
 </div>
 
 <!-- Toast notification -->
 <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 10px; right: 10px; z-index: 0;">
-    <div class="toast" id="toast-notification" style="position: fixed; top: 10px; right: 10px;" data-bs-autohide="true" data-bs-delay="5000">
+    <div class="toast" id="toast-notification" style="position: fixed; top: 10px; right: 10px;" data-bs-autohide="true"
+        data-bs-delay="5000">
         <div class="toast-header">
             <strong class="me-auto">Ping</strong>
             <button type="button" class="btn" data-bs-dismiss="toast" aria-label="Close">
@@ -97,36 +90,36 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const pingButtons = document.querySelectorAll('.ping-btn');
-    pingButtons.forEach(btn => {
-        btn.addEventListener('click', async function () {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
-            const assetId = btn.getAttribute('data-asset-id');
-            const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            if (response.status === 200) {
-                showToast('Success: Connection established', 'success');
-            } else {
-                const data = await response.json();
-                showToast(data.error, 'danger');
-            }
-            btn.innerHTML = 'Ping'
+        const pingButtons = document.querySelectorAll('.ping-btn');
+        pingButtons.forEach(btn => {
+            btn.addEventListener('click', async function () {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'
+                const assetId = btn.getAttribute('data-asset-id');
+                const response = await fetch(`/asset/ping/${assetId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (response.status === 200) {
+                    showToast('Success: Connection established', 'success');
+                } else {
+                    const data = await response.json();
+                    showToast(data.error, 'danger');
+                }
+                btn.innerHTML = 'Ping'
+            });
         });
     });
-});
 
-function showToast(message, type) {
-    const toastElement = document.getElementById("toast-notification");
-    toastElement.querySelector(".toast-body").innerHTML = message;
-    toastElement.classList.remove("bg-success", "bg-danger");
-    toastElement.classList.add("bg-" + type);
+    function showToast(message, type) {
+        const toastElement = document.getElementById("toast-notification");
+        toastElement.querySelector(".toast-body").innerHTML = message;
+        toastElement.classList.remove("bg-success", "bg-danger");
+        toastElement.classList.add("bg-" + type);
 
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
-}
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
 
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip();
-})
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
 </script>
 
 {% include 'pagination.html' with page_obj=page_obj %}
