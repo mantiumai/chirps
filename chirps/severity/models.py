@@ -1,3 +1,4 @@
+"""Severity models"""
 from django.db import models
 
 

@@ -1,4 +1,4 @@
-"""URLs for the policy app."""
+"""URLs for the severity app."""
 from django.urls import path
 
 from . import views

@@ -1,3 +1,4 @@
+"""Severity forms"""
 from django import forms
 from severity.models import Severity
 
