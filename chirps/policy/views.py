@@ -163,10 +163,15 @@ def edit(request, policy_id):
 @login_required
 def create_rule(request):
     """Render a single row of a Rule for the create policy page."""
+    severities = Severity.objects.filter(archived=False)
     return render(
         request,
         'policy/create_rule.html',
-        {'rule_id': request.GET.get('rule_id', 0), 'next_rule_id': int(request.GET.get('rule_id', 0)) + 1},
+        {
+            'rule_id': request.GET.get('rule_id', 0),
+            'next_rule_id': int(request.GET.get('rule_id', 0)) + 1,
+            'severities': severities,
+        },
     )
 
 
