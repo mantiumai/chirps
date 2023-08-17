@@ -106,3 +106,12 @@ class RedisAsset(BaseAsset):
         except exceptions.ConnectionError as err:
             client.close()
             return PingResult(success=False, error=str(err))
+
+    def displayable_attributes(self):
+        """Display a subset of the model's attributes"""
+        return [
+            {'label': 'Host', 'value': self.host},
+            {'label': 'Port', 'value': self.port},
+            {'label': 'Database Name', 'value': self.database_name},
+            {'label': 'Username', 'value': self.username},
+        ]

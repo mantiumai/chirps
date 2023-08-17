@@ -5,6 +5,7 @@ from django.forms import ModelForm
 from django.urls import reverse_lazy
 from embedding.models import Embedding
 
+from .providers.api_endpoint import APIEndpointAsset
 from .providers.mantium import MantiumAsset
 from .providers.pinecone import PineconeAsset
 from .providers.redis import RedisAsset
@@ -164,10 +165,39 @@ class PineconeAssetForm(VectorDatabaseAssetForm):
         )
 
 
+class APIEndpointAssetForm(ModelForm):
+    """Form for the APIEndpointAsset model."""
+
+    class Meta:
+        """Django Meta options for the APIEndpointAssetForm."""
+
+        model = APIEndpointAsset
+        fields = [
+            'name',
+            'url',
+            'authentication_method',
+            'api_key',
+            'headers',
+            'body',
+        ]
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
+            'url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'URL'}),
+            'authentication_method': forms.Select(
+                choices=[('Basic', 'Basic'), ('Bearer', 'Bearer')], attrs={'class': 'form-control'}
+            ),
+            'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
+            'headers': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Headers (JSON)', 'rows': 3}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body (JSON)', 'rows': 3}),
+        }
+
+
 assets = [
     {'form': RedisAssetForm, 'model': RedisAsset},
     {'form': MantiumAssetForm, 'model': MantiumAsset},
     {'form': PineconeAssetForm, 'model': PineconeAsset},
+    {'form': APIEndpointAssetForm, 'model': APIEndpointAsset},
 ]
 
 
