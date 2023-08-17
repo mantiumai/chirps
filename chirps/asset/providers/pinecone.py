@@ -67,3 +67,12 @@ class PineconeAsset(BaseAsset):
         except pinecone_lib.core.client.exceptions.UnauthorizedException as err:
             logger.error('Pinecone connection test failed', extra={'error': err.body})
             return PingResult(success=False, error=err.body)
+
+    def displayable_attributes(self):
+        """Display a subset of the model's attributes"""
+        return [
+            {'label': 'API Key', 'value': self.decrypted_api_key},
+            {'label': 'Environment', 'value': self.environment},
+            {'label': 'Index Name', 'value': self.index_name},
+            {'label': 'Project Name', 'value': self.project_name},
+        ]
