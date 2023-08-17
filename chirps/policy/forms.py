@@ -1,7 +1,7 @@
 """Forms for the Policy app."""
 from django import forms
 
-from .models import Policy, Severity
+from .models import Policy
 
 
 class PolicyForm(forms.Form):
@@ -57,16 +57,3 @@ class PolicyForm(forms.Form):
             index += 1
 
         return PolicyForm(data=data)
-
-
-class CreateSeverityForm(forms.ModelForm):
-    """Form for creating a new severity."""
-
-    class Meta:
-        model = Severity
-        fields = ['name', 'value', 'color']
-        widgets = {'color': forms.widgets.TextInput(attrs={'type': 'color'})}
-
-
-class EditSeverityForm(CreateSeverityForm):
-    """Form for editing an existing severity."""

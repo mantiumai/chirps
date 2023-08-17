@@ -1,6 +1,7 @@
 """Models for the policy application."""
 from django.contrib.auth.models import User
 from django.db import models
+from severity.models import Severity
 
 
 class Policy(models.Model):
@@ -34,19 +35,6 @@ class PolicyVersion(models.Model):
     number = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
-
-
-class Severity(models.Model):
-    """Model for severity levels."""
-
-    name = models.CharField(max_length=64)
-    value = models.PositiveIntegerField()
-    color = models.CharField(max_length=7)
-    archived = models.BooleanField(default=False)
-
-    def __str__(self):
-        """Stringify the name"""
-        return self.name
 
 
 class Rule(models.Model):

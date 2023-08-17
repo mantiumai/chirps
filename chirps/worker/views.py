@@ -24,7 +24,7 @@ def is_redis_running() -> bool:
 
 def worker_status(request: Request) -> JsonResponse:
     """Get the status of the Celery worker"""
-    celery_inspection = app.control.inspect()
+    celery_inspection = app.control.inspect()   # type: ignore
     celery_statuses = celery_inspection.ping()
 
     is_celery_running = False

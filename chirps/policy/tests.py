@@ -100,7 +100,7 @@ def test_network_authentication_pattern_invalid(self):
 class StandardPIIRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/standard_pii.json', 'policy/severities.json']
+    fixtures = ['policy/standard_pii.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -213,7 +213,7 @@ class StandardPIIRegexTests(TestCase):
 class FinanceRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/finance.json', 'policy/severities.json']
+    fixtures = ['policy/finance.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -288,7 +288,7 @@ class FinanceRegexTests(TestCase):
 class HealthRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/health.json', 'policy/severities.json']
+    fixtures = ['policy/health.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -323,7 +323,7 @@ class HealthRegexTests(TestCase):
 class CredentialsRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/credentials.json', 'policy/severities.json']
+    fixtures = ['policy/credentials.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -422,7 +422,12 @@ class CredentialsRegexTests(TestCase):
 class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
 
-    fixtures = ['policy/employee.json', 'policy/network.json', 'policy/sensitive_data.json', 'policy/severities.json']
+    fixtures = [
+        'policy/employee.json',
+        'policy/network.json',
+        'policy/sensitive_data.json',
+        'severity/default_severities.json',
+    ]
 
     def setUp(self):
         """Login the user before performing any tests."""

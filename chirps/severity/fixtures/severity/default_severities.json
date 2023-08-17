@@ -1,0 +1,38 @@
+[
+    {
+      "model": "severity.Severity",
+      "pk": 1,
+      "fields": {
+        "name": "Low",
+        "value": 1,
+        "color": "#30C02C"
+      }
+    },
+    {
+      "model": "severity.Severity",
+      "pk": 2,
+      "fields": {
+        "name": "Medium",
+        "value": 2,
+        "color": "#F7DC6F"
+      }
+    },
+    {
+      "model": "severity.Severity",
+      "pk": 3,
+      "fields": {
+        "name": "High",
+        "value": 3,
+        "color": "#F1C40F"
+      }
+    },
+    {
+      "model": "severity.Severity",
+      "pk": 4,
+      "fields": {
+        "name": "Critical",
+        "value": 4,
+        "color": "#E74C3C"
+      }
+    }
+  ]

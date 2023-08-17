@@ -22,9 +22,10 @@ urlpatterns = [
     path('', include('base_app.urls')),
     path('account/', include('account.urls')),
     path('admin/', admin.site.urls),
+    path('asset/', include('asset.urls')),
     path('embedding/', include('embedding.urls')),
     path('policy/', include('policy.urls')),
     path('scan/', include('scan.urls')),
-    path('asset/', include('asset.urls')),
+    path('severity/', include('severity.urls')),
     path('worker/', include('worker.urls')),
 ]

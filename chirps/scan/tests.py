@@ -12,7 +12,8 @@ from django.contrib.auth.models import User
 from django.contrib.messages import get_messages
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
-from policy.models import Policy, PolicyVersion, Rule, Severity
+from policy.models import Policy, PolicyVersion, Rule
+from severity.models import Severity
 
 from .models import ScanAsset, ScanAssetFailure
 from .tasks import task_failure_handler
@@ -22,7 +23,7 @@ from .tasks import task_failure_handler
 class ScanTest(TestCase):
     """Test the scan application."""
 
-    fixtures = ['scan/test_dash_pagination.json', 'policy/severities.json']
+    fixtures = ['scan/test_dash_pagination.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Login the user before performing any tests"""
@@ -106,7 +107,7 @@ def dummy_task(*args, **kwargs):
 class ScanCeleryTests(TransactionTestCase):
     """Test the Celery job mechanism for scans."""
 
-    fixtures = ['scan/test_dash_pagination.json', 'policy/severities.json']
+    fixtures = ['scan/test_dash_pagination.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Login the user before performing any tests"""
