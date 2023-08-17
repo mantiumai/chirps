@@ -14,3 +14,4 @@ pinecone-client
 pytest
 python-dotenv
 fakeredis==2.16.0
+django-stubs==4.2.3

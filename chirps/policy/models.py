@@ -23,7 +23,7 @@ class Policy(models.Model):
         'PolicyVersion', on_delete=models.CASCADE, related_name='current_version', null=True, blank=True
     )
 
-    def __str__(self):
+    def __str__(self: 'Policy') -> str:
         """Stringify the name"""
         return self.name
 
@@ -56,6 +56,6 @@ class Rule(models.Model):
     # Foreign Key to the policy this rule belongs to
     policy = models.ForeignKey(PolicyVersion, on_delete=models.CASCADE, related_name='rules')
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Stringify the name"""
         return self.name

@@ -1,6 +1,6 @@
 """Views for the policy app."""
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -9,7 +9,7 @@ from .models import Policy, PolicyVersion, Rule
 
 
 @login_required
-def dashboard(request):
+def dashboard(request: HttpRequest) -> HttpResponse:
     """Render the dashboard for the policy app.
 
     Args:
@@ -22,7 +22,7 @@ def dashboard(request):
 
 
 @login_required
-def create(request):
+def create(request: HttpRequest) -> HttpResponse:
     """Render the create policy form.
 
     Args:
@@ -61,7 +61,7 @@ def create(request):
 
 
 @login_required
-def clone(request, policy_id):
+def clone(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Clone a template policy to a custom user policy
 
     Args:
@@ -94,11 +94,11 @@ def clone(request, policy_id):
         )
 
     # Redirect to the edit page for the new policy
-    return redirect('policy_edit', policy_id=cloned_policy.id)
+    return redirect('policy_edit', policy_id=cloned_policy.id)   # type: ignore
 
 
 @login_required
-def edit(request, policy_id):
+def edit(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Render the edit policy form.
 
     Args:
@@ -139,7 +139,7 @@ def edit(request, policy_id):
 
 
 @login_required
-def create_rule(request):
+def create_rule(request: HttpRequest) -> HttpResponse:
     """Render a single row of a Rule for the create policy page."""
     return render(
         request,
@@ -150,7 +150,7 @@ def create_rule(request):
 
 @login_required
 @require_http_methods(['DELETE'])
-def delete_rule(request, rule_id):
+def delete_rule(request: HttpRequest, rule_id: int) -> HttpResponse:
     """Delete a single rule within a policy."""
     # If the rule_id is 0, then simply return a 200
     # This happens when the UI is deleting a rule that doesn't exist yet (i.e. in the policy create page)
@@ -162,7 +162,7 @@ def delete_rule(request, rule_id):
 
 @login_required
 @require_http_methods(['DELETE'])
-def archive(request, policy_id):
+def archive(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Archive a policy."""
     policy = get_object_or_404(Policy, id=policy_id, user=request.user)
     policy.archived = True

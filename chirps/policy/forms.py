@@ -10,7 +10,7 @@ class PolicyForm(forms.Form):
     name = forms.CharField(label='Policy Name', max_length=100)
     description = forms.CharField(label='Policy Description', max_length=1000)
 
-    def clean(self):
+    def clean(self) -> None:
         """Create the 'rules' cleaned data field."""
         super().clean()
         rules = []
