@@ -40,8 +40,11 @@ class ScanForm(ModelForm):
         data = {'name': scan.name, 'description': scan.description}
 
         # The policies and assets fields are a list of IDs, and not part of the standard form
-        data['policies'] = [policy.id for policy in scan.policies()]
-        data['assets'] = [asset.id for asset in scan.assets()]
+        policies = [policy.id for policy in scan.policies()]
+        assets = [asset.id for asset in scan.assets()]
+
+        data['policies'] = Policy.objects.filter(id__in=policies)
+        data['assets'] = BaseAsset.objects.filter(id__in=assets)
 
         return ScanForm(data=data)
 

@@ -5,6 +5,7 @@ from asset.models import BaseAsset
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
@@ -196,7 +197,7 @@ def edit(request, scan_id):
     scan = get_object_or_404(ScanTemplate, pk=scan_id, user=request.user)
 
     if request.method == 'POST':
-        scan_form = ScanForm(request.POST, user=request.user)
+        scan_form = ScanForm(request.POST, user=request.user, instance=scan)
         scan_form.full_clean()
 
         if scan_form.is_valid():
@@ -236,19 +237,15 @@ def edit(request, scan_id):
                         messages.error(request, 'User has not configured their cohere API key')
 
             if fail_scan_create is True:
-                return redirect('scan_create')
+                return redirect('scan_edit', scan_id=scan.id)
 
-            # Convert the scan form into a scan model
-            # Create the initial Scan model
-            new_scan = ScanTemplate.objects.create(
-                name=scan_form.cleaned_data['name'],
-                description=scan_form.cleaned_data['description'],
-                user=request.user,
-            )
-            # Create the initial ScanVersion model
-            new_scan_version = ScanVersion.objects.create(
-                scan=new_scan,
-            )
+            # Update the top level scan fields, if they've changed
+            scan.description = scan_form.cleaned_data['description']
+            scan.name = scan_form.cleaned_data['name']
+            scan.save()
+
+            # Create the new ScanVersion model
+            new_scan_version = ScanVersion.objects.create(scan=scan, number=scan.current_version.number + 1)
 
             # Set the foreign keys to the selected policies and assets
             new_scan_version.policies.set(selected_policies)
@@ -256,8 +253,8 @@ def edit(request, scan_id):
             new_scan_version.save()
 
             # Set the initial version in the Scan model
-            new_scan.current_version = new_scan_version
-            new_scan.save()
+            scan.current_version = new_scan_version
+            scan.save()
 
             # Redirect the user back to the dashboard
             return redirect('scan_dashboard')
@@ -265,15 +262,28 @@ def edit(request, scan_id):
     else:
         scan_form = ScanForm().from_scan(scan)
 
+    selected_policies = [policy.id for policy in scan.policies()]
+    selected_assets = [asset.id for asset in scan.assets()]
+
     # Fetch the list of template and custom policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
-    user_policies = Policy.objects.filter(user=request.user, archived=False, is_template=False).order_by('id')
+    user_policies = Policy.objects.filter(
+        Q(user=request.user, archived=False, is_template=False) | Q(is_template=True, archived=False)
+    ).order_by('id')
     assets = BaseAsset.objects.filter(user=request.user)
 
     return render(
         request,
         'scan/edit.html',
-        {'form': scan_form, 'user_policies': user_policies, 'templates': templates, 'assets': assets},
+        {
+            'form': scan_form,
+            'user_policies': user_policies,
+            'templates': templates,
+            'assets': assets,
+            'scan': scan,
+            'selected_assets': selected_assets,
+            'selected_policies': selected_policies,
+        },
     )
 
 

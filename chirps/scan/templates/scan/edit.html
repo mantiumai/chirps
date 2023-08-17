@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}New Scan{% endblock %}
+{% block title %}Edit Scan{% endblock %}
 
 {% block content %}
 
 <div>
-  <h1 class="text-success">Edit Scan</h1>
+  <h1 class="text-success">Edit Scan: {{scan.name}}</h1>
   {% if messages %}
   <div class="alert alert-danger" role="alert">
     {% for message in messages %}
@@ -15,13 +15,10 @@
   <hr>
   <div class="card my-4">
     <div class="card-body cardbody-color p-4">
-      <div class="form-group">
-        <form method="POST" action="{% url 'scan_create' %}">
-          {% csrf_token %}
 
-          {% comment %} {% for error in form.non_field_errors %}
-          <span class="text-danger">{{error}}</span><br />
-          {% endfor %} {% endcomment %}
+      <div class="form-group">
+        <form method="POST" action="{% url 'scan_edit' scan.id %}">
+          {% csrf_token %}
 
           {{form.name.label_tag}}
           {{form.name}}
@@ -34,8 +31,8 @@
               <label for="policies" class="form-label">Policies</label>
               <select class="selectpicker form-control" id="{{ form.policies.auto_id }}"
                 name="{{ form.policies.html_name }}" multiple data-actions-box="true" data-live-search="true">
-                {% for policy in form.policies.field.queryset %}
-                <option value="{{ policy.id }}">{{ policy }}</option>
+                {% for policy in user_policies %}
+                <option value="{{ policy.id }}" {% if policy.id in selected_policies %}selected{% endif %}>{{ policy }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -45,7 +42,8 @@
               <select class="selectpicker form-control" id="assets" name="assets" multiple>
                 {% for asset in assets %}
                 <option value="{{ asset.id }}"
-                  data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{asset.logo_url}}'> {{ asset.name }}">
+                        data-content="<img width=16 class='rounded float-end my-auto ml-0 mr-' src='{{asset.logo_url}}'> {{ asset.name }}"
+                        {% if asset.id in selected_assets %}selected{% endif %}>
                   {{ asset.name }}</option>
                 {% endfor %}
               </select>
@@ -54,7 +52,7 @@
 
           <div class="d-flex mt-3">
             <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
-            <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
+            <button class="btn btn-primary ml-2 mr-0" type="submit">Edit</button>
           </div>
         </form>
       </div>
