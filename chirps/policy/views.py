@@ -94,7 +94,7 @@ def clone(request: HttpRequest, policy_id: int) -> HttpResponse:
         )
 
     # Redirect to the edit page for the new policy
-    return redirect('policy_edit', policy_id=cloned_policy.id)   # type: ignore
+    return redirect('policy_edit', policy_id=cloned_policy.id)
 
 
 @login_required

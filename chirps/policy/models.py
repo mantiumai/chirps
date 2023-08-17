@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Policy(models.Model):
+    id = models.AutoField(primary_key=True)
     """Model for what to do when scanning an asset."""
 
     # True to hide this policy from the user
