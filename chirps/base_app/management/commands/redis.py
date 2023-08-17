@@ -1,8 +1,9 @@
 """Management command for interacting with redis."""
 import os
 
-from chirps.settings import BASE_DIR
 from django.core.management.base import BaseCommand
+
+from chirps.settings import BASE_DIR
 
 
 class Command(BaseCommand):
