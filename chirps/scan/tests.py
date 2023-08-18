@@ -3,7 +3,6 @@ import time
 from unittest.mock import patch
 
 import pytest
-from account.models import Profile
 from asset.providers.pinecone import PineconeAsset
 from celery import shared_task
 from celery.contrib.testing.app import TestApp
@@ -11,11 +10,11 @@ from celery.contrib.testing.worker import start_worker
 from django.contrib.auth.models import User
 from django.contrib.messages import get_messages
 from django.test import TestCase, TransactionTestCase
-from django.urls import reverse
+from django.urls import reverse_lazy
 from policy.models import Policy, PolicyVersion, Rule
 from severity.models import Severity
 
-from .models import ScanAsset, ScanAssetFailure
+from .models import ScanAsset, ScanAssetFailure, ScanRun, ScanTemplate
 from .tasks import task_failure_handler
 
 
@@ -27,46 +26,42 @@ class ScanTest(TestCase):
 
     def setUp(self):
         """Login the user before performing any tests"""
-        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
-
-        # Create a profile for the user
-        user = User.objects.get(username='admin')
-        Profile.objects.create(user=user)
+        self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
 
     def test_scan_dashboard_no_pagination(self):
         """Verify that no pagination widget is displayed when there are less than 25 items."""
-        response = self.client.get(reverse('scan_dashboard'))
+        response = self.client.get(reverse_lazy('scan_dashboard'))
 
         # No pagination widget should be present
         # Ensure the element ID is not found
         self.assertNotContains(response, 'chirps-pagination-widget', status_code=200)
 
         # All 3 scans should be present (look for the element IDs)
-        for scan_id in ['4', '5', '6']:
-            self.assertContains(response, f'chirps-scan-{scan_id}', status_code=200)
+        for scan_id in ['Demo Scan', 'New Scan', 'Third Scan']:
+            self.assertContains(response, scan_id, status_code=200)
 
     def test_scan_dashboard_pagination(self):
         """Verify that the 3 pages are available and that the pagination widget is displayed."""
         # First page
-        response = self.client.get(reverse('scan_dashboard'), {'item_count': 1})
+        response = self.client.get(reverse_lazy('scan_dashboard'), {'item_count': 1})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-scan-4', status_code=200)
+        self.assertContains(response, 'Demo Scan', status_code=200)
 
         # Second page
-        response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 2})
+        response = self.client.get(reverse_lazy('scan_dashboard'), {'item_count': 1, 'page': 2})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-scan-5', status_code=200)
+        self.assertContains(response, 'New Scan', status_code=200)
 
         # Third page
-        response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 3})
+        response = self.client.get(reverse_lazy('scan_dashboard'), {'item_count': 1, 'page': 3})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-scan-6', status_code=200)
+        self.assertContains(response, 'Third Scan', status_code=200)
 
     def test_scan_dashboard_last_page(self):
         """If the page number exceeds the number of pages, verify that the last page is returned"""
-        response = self.client.get(reverse('scan_dashboard'), {'item_count': 1, 'page': 100})
+        response = self.client.get(reverse_lazy('scan_dashboard'), {'item_count': 1, 'page': 100})
         self.assertContains(response, 'chirps-pagination-widget', status_code=200)
-        self.assertContains(response, 'chirps-scan-6', status_code=200)
+        self.assertContains(response, 'Third Scan', status_code=200)
 
     def test_scan_requires_openai_key(self):
         """Test that a scan requires the user's OpenAI key"""
@@ -85,8 +80,13 @@ class ScanTest(TestCase):
         # Trigger a scan for the new policy
         with patch('scan.views.scan_task', dummy_task):
             response = self.client.post(
-                reverse('scan_create'),
-                {'policies': [policy.id], 'assets': [asset.id], 'description': 'test scan requiring OpenAI key'},
+                reverse_lazy('scan_create'),
+                {
+                    'policies': [policy.id],
+                    'assets': [asset.id],
+                    'name': 'dynamic test scan',
+                    'description': 'test scan requiring OpenAI key',
+                },
             )
 
         # The scan should fail as the user doesn't have an OpenAI key configured
@@ -94,8 +94,8 @@ class ScanTest(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), 'User has not configured their OpenAI API key')
 
-        # Check if ScanAsset object was not created
-        self.assertFalse(ScanAsset.objects.filter(scan__description='test scan requiring OpenAI key').exists())
+        # Make sure the ScanTemplate object was NOT created
+        self.assertFalse(ScanTemplate.objects.filter(name='dynamic test scan').exists())
 
 
 @shared_task(on_failure=task_failure_handler)
@@ -111,7 +111,7 @@ class ScanCeleryTests(TransactionTestCase):
 
     def setUp(self):
         """Login the user before performing any tests"""
-        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+        self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
 
         celery_config = {
             'accept_content': {'json'},
@@ -134,13 +134,16 @@ class ScanCeleryTests(TransactionTestCase):
 
     def test_scan_failure(self):
         """Given a failed scan, ensure that the UI renders the failure message."""
-        with patch('scan.views.scan_task', dummy_task):
-            response = self.client.post(
-                reverse('scan_create'), {'policies': [100], 'assets': [1], 'description': 'test scan'}
-            )
+        # Simply use the first available scan for the purpose of this test
+        scan = ScanTemplate.objects.all()[0]
 
-            # Should redirect the user back to the dashboard
-            self.assertRedirects(response, '/scan/', status_code=302)
+        with patch('scan.views.scan_task', dummy_task):
+
+            # Kick off a scan run from a scan that was configured in the fixtures
+            response = self.client.get(f'/scan/vcr_start/{scan.id}/')
+
+            # Should respond with VCR controls, the play button disabled
+            self.assertContains(response, '<button class="btn btn-sm btn-success disabled">', status_code=200)
 
             # Wait for the scan asset to reach a failed state
             total_wait = 5
@@ -152,17 +155,19 @@ class ScanCeleryTests(TransactionTestCase):
             # Make sure the scan asset poll didn't timeout
             self.assertGreater(total_wait, 0)
 
-        # Verify that the scan is available in the dashboard
-        response = self.client.get(reverse('scan_dashboard'))
+        # Verify that the scan is available in the scan history
+        response = self.client.get(f'/scan/{scan.id}/')
 
-        # Given the current state of the fixtures, the latest scan should be ID #7
-        self.assertContains(response, 'chirps-scan-7', status_code=200)
+        # Given the current state of the fixtures, the latest scan should be ID #12
+        self.assertContains(response, 'chirps-scan-12', status_code=200)
 
-        # Obtain the ID of the ScanAsset instance created for the scan
-        scan_asset = ScanAsset.objects.get(scan__id=7)
+        # Obtain the ID of the ScanRun instance created for the scan
+        scan_run = ScanRun.objects.filter(scan_version__scan__id=scan.id)[2]
 
         # Open the scan details page
-        response = self.client.get(reverse('scan_asset_status', kwargs={'scan_asset_id': scan_asset.id}))
+        scan_asset = ScanAsset.objects.filter(scan=scan_run.id)[0]
+
+        response = self.client.get(f'/scan/asset_status/{scan_asset.id}/')
 
         # Verify the scan asset status contains the proper error message
         self.assertContains(response, 'Dummy exception', status_code=286)
