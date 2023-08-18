@@ -8,7 +8,7 @@ from django.urls import reverse
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, Rule
+from .models import Policy, RegexRule
 
 cfixtures = ['policy/network.json']
 
@@ -17,7 +17,7 @@ def setUp(self):
     """Set up tests"""
     network_security_policy = Policy.objects.get(name='Network Security')
     current_policy_version = network_security_policy.current_version
-    self.rules = Rule.objects.filter(policy=current_policy_version)
+    self.rules = RegexRule.objects.filter(policy=current_policy_version)
     self.test_string = 'Here is some network security information. The following {} is sensitive.'
 
 
@@ -107,7 +107,7 @@ class StandardPIIRegexTests(TestCase):
         """Set up tests"""
         standard_pii_policy = Policy.objects.get(name='Standard PII')
         current_policy_version = standard_pii_policy.current_version
-        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.rules = RegexRule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some information. The following {} is sensitive.'
 
     def verify_pattern(self, rule_name, test_values, expected):
@@ -220,7 +220,7 @@ class FinanceRegexTests(TestCase):
         """Set up tests"""
         finance_policy = Policy.objects.get(name='Finance')
         current_policy_version = finance_policy.current_version
-        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.rules = RegexRule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some information. The following {} is sensitive.'
 
     def verify_pattern(self, rule_name, test_values, expected):
@@ -295,7 +295,7 @@ class HealthRegexTests(TestCase):
         """Set up tests"""
         health_policy = Policy.objects.get(name='Health')
         current_policy_version = health_policy.current_version
-        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.rules = RegexRule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some information. The following {} is sensitive.'
 
     def verify_pattern(self, rule_name, test_values, expected):
@@ -330,7 +330,7 @@ class CredentialsRegexTests(TestCase):
         """Set up tests"""
         credentials_policy = Policy.objects.get(name='Credentials')
         current_policy_version = credentials_policy.current_version
-        self.rules = Rule.objects.filter(policy=current_policy_version)
+        self.rules = RegexRule.objects.filter(policy=current_policy_version)
         self.test_string = 'Here is some information. The following {} is sensitive.'
 
     def verify_pattern(self, rule_name, test_values, expected):

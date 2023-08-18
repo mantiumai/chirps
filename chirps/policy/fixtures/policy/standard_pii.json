@@ -19,91 +19,171 @@
         "pk": 400
     },
     {
+        "model": "policy.baserule",
+        "pk": 400,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "SSN",
             "policy": 400,
-            "query_string": "What's my social security number?",
-            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
             "severity": 4
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my social security number?",
+            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 400
     },
     {
+        "model": "policy.baserule",
+        "pk": 401,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "California Driver's License",
             "policy": 400,
-            "query_string": "What's my driver's license number?",
-            "regex_test": "[A-Z]{1}\\d{7}",
             "severity": 3
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my driver's license number?",
+            "regex_test": "[A-Z]{1}\\d{7}"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 401
     },
     {
+        "model": "policy.baserule",
+        "pk": 402,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "United Kingdom Driver's License",
             "policy": 400,
-            "query_string": "What's my driver's license number?",
-            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}",
             "severity": 3
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my driver's license number?",
+            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 402
     },
     {
+        "model": "policy.baserule",
+        "pk": 403,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "United Kingdom Passport Number",
             "policy": 400,
-            "query_string": "What's my passport number?",
-            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}",
             "severity": 3
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my passport number?",
+            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 403
     },
     {
+        "model": "policy.baserule",
+        "pk": 404,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Individual Taxpayer Identification Number",
             "policy": 400,
-            "query_string": "What's my ITIN?",
-            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}",
             "severity": 3
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my ITIN?",
+            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 404
     },
     {
-        "model": "policy.Rule",
+        "model": "policy.baserule",
         "pk": 405,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Email Addresses",
-            "query_string": "What's my email address?",
-            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
             "severity": 3,
             "policy": 400
         }
     },
     {
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
+        "pk": 405,
+        "fields": {
+            "query_string": "What's my email address?",
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 406,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Phone Numbers",
-            "query_string": "What's my phone number?",
-            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
             "severity": 3,
             "policy": 400
         }
     },
     {
+        "model": "policy.regexrule",
+        "pk": 406,
         "fields": {
+            "query_string": "What's my phone number?",
+            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}"
+        }
+    },
+    {
+        "model": "policy.baserule",
+        "pk": 407,
+        "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Address",
             "policy": 400,
-            "query_string": "What's my address?",
-            "regex_test": "\\d+[ ](?:[A-Za-z0-9.-]+[ ]?)+(?:Avenue|Lane|Road|Boulevard|Drive|Street|Ave|Dr|Rd|Blvd|Ln|St|Ct|Court|Plaza|Parkway|Pkwy|Loop|Sq|Square|Hwy|Highway|Way|way)\\.?",
             "severity": 2
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my address?",
+            "regex_test": "\\d+[ ](?:[A-Za-z0-9.-]+[ ]?)+(?:Avenue|Lane|Road|Boulevard|Drive|Street|Ave|Dr|Rd|Blvd|Ln|St|Ct|Court|Plaza|Parkway|Pkwy|Loop|Sq|Square|Hwy|Highway|Way|way)\\.?"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 407
     }
 ]
