@@ -103,7 +103,7 @@ The `ScanAsset` model represents a single asset that was scanned. It contains th
 
 - `started_at`: A DateTimeField indicating the start time of the scan of the asset, automatically set when the scan is created.
 - `finished_at`: A DateTimeField indicating the completion time of the scan of the asset. This field is nullable.
-- `scan`: A ForeignKey to the Scan model, with the related name 'scan_assets'.
+- `scan`: A ForeignKey to the Scan model, with the related name 'scan_run_assets'.
 - `asset`: A ForeignKey to the BaseAsset model.
 - `celery_task_id`: A CharField with a maximum length of 256 characters, used for storing the associated Celery task ID. This field is nullable.
 - `progress`: An IntegerField for storing the progress percentage of the scan of the asset, with a default of 0.

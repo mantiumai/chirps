@@ -1,264 +1,5 @@
 [
     {
-        "model": "scan.scan",
-        "pk": 4,
-        "fields": {
-            "started_at": "2023-07-07T20:09:15.998Z",
-            "finished_at": "2023-07-07T20:09:48.990Z",
-            "description": "Test",
-            "user": 1
-        }
-    },
-    {
-        "model": "scan.scanasset",
-        "pk": 1,
-        "fields": {
-            "scan": 4,
-            "asset": 1,
-            "started_at": "2023-07-07T20:09:15.998Z",
-            "finished_at": "2023-07-07T20:09:48.990Z",
-            "celery_task_id": "9e756e30-ce99-462b-a6c7-1e643a1a6481"
-        }
-    },
-    {
-        "model": "scan.scan",
-        "pk": 5,
-        "fields": {
-            "started_at": "2023-07-11T00:52:49.365Z",
-            "finished_at": "2023-07-11T00:53:24.915Z",
-            "description": "Second Scan",
-            "user": 1
-        }
-    },
-    {
-        "model": "scan.scanasset",
-        "pk": 1,
-        "fields": {
-            "scan": 5,
-            "asset": 1,
-            "started_at": "2023-07-07T20:09:15.998Z",
-            "finished_at": "2023-07-07T20:09:48.990Z",
-            "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
-        }
-    },
-    {
-        "model": "scan.scan",
-        "pk": 6,
-        "fields": {
-            "started_at": "2023-07-11T00:54:31.010Z",
-            "finished_at": "2023-07-11T00:55:00.788Z",
-            "description": "Third Scan",
-            "user": 1
-        }
-    },
-    {
-        "model": "scan.scanasset",
-        "pk": 1,
-        "fields": {
-            "scan": 6,
-            "asset": 1,
-            "started_at": "2023-07-07T20:09:15.998Z",
-            "finished_at": "2023-07-07T20:09:48.990Z",
-            "celery_task_id": "a5a359d9-a5e2-44e3-b127-140db2a7fdcd"
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 4,
-            "policy": 100
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 5,
-            "policy": 100
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 6,
-            "policy": 100
-        }
-    },
-    {
-        "model": "asset.baseasset",
-        "pk": 1,
-        "fields": {
-            "polymorphic_ctype": ["asset", "mantiumasset"],
-            "name": "ZimTest",
-            "user": 1
-        }
-    },
-    {
-        "model": "asset.mantiumasset",
-        "pk": 1,
-        "fields": {
-            "app_id": "6487620f86cc840954d29704",
-            "client_id": "xsVfwUwN1ln3QkPdto9ya79q",
-            "client_secret": "X83eIu2tarnWy98z1FK2C0pEUPZyGi4mlM3olgUJuKQTOrQV",
-            "top_k": 100
-        }
-    },
-    {
-        "model": "policy.policy",
-        "pk": 100,
-        "fields": {
-            "name": "Employee Information",
-            "description": "This policy will scan for employee information.",
-            "is_template": true,
-            "current_version": 100,
-            "user": null
-        }
-    },
-    {
-        "model": "policy.policyversion",
-        "pk": 100,
-        "fields": {
-            "number": 1,
-            "policy": 100,
-            "created_at": "2016-01-01T00:00:00Z"
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 100,
-        "fields": {
-            "name": "SSN",
-            "query_string": "What's my social security number?",
-            "query_embedding": null,
-            "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
-            "severity": 4,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 101,
-        "fields": {
-            "name": "Address",
-            "query_string": "What's my address?",
-            "query_embedding": null,
-            "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
-            "severity": 2,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 102,
-        "fields": {
-            "name": "Bank Account",
-            "query_string": "What's my bank account number?",
-            "query_embedding": null,
-            "regex_test": "\\d{10,12}",
-            "severity": 4,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 103,
-        "fields": {
-            "name": "Credit Card",
-            "query_string": "What's my credit card number?",
-            "query_embedding": null,
-            "regex_test": "(?:\\d[ -]*?){13,16}",
-            "severity": 4,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 104,
-        "fields": {
-            "name": "Email Address",
-            "query_string": "What's my email address?",
-            "query_embedding": null,
-            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-            "severity": 2,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 105,
-        "fields": {
-            "name": "Phone number",
-            "query_string": "What's my phone number?",
-            "query_embedding": null,
-            "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
-            "severity": 2,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 106,
-        "fields": {
-            "name": "Salary",
-            "query_string": "What's my salary?",
-            "query_embedding": null,
-            "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
-            "severity": 2,
-            "policy": 100
-        }
-    },
-    {
-        "model": "policy.policy",
-        "pk": 101,
-        "fields": {
-            "name": "Network Security",
-            "description": "This policy will scan for network security information.",
-            "is_template": true,
-            "current_version": 101,
-            "user": null
-        }
-    },
-    {
-        "model": "policy.policyversion",
-        "pk": 101,
-        "fields": {
-            "number": 1,
-            "policy": 101,
-            "created_at": "2016-01-01T00:00:00Z"
-        }
-    },
-    {
-        "model": "policy.rule",
-        "pk": 107,
-        "fields": {
-            "name": "Open Ports",
-            "query_string": "Which ports are open on my network?",
-            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
-            "severity": 3,
-            "policy": 101
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 4,
-            "policy": 101
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 5,
-            "policy": 101
-        }
-    },
-    {
-        "model": "scan.scan_policies",
-        "fields": {
-            "scan": 6,
-            "policy": 101
-        }
-    },
-    {
         "model": "auth.user",
         "pk": 1,
         "fields": {
@@ -274,6 +15,1302 @@
             "date_joined": "2023-07-07T18:01:00.203Z",
             "groups": [],
             "user_permissions": []
+        }
+    },
+    {
+        "model": "account.profile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "openai_key": "",
+            "cohere_key": "",
+            "finding_preview_size": 20
+        }
+    },
+    {
+        "model": "asset.baseasset",
+        "pk": 1,
+        "fields": {
+            "polymorphic_ctype": 14,
+            "name": "local redis",
+            "user": 1
+        }
+    },
+    {
+        "model": "asset.redisasset",
+        "pk": 1,
+        "fields": {
+            "host": "localhost",
+            "port": 6379,
+            "database_name": "0",
+            "username": "default",
+            "password": null,
+            "index_name": "test",
+            "text_field": "content",
+            "embedding_field": "embeddings",
+            "embedding_model": "text-embedding-ada-002",
+            "embedding_model_service": "OpenAI"
+        }
+    },
+    {
+        "model": "policy.policy",
+        "pk": 300,
+        "fields": {
+            "archived": false,
+            "name": "Network Security",
+            "description": "This policy will scan for sensitive network information.",
+            "is_template": true,
+            "user": null,
+            "current_version": 300
+        }
+    },
+    {
+        "model": "policy.policy",
+        "pk": 400,
+        "fields": {
+            "archived": false,
+            "name": "Standard PII",
+            "description": "This policy will scan for personally identifiable information.",
+            "is_template": true,
+            "user": null,
+            "current_version": 400
+        }
+    },
+    {
+        "model": "policy.policy",
+        "pk": 500,
+        "fields": {
+            "archived": false,
+            "name": "Finance",
+            "description": "This policy will scan for financial information.",
+            "is_template": true,
+            "user": null,
+            "current_version": 500
+        }
+    },
+    {
+        "model": "policy.policy",
+        "pk": 600,
+        "fields": {
+            "archived": false,
+            "name": "Health",
+            "description": "This policy will scan for health information.",
+            "is_template": true,
+            "user": null,
+            "current_version": 600
+        }
+    },
+    {
+        "model": "policy.policy",
+        "pk": 700,
+        "fields": {
+            "archived": false,
+            "name": "Credentials",
+            "description": "This policy will scan for credentials.",
+            "is_template": true,
+            "user": null,
+            "current_version": 700
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 300,
+        "fields": {
+            "number": 1,
+            "created_at": "2016-01-01T00:00:00Z",
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 400,
+        "fields": {
+            "number": 1,
+            "created_at": "2016-01-01T00:00:00Z",
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 500,
+        "fields": {
+            "number": 1,
+            "created_at": "2016-01-01T00:00:00Z",
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 600,
+        "fields": {
+            "number": 1,
+            "created_at": "2016-01-01T00:00:00Z",
+            "policy": 600
+        }
+    },
+    {
+        "model": "policy.policyversion",
+        "pk": 700,
+        "fields": {
+            "number": 1,
+            "created_at": "2016-01-01T00:00:00Z",
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 300,
+        "fields": {
+            "name": "Open Ports",
+            "query_string": "Which ports are open on my network?",
+            "query_embedding": null,
+            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
+            "severity": 3,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 301,
+        "fields": {
+            "name": "Firewall Configuration",
+            "query_string": "What are the firewall rules in place?",
+            "query_embedding": null,
+            "regex_test": "(allow|deny) from (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) to (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) port (\\d{1,5}|any)",
+            "severity": 2,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 302,
+        "fields": {
+            "name": "Network Encryption",
+            "query_string": "How is network traffic encrypted?",
+            "query_embedding": null,
+            "regex_test": "\\b(none|WEP|WPA|WPA2|WPA3)\\b",
+            "severity": 3,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 303,
+        "fields": {
+            "name": "Network Authentication",
+            "query_string": "What authentication protocols are used on the network?",
+            "query_embedding": null,
+            "regex_test": "(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)",
+            "severity": 3,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 400,
+        "fields": {
+            "name": "SSN",
+            "query_string": "What's my social security number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
+            "severity": 4,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 401,
+        "fields": {
+            "name": "California Driver's License",
+            "query_string": "What's my driver's license number?",
+            "query_embedding": null,
+            "regex_test": "[A-Z]{1}\\d{7}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 402,
+        "fields": {
+            "name": "United Kingdom Driver's License",
+            "query_string": "What's my driver's license number?",
+            "query_embedding": null,
+            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 403,
+        "fields": {
+            "name": "United Kingdom Passport Number",
+            "query_string": "What's my passport number?",
+            "query_embedding": null,
+            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 404,
+        "fields": {
+            "name": "Individual Taxpayer Identification Number",
+            "query_string": "What's my ITIN?",
+            "query_embedding": null,
+            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 405,
+        "fields": {
+            "name": "Email Addresses",
+            "query_string": "What's my email address?",
+            "query_embedding": null,
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 406,
+        "fields": {
+            "name": "Phone Numbers",
+            "query_string": "What's my phone number?",
+            "query_embedding": null,
+            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 407,
+        "fields": {
+            "name": "Address",
+            "query_string": "What's my address?",
+            "query_embedding": null,
+            "regex_test": "\\d+[ ](?:[A-Za-z0-9.-]+[ ]?)+(?:Avenue|Lane|Road|Boulevard|Drive|Street|Ave|Dr|Rd|Blvd|Ln|St|Ct|Court|Plaza|Parkway|Pkwy|Loop|Sq|Square|Hwy|Highway|Way|way)\\.?",
+            "severity": 2,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 500,
+        "fields": {
+            "name": "Citibank Routing Number - California",
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "32(?:11|22)71(?:18|72)4",
+            "severity": 2,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 501,
+        "fields": {
+            "name": "Bank of America Routing Number - California",
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)",
+            "severity": 2,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 502,
+        "fields": {
+            "name": "Chase Routing Number - California",
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "322271627",
+            "severity": 2,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 503,
+        "fields": {
+            "name": "Bank Account",
+            "query_string": "What's my bank account number?",
+            "query_embedding": null,
+            "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
+            "severity": 4,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 504,
+        "fields": {
+            "name": "Credit Card",
+            "query_string": "What's my credit card number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
+            "severity": 4,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 600,
+        "fields": {
+            "name": "HIPAA PHI National Drug Code",
+            "query_string": "What's my drug code?",
+            "query_embedding": null,
+            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}",
+            "severity": 2,
+            "policy": 600
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 700,
+        "fields": {
+            "name": "Facebook Access Token",
+            "query_string": "What's my Facebook access token?",
+            "query_embedding": null,
+            "regex_test": "EAACEdEose0cBA[0-9A-Za-z]+",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 701,
+        "fields": {
+            "name": "Google YouTube API Key",
+            "query_string": "What's my Google Youtube key?",
+            "query_embedding": null,
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 702,
+        "fields": {
+            "name": "Twitter Access Token",
+            "query_string": "What's my Twitter access token?",
+            "query_embedding": null,
+            "regex_test": "[1-9][0-9]+-[0-9a-zA-Z]{40}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 703,
+        "fields": {
+            "name": "MailGun API Key",
+            "query_string": "What's my MailGun API key?",
+            "query_embedding": null,
+            "regex_test": "key-[0-9a-zA-Z]{32}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 704,
+        "fields": {
+            "name": "OAuth Secret",
+            "query_string": "What's my OAuth secret?",
+            "query_embedding": null,
+            "regex_test": "[0-9a-zA-Z\\-_]{24}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 705,
+        "fields": {
+            "name": "OAuth Auth Code",
+            "query_string": "What's my OAuth auth code?",
+            "query_embedding": null,
+            "regex_test": "4/[0-9A-Za-z\\-_]+",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 706,
+        "fields": {
+            "name": "PGP Header",
+            "query_string": "What's my PGP header?",
+            "query_embedding": null,
+            "regex_test": "-{5}(?:BEGIN|END)\\ PGP\\ MESSAGE-{5}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 707,
+        "fields": {
+            "name": "SSL Certificate",
+            "query_string": "What's my SSL certificate?",
+            "query_embedding": null,
+            "regex_test": "-----BEGIN CERTIFICATE-----(?:.|\\n)+?\\s-----END CERTIFICATE-----",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 708,
+        "fields": {
+            "name": "Google Cloud Platform",
+            "query_string": "What's my Google key?",
+            "query_embedding": null,
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 709,
+        "fields": {
+            "name": "Stripe Standard API Key",
+            "query_string": "What's my Stripe API key?",
+            "query_embedding": null,
+            "regex_test": "sk_live_[0-9a-zA-Z]{24}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 710,
+        "fields": {
+            "name": "AWS Secret Key",
+            "query_string": "What's my AWS key?",
+            "query_embedding": null,
+            "regex_test": "((secret[-_]?access[-_]?key)|(SECRET[-_]?ACCESS[-_]?KEY|(private[-_]?key))|([Ss]ecretAccessKey)).{0,20}[^a-zA-Z0-9+/][a-zA-Z0-9+/]{40}\\b",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 711,
+        "fields": {
+            "name": "AWS Access Key ID",
+            "query_string": "What's my AWS key?",
+            "query_embedding": null,
+            "regex_test": "AKIA[0-9A-Z]{16}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 712,
+        "fields": {
+            "name": "Google Cloud API Key",
+            "query_string": "What's my Google key?",
+            "query_embedding": null,
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 713,
+        "fields": {
+            "name": "Stripe Restricted API Key",
+            "query_string": "What's my Stripe API key?",
+            "query_embedding": null,
+            "regex_test": "rk_live_[0-9a-zA-Z]{24}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 714,
+        "fields": {
+            "name": "Azure API Key",
+            "query_string": "What's my Azure API key?",
+            "query_embedding": null,
+            "regex_test": "(KEY|key|Key)*\\s*(:|:=|=>|=)*\\s*[A-F0-9]{32}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 715,
+        "fields": {
+            "name": "PuTTY SSH DSA Key",
+            "query_string": "What's my PuTTY SSH DSA key?",
+            "query_embedding": null,
+            "regex_test": "PuTTY-User-Key-File-2: ssh-dss\\s*Encryption: none(?:.|\\s?)*?Private-MAC:",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 716,
+        "fields": {
+            "name": "Slack API Token",
+            "query_string": "What's my Slack API token?",
+            "query_embedding": null,
+            "regex_test": "(xox[pb](?:-[a-zA-Z0-9]+){4,})",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 717,
+        "fields": {
+            "name": "Slack API Key",
+            "query_string": "What's my Slack API key?",
+            "query_embedding": null,
+            "regex_test": "(slack_api_key|SLACK_API_KEY|slack_key|SLACK_KEY)[a-z_ =\\\\s\"\\\\':]{0,10}[^a-f0-9][a-f0-9]{32}[^a-f0-9]",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.rule",
+        "pk": 718,
+        "fields": {
+            "name": "Square OAuth Secret",
+            "query_string": "What's my Square OAuth secret?",
+            "query_embedding": null,
+            "regex_test": "sq0csp-[0-9A-Za-z\\-_]{43}",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "scan.scantemplate",
+        "pk": 3,
+        "fields": {
+            "name": "Demo Scan",
+            "description": "Super Cool",
+            "user": 1,
+            "current_version": 4
+        }
+    },
+    {
+        "model": "scan.scantemplate",
+        "pk": 4,
+        "fields": {
+            "name": "New Scan",
+            "description": "Scan Two",
+            "user": 1,
+            "current_version": 5
+        }
+    },
+    {
+        "model": "scan.scantemplate",
+        "pk": 5,
+        "fields": {
+            "name": "Third Scan",
+            "description": "3",
+            "user": 1,
+            "current_version": 6
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 3,
+        "fields": {
+            "number": 1,
+            "scan": 3,
+            "policies": [
+                300,
+                400,
+                500,
+                600,
+                700
+            ],
+            "assets": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 4,
+        "fields": {
+            "number": 2,
+            "scan": 3,
+            "policies": [
+                300,
+                400,
+                500,
+                600
+            ],
+            "assets": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 5,
+        "fields": {
+            "number": 1,
+            "scan": 4,
+            "policies": [
+                300
+            ],
+            "assets": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "scan.scanversion",
+        "pk": 6,
+        "fields": {
+            "number": 1,
+            "scan": 5,
+            "policies": [
+                700
+            ],
+            "assets": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "scan.scanrun",
+        "pk": 10,
+        "fields": {
+            "started_at": "2023-08-17T22:45:20.076Z",
+            "finished_at": "2023-08-17T22:45:23.442Z",
+            "scan_version": 3,
+            "status": "Complete"
+        }
+    },
+    {
+        "model": "scan.scanrun",
+        "pk": 11,
+        "fields": {
+            "started_at": "2023-08-17T22:46:26.049Z",
+            "finished_at": "2023-08-17T22:46:27.547Z",
+            "scan_version": 4,
+            "status": "Complete"
+        }
+    },
+    {
+        "model": "scan.scanasset",
+        "pk": 10,
+        "fields": {
+            "started_at": "2023-08-17T22:45:20.119Z",
+            "finished_at": "2023-08-17T22:45:23.393Z",
+            "scan": 10,
+            "asset": 1,
+            "celery_task_id": "199ae0bb-87b8-4785-b3c7-e04f9fb449e3",
+            "progress": 100
+        }
+    },
+    {
+        "model": "scan.scanasset",
+        "pk": 11,
+        "fields": {
+            "started_at": "2023-08-17T22:46:26.081Z",
+            "finished_at": "2023-08-17T22:46:27.514Z",
+            "scan": 11,
+            "asset": 1,
+            "celery_task_id": "0ca487c4-db70-4912-80c6-38308f99fbd6",
+            "progress": 100
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 195,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 300
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 196,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 301
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 197,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 302
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 198,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 303
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 199,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 400
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 200,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 401
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 201,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 402
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 202,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 403
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 203,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 404
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 204,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 405
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 205,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 406
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 206,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 407
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 207,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 500
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 208,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 501
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 209,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 502
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 210,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 503
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 211,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 504
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 212,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 600
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 213,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 700
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 214,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 701
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 215,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 702
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 216,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 703
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 217,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 704
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 218,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 705
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 219,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 706
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 220,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 707
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 221,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 708
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 222,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 709
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 223,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 710
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 224,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 711
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 225,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 712
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 226,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 713
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 227,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 714
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 228,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 715
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 229,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 716
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 230,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 717
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 231,
+        "fields": {
+            "scan_asset": 10,
+            "text": "the social security number is 123-45-6789",
+            "rule": 718
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 232,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 300
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 233,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 301
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 234,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 302
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 235,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 303
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 236,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 400
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 237,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 401
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 238,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 402
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 239,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 403
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 240,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 404
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 241,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 405
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 242,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 406
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 243,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 407
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 244,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 500
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 245,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 501
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 246,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 502
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 247,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 503
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 248,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 504
+        }
+    },
+    {
+        "model": "scan.result",
+        "pk": 249,
+        "fields": {
+            "scan_asset": 11,
+            "text": "the social security number is 123-45-6789",
+            "rule": 600
+        }
+    },
+    {
+        "model": "scan.finding",
+        "pk": 17,
+        "fields": {
+            "source_id": "test:1",
+            "result": 195,
+            "offset": 30,
+            "length": 3
+        }
+    },
+    {
+        "model": "scan.finding",
+        "pk": 18,
+        "fields": {
+            "source_id": "test:1",
+            "result": 199,
+            "offset": 30,
+            "length": 11
+        }
+    },
+    {
+        "model": "scan.finding",
+        "pk": 19,
+        "fields": {
+            "source_id": "test:1",
+            "result": 232,
+            "offset": 30,
+            "length": 3
+        }
+    },
+    {
+        "model": "scan.finding",
+        "pk": 20,
+        "fields": {
+            "source_id": "test:1",
+            "result": 236,
+            "offset": 30,
+            "length": 11
+        }
+    },
+    {
+        "model": "severity.severity",
+        "pk": 1,
+        "fields": {
+            "name": "Low",
+            "value": 1,
+            "color": "#30C02C",
+            "archived": false
+        }
+    },
+    {
+        "model": "severity.severity",
+        "pk": 2,
+        "fields": {
+            "name": "Medium",
+            "value": 2,
+            "color": "#F7DC6F",
+            "archived": false
+        }
+    },
+    {
+        "model": "severity.severity",
+        "pk": 3,
+        "fields": {
+            "name": "High",
+            "value": 3,
+            "color": "#F1C40F",
+            "archived": false
+        }
+    },
+    {
+        "model": "severity.severity",
+        "pk": 4,
+        "fields": {
+            "name": "Critical",
+            "value": 4,
+            "color": "#E74C3C",
+            "archived": false
         }
     }
 ]

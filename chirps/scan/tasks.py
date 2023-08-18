@@ -33,15 +33,15 @@ def task_failure_handler(self, exc, task_id, args, kwargs, einfo):
     ScanAssetFailure.objects.create(scan_asset=scan_asset, exception=str(exc), traceback=str(einfo))
 
     # If any of the other scan assets are running, skip setting the main scan status to complete
-    scan = scan_asset.scan
-    for scan_asset in scan.scan_assets.all():
+    scan_run = scan_asset.scan
+    for scan_asset in scan_run.run_assets.all():
         if scan_asset.finished_at is None:
             return
 
     # All of the other scan assets are complete, so we can mark the scan as failed
-    scan.status = 'Failed'
-    scan.finished_at = timezone.now()
-    scan.save()
+    scan_run.status = 'Failed'
+    scan_run.finished_at = timezone.now()
+    scan_run.save()
 
 
 @shared_task(on_failure=task_failure_handler)
@@ -51,24 +51,24 @@ def scan_task(scan_asset_id):
 
     try:
         scan_asset = ScanAsset.objects.get(pk=scan_asset_id)
-        scan = scan_asset.scan
+        scan_run = scan_asset.scan
 
         # Update scan status
-        scan.status = 'Running'
-        scan.save()
+        scan_run.status = 'Running'
+        scan_run.save()
 
     except ScanAsset.DoesNotExist:
         logger.error('ScanAsset record not found', extra={'scan_asset_id': scan_asset_id})
         scan_task.update_state(state='FAILURE', meta={'error': f'ScanAsset record not found ({scan_asset_id})'})
         return
 
-    # Need to perform a secondary query in order to fetch the derrived class
+    # Need to perform a secondary query in order to fetch the derived class
     # This magic is handled by django-polymorphic
     asset = BaseAsset.objects.get(id=scan_asset.asset.id)
 
     # Iterate through the selected policies and fetch their rules
     policy_rules = []
-    for policy in scan.policies.all():
+    for policy in scan_run.scan_version.policies.all():
         for rule in policy.current_version.rules.all():
             policy_rules.append((policy, rule))
 
@@ -80,7 +80,7 @@ def scan_task(scan_asset_id):
         if asset.REQUIRES_EMBEDDINGS:
             # template policies should not be bound to a user
             add_user_filter = not policy.is_template
-            user = scan.user if add_user_filter else None
+            user = scan_run.scan_version.scan.user if add_user_filter else None
             embedding = create_embedding(rule.query_string, asset.embedding_model, asset.embedding_model_service, user)
             query = embedding.vectors
         else:
@@ -119,21 +119,21 @@ def scan_task(scan_asset_id):
     logger.info('Scan task complete', extra={'scan_asset_id': scan_asset.id})
 
     # If any of the scan assets are running, skip setting the main scan status to complete
-    for scan_asset in scan.scan_assets.all():
+    for scan_asset in scan_run.run_assets.all():
         if scan_asset.finished_at is None:
             return
 
     # Double check to see if any of the scan assets failed
-    for scan_asset in scan.scan_assets.all():
+    for scan_asset in scan_run.run_assets.all():
         if scan_asset.celery_task_status() == 'FAILURE':
-            scan.status = 'Failed'
-            scan.finished_at = timezone.now()
-            scan.save()
+            scan_run.status = 'Failed'
+            scan_run.finished_at = timezone.now()
+            scan_run.save()
             return
 
-    # Everything went well, mark the scan as complete!
-    scan.status = 'Complete'
-    scan.finished_at = timezone.now()
-    scan.save()
+    # Everything went well, mark the entire scan run as complete!
+    scan_run.status = 'Complete'
+    scan_run.finished_at = timezone.now()
+    scan_run.save()
 
-    logger.info('Scan complete', extra={'scan_id': scan.id})
+    logger.info('Scan complete', extra={'scan_id': scan_asset.id})

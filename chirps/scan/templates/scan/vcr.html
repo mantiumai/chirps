@@ -1,0 +1,19 @@
+{% if scan.is_running %}
+
+    <button class="btn btn-sm btn-success disabled">
+        <i class="fa-solid fa-circle-play"></i>
+    </button>
+
+    <button class="btn btn-sm btn-danger disabled">
+        <i class="fa-solid fa-circle-stop"></i>
+    </button>
+
+{% else %}
+    <button class="btn btn-sm btn-success">
+        <i class="fa-solid fa-circle-play" hx-get="{% url 'scan_vcr_start' scan.id %}" hx-target="#vcr-{{scan.id}}"></i>
+    </button>
+
+    <button class="btn btn-sm btn-danger disabled">
+        <i class="fa-solid fa-circle-stop"></i>
+    </button>
+{% endif %}

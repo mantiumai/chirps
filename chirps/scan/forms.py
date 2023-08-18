@@ -4,7 +4,7 @@ from django import forms
 from django.forms import ModelForm, ValidationError
 from policy.models import Policy
 
-from .models import Scan
+from .models import ScanTemplate
 
 
 class ScanForm(ModelForm):
@@ -24,14 +24,29 @@ class ScanForm(ModelForm):
     class Meta:
         """Django Meta options for the ScanForm."""
 
-        model = Scan
-        fields = ['description']
-
+        model = ScanTemplate
+        fields = ['name', 'description']
+        labels = {'name': 'Name', 'description': 'Description'}
         widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the scan'}),
             'description': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}
+                attrs={'class': 'form-control', 'placeholder': 'Enter a description for the scan'}
             ),
         }
+
+    @classmethod
+    def from_scan(cls, scan: ScanTemplate) -> 'ScanForm':
+        """Build a ScanForm from a ScanTemplate object."""
+        data = {'name': scan.name, 'description': scan.description}
+
+        # The policies and assets fields are a list of IDs, and not part of the standard form
+        policies = [policy.id for policy in scan.policies()]
+        assets = [asset.id for asset in scan.assets()]
+
+        data['policies'] = Policy.objects.filter(id__in=policies)
+        data['assets'] = BaseAsset.objects.filter(id__in=assets)
+
+        return ScanForm(data=data)
 
     def clean(self):
         """Create the 'policies' and 'assets' cleaned data fields."""
