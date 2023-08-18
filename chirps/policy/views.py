@@ -1,7 +1,8 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from severity.forms import CreateSeverityForm, EditSeverityForm
@@ -12,13 +13,14 @@ from .models import Policy, PolicyVersion, Rule
 
 
 @login_required
-def dashboard(request):
+def dashboard(request: HttpRequest) -> HttpResponse:
     """Render the dashboard for the policy app.
 
     Args:
         request (HttpRequest): Django request object
     """
     # Fetch a list of all the available template and custom user policies
+    assert isinstance(request.user, User)
     templates = Policy.objects.filter(is_template=True).order_by('id')
     user_policies = Policy.objects.filter(user=request.user, archived=False).order_by('id')
     severities = Severity.objects.filter(archived=False).order_by('id')
@@ -39,12 +41,13 @@ def dashboard(request):
 
 
 @login_required
-def create(request):
+def create(request: HttpRequest) -> HttpResponse:
     """Render the create policy form.
 
     Args:
         request (HttpRequest): Django request object
     """
+    assert isinstance(request.user, User)
     if request.method == 'POST':
         form = PolicyForm(request.POST)
         form.full_clean()
@@ -84,14 +87,19 @@ def create(request):
 
 
 @login_required
-def clone(request, policy_id):
+def clone(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Clone a template policy to a custom user policy
 
     Args:
         request (HttpRequest): Django request object
         policy_id (int): ID of the template policy to clone
     """
+    assert isinstance(request.user, User)
     policy = get_object_or_404(Policy, id=policy_id, is_template=True)
+
+    # Check if current_version exists for the policy
+    if not policy.current_version:
+        return HttpResponse('Policy version not found', status=404)
 
     cloned_policy = Policy.objects.create(
         name=policy.name,
@@ -121,20 +129,27 @@ def clone(request, policy_id):
 
 
 @login_required
-def edit(request, policy_id):
+def edit(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Render the edit policy form.
 
     Args:
         request (HttpRequest): Django request object
         policy_id (int): ID of the policy to edit
     """
+    assert isinstance(request.user, User)
     policy = get_object_or_404(Policy, id=policy_id, user=request.user)
+
+    # Check if current_version exists for the policy
+    if not policy.current_version:
+        return HttpResponse('Policy version not found', status=404)
+
     if request.method == 'POST':
         form = PolicyForm(request.POST)
         form.full_clean()
         policy.save()
 
         # Create a new policy version
+        assert isinstance(policy.current_version.number, int)
         new_policy_version = PolicyVersion.objects.create(number=policy.current_version.number + 1, policy=policy)
 
         # Persist all of the rules against the new version
@@ -168,7 +183,7 @@ def edit(request, policy_id):
 
 
 @login_required
-def create_rule(request):
+def create_rule(request: HttpRequest) -> HttpResponse:
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
     return render(
@@ -184,7 +199,7 @@ def create_rule(request):
 
 @login_required
 @require_http_methods(['DELETE'])
-def delete_rule(request, rule_id):
+def delete_rule(request: HttpRequest, rule_id: int) -> HttpResponse:
     """Delete a single rule within a policy."""
     # If the rule_id is 0, then simply return a 200
     # This happens when the UI is deleting a rule that doesn't exist yet (i.e. in the policy create page)
@@ -195,7 +210,7 @@ def delete_rule(request, rule_id):
 
 
 @login_required
-def archive(request, policy_id):
+def archive(request: HttpRequest, policy_id: int) -> HttpResponse:
     """Archive a policy."""
     policy = get_object_or_404(Policy, id=policy_id, user=request.user)
     policy.archived = True

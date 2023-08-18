@@ -10,7 +10,7 @@ class PolicyForm(forms.Form):
     name = forms.CharField(label='Policy Name', max_length=100)
     description = forms.CharField(label='Policy Description', max_length=1000)
 
-    def clean(self):
+    def clean(self) -> None:
         """Create the 'rules' cleaned data field."""
         super().clean()
         rules = []
@@ -49,11 +49,12 @@ class PolicyForm(forms.Form):
         data = {'name': policy.name, 'description': policy.description}
 
         # Push all of the rules from the current policy into the dictionary
-        for rule in policy.current_version.rules.all():
-            data[f'rule_name_{index}'] = rule.name
-            data[f'rule_query_string_{index}'] = rule.query_string
-            data[f'rule_regex_{index}'] = rule.regex_test
-            data[f'rule_severity_{index}'] = rule.severity
-            index += 1
+        if policy.current_version:
+            for rule in policy.current_version.rules.all():
+                data[f'rule_name_{index}'] = rule.name
+                data[f'rule_query_string_{index}'] = rule.query_string
+                data[f'rule_regex_{index}'] = rule.regex_test
+                data[f'rule_severity_{index}'] = str(rule.severity)
+                index += 1
 
         return PolicyForm(data=data)
