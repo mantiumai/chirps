@@ -3,6 +3,8 @@ import os
 
 from django.core.management.base import BaseCommand
 
+from chirps.settings import BASE_DIR
+
 
 class Command(BaseCommand):
     """Management command for interacting with redis."""
@@ -17,9 +19,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle redis command"""
+        workspace_path = os.path.abspath(os.path.join(BASE_DIR, '..'))
         if options['start']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml up -d redis')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml up -d redis')
         elif options['stop']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml down')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml down')
         elif options['status']:
-            os.system('docker-compose -f /workspace/.devcontainer/docker-compose.yml ps')
+            os.system(f'docker-compose -f {workspace_path}/.devcontainer/docker-compose.yml ps')
