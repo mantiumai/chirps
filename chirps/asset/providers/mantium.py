@@ -34,3 +34,7 @@ class MantiumAsset(BaseAsset):
         documents = [SearchResult(data=doc['content']) for doc in results['documents']]
         logger.debug('Mantium asset search complete', extra={'id': self.id})
         return documents
+
+    def displayable_attributes(self):
+        """Display a subset of the model's attributes"""
+        return [{'label': 'Application ID', 'value': self.app_id}]
