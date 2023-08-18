@@ -17,7 +17,7 @@ class APIEndpointAsset(BaseAsset):
     )
     api_key = EncryptedCharField(max_length=256, editable=True)
     headers = models.JSONField(blank=True, null=True)
-    body = models.JSONField(blank=True, null=True, default=dict(body='%query%'))
+    body = models.JSONField(blank=True, null=True, default={'body': '%query%'})
 
     # Name of the file in the ./asset/static/ directory to use as a logo
     html_logo = 'asset/api-endpoint-logo.svg'
