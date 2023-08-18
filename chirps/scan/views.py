@@ -390,6 +390,5 @@ def vcr_start(request, scan_id):
 
 
 @login_required
-def vcr_stop(request, scan_id):
+def vcr_stop(request, scan_id):   # pylint: disable=unused-argument
     """TBD"""
-    pass
