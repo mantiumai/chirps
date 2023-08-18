@@ -1,24 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
     const keyValueContainers = document.querySelectorAll('.key-value-container');
 
-    keyValueContainers.forEach(container => {
+    keyValueContainers.forEach((container, index) => {
         const addButton = container.nextElementSibling;
-        addButton.addEventListener('click', () => {
-            addKeyValuePair(container);
-        });
 
-        // Initialize with existing pairs from the hidden input value
-        const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
-        if (hiddenInput.value) {
-            const pairs = JSON.parse(hiddenInput.value);
-            for (const key in pairs) {
-                addKeyValuePair(container, key, pairs[key]);
+        // Add a data attribute to the button to prevent multiple event listeners
+        if (!addButton.hasAttribute('data-initialized')) {
+            addButton.setAttribute('data-initialized', 'true');
+
+            addButton.addEventListener('click', () => {
+                addKeyValuePair(container);
+            });
+
+            // Initialize with existing pairs from the hidden input value
+            const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
+            if (hiddenInput.value) {
+                const pairs = JSON.parse(hiddenInput.value);
+                for (const key in pairs) {
+                    addKeyValuePair(container, key, pairs[key]);
+                }
             }
         }
     });
 });
 
+
 function addKeyValuePair(container, key = '', value = '') {
+    if (!container) {
+        console.error('Container not found');
+        return;
+    }
     const keyInput = document.createElement('input');
     keyInput.type = 'text';
     keyInput.placeholder = 'Key';

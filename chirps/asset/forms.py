@@ -179,6 +179,7 @@ class APIEndpointAssetForm(ModelForm):
             'authentication_method',
             'api_key',
             'headers',
+            'body',
         ]
 
         widgets = {
@@ -189,6 +190,7 @@ class APIEndpointAssetForm(ModelForm):
             ),
             'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
             'headers': KeyValueWidget(attrs={'class': 'form-control'}),
+            'body': KeyValueWidget(attrs={'class': 'form-control'}),
         }
 
 
