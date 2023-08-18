@@ -1,3 +1,4 @@
+"""Widgets for the asset app"""
 from django import forms
 from django.utils.html import format_html
 
