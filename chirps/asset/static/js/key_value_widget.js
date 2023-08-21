@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
 function addKeyValuePair(container, key = '', value = '') {
     if (!container) {
         console.error('Container not found');
@@ -42,22 +43,10 @@ function addKeyValuePair(container, key = '', value = '') {
     valueInput.value = value;
     valueInput.className = 'form-control mr-2';
 
-    // Make the value %query% uneditable
-    if (value === '%query%') {
-        valueInput.setAttribute('disabled', 'disabled');
-    }
-
-    const removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.textContent = 'Remove';
-    removeButton.className = 'btn btn-danger';
-
     const pair = document.createElement('div');
     pair.className = 'form-inline mb-2';
     pair.appendChild(keyInput);
     pair.appendChild(valueInput);
-    pair.appendChild(removeButton);
-    container.appendChild(pair);
 
     // Add tooltip icon and message for the 'body' field with key 'data'
     if (container.id.includes('body') && value === '%query%') {
@@ -68,14 +57,25 @@ function addKeyValuePair(container, key = '', value = '') {
 
         pair.appendChild(tooltipIcon);
 
-        // Initialize the tooltip
-        $(tooltipIcon).tooltip();
+        // this value will be used to know where in the request to put our message, so don't let the user change it
+        valueInput.disabled = true;
     }
 
-    removeButton.addEventListener('click', () => {
-        container.removeChild(pair);
-        updateHiddenInput(container);
-    });
+    if (value !== '%query%') {
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.textContent = 'Remove';
+        removeButton.className = 'btn btn-danger';
+
+        pair.appendChild(removeButton);
+
+        removeButton.addEventListener('click', () => {
+            container.removeChild(pair);
+            updateHiddenInput(container);
+        });
+    }
+
+    container.appendChild(pair);
 
     keyInput.addEventListener('input', () => {
         updateHiddenInput(container);
@@ -84,4 +84,18 @@ function addKeyValuePair(container, key = '', value = '') {
     valueInput.addEventListener('input', () => {
         updateHiddenInput(container);
     });
+}
+
+function updateHiddenInput(container) {
+    const pairs = {};
+    const keyValuePairs = container.querySelectorAll('div.form-inline');
+
+    keyValuePairs.forEach(pair => {
+        const keyInput = pair.querySelector('input:first-child');
+        const valueInput = pair.querySelector('input:nth-child(2)');
+        pairs[keyInput.value] = valueInput.value;
+    });
+
+    const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
+    hiddenInput.value = JSON.stringify(pairs);
 }
