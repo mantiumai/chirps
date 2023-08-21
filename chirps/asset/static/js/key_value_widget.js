@@ -42,6 +42,11 @@ function addKeyValuePair(container, key = '', value = '') {
     valueInput.value = value;
     valueInput.className = 'form-control mr-2';
 
+    // Make the value %query% uneditable
+    if (value === '%query%') {
+        valueInput.setAttribute('disabled', 'disabled');
+    }
+
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
     removeButton.textContent = 'Remove';
@@ -53,6 +58,19 @@ function addKeyValuePair(container, key = '', value = '') {
     pair.appendChild(valueInput);
     pair.appendChild(removeButton);
     container.appendChild(pair);
+
+    // Add tooltip icon and message for the 'body' field with key 'data'
+    if (container.id.includes('body') && value === '%query%') {
+        const tooltipIcon = document.createElement('i');
+        tooltipIcon.className = 'fas fa-info-circle ml-2';
+        tooltipIcon.setAttribute('data-toggle', 'tooltip');
+        tooltipIcon.setAttribute('title', 'Chirps sends a POST request to the API endpoint.\n\nThe value %query% will be replaced by the request text.\n\nPlease update the key to match what is expected in the request.');
+
+        pair.appendChild(tooltipIcon);
+
+        // Initialize the tooltip
+        $(tooltipIcon).tooltip();
+    }
 
     removeButton.addEventListener('click', () => {
         container.removeChild(pair);
@@ -66,18 +84,4 @@ function addKeyValuePair(container, key = '', value = '') {
     valueInput.addEventListener('input', () => {
         updateHiddenInput(container);
     });
-}
-
-function updateHiddenInput(container) {
-    const pairs = {};
-    const keyValuePairs = container.querySelectorAll('div.form-inline');
-
-    keyValuePairs.forEach(pair => {
-        const keyInput = pair.querySelector('input:first-child');
-        const valueInput = pair.querySelector('input:nth-child(2)');
-        pairs[keyInput.value] = valueInput.value;
-    });
-
-    const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
-    hiddenInput.value = JSON.stringify(pairs);
 }
