@@ -1,8 +1,8 @@
 name: Bump version workflow
 
 on:
-    push:
-        branches: [ "main" ]
+  push:
+    branches: [ "main" ]
     # Prevent the workflow from triggering when only the 'VERSION' file is updated
     paths-ignore:
     - 'VERSION'
