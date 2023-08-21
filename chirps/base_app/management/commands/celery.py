@@ -2,6 +2,7 @@
 import os
 
 from django.core.management.base import BaseCommand
+from django.utils import autoreload
 
 
 class Command(BaseCommand):
@@ -18,12 +19,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Handle the command."""
         if options['start']:
-            self.start()
+            self.stop()
+            autoreload.run_with_reloader(self.start)
         elif options['stop']:
             self.stop()
         elif options['restart']:
             self.stop()
-            self.start()
+            autoreload.run_with_reloader(self.start)
 
     def start(self):
         """Start the celery server."""
