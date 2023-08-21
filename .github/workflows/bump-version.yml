@@ -32,7 +32,7 @@ jobs:
         current_version: "${{ env.current_version }}"
         files: VERSION
         part: patch
-        commit_name: GitHub Action Bot
-        commit_email: github-action-bot@users.noreply.github.com
-        login: github-action-bot
+        commit_name: Version Bump Bot
+        commit_email: bot@noreply.example.com
+        login: REPLACE_WITH_PAT_USERNAME
         token: "${{ secrets.BOT_TOKEN }}"
