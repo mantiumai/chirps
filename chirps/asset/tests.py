@@ -2,7 +2,7 @@
 from unittest import mock
 
 import fakeredis
-from asset.forms import PineconeAssetForm, RedisAssetForm
+from asset.forms import APIEndpointAssetForm, PineconeAssetForm, RedisAssetForm
 from asset.providers.mantium import MantiumAsset
 from asset.providers.redis import RedisAsset
 from django.contrib.auth.models import User  # noqa: E5142
@@ -122,6 +122,30 @@ class AssetTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
 
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
+        self.assertRedirects(response, reverse('asset_dashboard'))
+
+    def test_api_endpoint_asset_creation(self):
+        """Test the creation of an API Endpoint asset with the dropdown."""
+        self.client.post(
+            reverse('login'),
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+        )
+
+        form_data = {
+            'name': 'API Endpoint Asset',
+            'url': 'https://api.example.com/endpoint',
+            'authentication_method': 'Bearer',
+            'api_key': 'example-api-key',
+            'headers': '{"Content-Type": "application/json"}',
+            'body': '{"data": "%query%"}',
+        }
+        form = APIEndpointAssetForm(data=form_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+        response = self.client.post(reverse('asset_create', args=['API Endpoint']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
 
 
