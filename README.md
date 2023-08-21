@@ -55,11 +55,6 @@ The chirps application makes use of Celery and RabbitMQ for job processing. Exec
 
 Both the rabbitmq and celery commands have `--stop` and `--restart` options as well.
 
-#### IMPORTANT CELERY TIP
-
-If you make changes to a Celery task, it must be restarted in order for those changes to be picked up. Simply run
-`./manage.py celery --restart`
-
 ### Run Webserver
 
 `./manage.py runserver`
