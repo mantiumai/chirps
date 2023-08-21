@@ -1,8 +1,10 @@
 """Test cases for the asset application."""
+import json
 from unittest import mock
 
 import fakeredis
-from asset.forms import PineconeAssetForm, RedisAssetForm
+from asset.forms import APIEndpointAssetForm, PineconeAssetForm, RedisAssetForm
+from asset.providers.api_endpoint import APIEndpointAsset
 from asset.providers.mantium import MantiumAsset
 from asset.providers.redis import RedisAsset
 from django.contrib.auth.models import User  # noqa: E5142
@@ -123,6 +125,41 @@ class AssetTests(TestCase):
 
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
+
+    def test_api_endpoint_asset_creation(self):
+        """Test the creation of an API Endpoint asset with the dropdown."""
+        self.client.post(
+            reverse('login'),
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+        )
+
+        form_data = {
+            'name': 'API Endpoint Asset',
+            'url': 'https://api.example.com/endpoint',
+            'authentication_method': 'Bearer',
+            'api_key': 'example-api-key',
+            'headers': '{"Content-Type": "application/json"}',
+            'body': '{"data": "%query%"}',
+        }
+        form = APIEndpointAssetForm(data=form_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+        response = self.client.post(reverse('asset_create', args=['API Endpoint']), form_data)
+        self.assertRedirects(response, reverse('asset_dashboard'))
+
+        # Check if the data is properly stored in the database
+        user = User.objects.get(username=self.users[0]['username'])
+        api_endpoint_asset = APIEndpointAsset.objects.filter(user=user).first()
+        self.assertIsNotNone(api_endpoint_asset)
+        self.assertEqual(api_endpoint_asset.name, form_data['name'])
+        self.assertEqual(api_endpoint_asset.url, form_data['url'])
+        self.assertEqual(api_endpoint_asset.authentication_method, form_data['authentication_method'])
+        self.assertEqual(api_endpoint_asset.api_key, form_data['api_key'])
+        self.assertEqual(api_endpoint_asset.headers, json.loads(form_data['headers']))
+        self.assertEqual(api_endpoint_asset.body, json.loads(form_data['body']))
 
 
 class AssetPaginationTests(TestCase):

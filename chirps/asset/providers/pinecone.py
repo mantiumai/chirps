@@ -21,7 +21,7 @@ class PineconeAsset(BaseAsset):
     embedding_model_service = models.CharField(max_length=256, default='OpenAI')
 
     # Name of the file in the ./asset/static/ directory to use as a logo
-    html_logo = 'asset/pinecone-logo.png'
+    html_logo = 'asset/pinecone-logo.svg'
     html_name = 'Pinecone'
     html_description = 'Pinecone Vector Database'
 
