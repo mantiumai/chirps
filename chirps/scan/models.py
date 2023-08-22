@@ -1,4 +1,6 @@
 """Models for the scan application."""
+from abc import abstractmethod
+
 from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
@@ -194,10 +196,10 @@ class BaseResult(models.Model):
 
         return False
 
+    @abstractmethod
     def findings_count(self) -> int:
         """Return the number of findings associated with this result."""
-        findings_query = BaseFinding.objects.filter(result=self)
-        return findings_query.count()
+        raise NotImplementedError
 
     def __str__(self):
         """Stringify the rule name and scan ID"""
@@ -212,6 +214,11 @@ class RegexResult(BaseResult):
 
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()
+
+    def findings_count(self) -> int:
+        """Return the number of findings associated with this result."""
+        findings_query = self.findings.filter(result=self)
+        return findings_query.count()
 
 
 class BaseFinding(models.Model):
