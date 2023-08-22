@@ -175,6 +175,7 @@ class APIEndpointAssetForm(ModelForm):
         model = APIEndpointAsset
         fields = [
             'name',
+            'description',
             'url',
             'authentication_method',
             'api_key',
@@ -184,6 +185,9 @@ class APIEndpointAssetForm(ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
+            'description': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'What does this API endpoint do?'}
+            ),
             'url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'URL'}),
             'authentication_method': forms.Select(
                 choices=[('Basic', 'Basic'), ('Bearer', 'Bearer')], attrs={'class': 'form-control'}

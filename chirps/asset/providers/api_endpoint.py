@@ -19,6 +19,9 @@ class APIEndpointAsset(BaseAsset):
     headers = models.JSONField(blank=True, null=True)
     body = models.JSONField(blank=True, null=True, default={'data': '%query%'})
 
+    # What is the API endpoint set up to do?
+    description = models.TextField(blank=True, null=True, max_length=2048)
+
     # Name of the file in the ./asset/static/ directory to use as a logo
     html_logo = 'asset/api-endpoint-logo.svg'
     html_name = 'API Endpoint'

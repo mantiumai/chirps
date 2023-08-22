@@ -48,12 +48,35 @@
 
     <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
         <div class="accordion" id="template-panel-accordion">
-            {% include 'policy/dashboard_policy_list.html' with policy_list=templates edit_mode=True %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="regexAccordionHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#regexAccordionCollapse" aria-expanded="false" aria-controls="regexAccordionCollapse">
+                        Regex Templates
+                    </button>
+                </h2>
+                <div id="regexAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="regexAccordionHeading" data-bs-parent="#template-panel-accordion">
+                    <div class="accordion-body">
+                        {% include 'policy/dashboard_policy_list.html' with policy_list=regex_templates edit_mode=True %}
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="multiQueryAccordionHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#multiQueryAccordionCollapse" aria-expanded="false" aria-controls="multiQueryAccordionCollapse">
+                        Multi-Query Templates
+                    </button>
+                </h2>
+                <div id="multiQueryAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="multiQueryAccordionHeading" data-bs-parent="#template-panel-accordion">
+                    <div class="accordion-body">
+                        {% include 'policy/dashboard_policy_list.html' with policy_list=multiquery_templates edit_mode=True %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="tab-pane fade" id="tabs-3" role="tabpanel" aria-labelledby="tab-3">
-        <div class="accordion" id="template-panel-accordion">
+        <div class="accordion" id="severity-panel-accordion">
             {% include 'severity/severity_management.html' with severities=severities %}
         </div>
     </div>

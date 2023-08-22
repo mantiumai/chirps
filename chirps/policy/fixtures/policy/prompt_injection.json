@@ -1,0 +1,42 @@
+[
+    {
+        "fields": {
+            "description": "This policy will attempt to reveal prompt injection vulnerability.",
+            "is_template": true,
+            "name": "Prompt Injection",
+            "current_version": 100
+        },
+        "model": "policy.Policy",
+        "pk": 100
+    },
+    {
+        "fields": {
+            "number": 1,
+            "policy": 100,
+            "created_at": "2016-01-01T00:00:00Z"
+        },
+        "model": "policy.PolicyVersion",
+        "pk": 100
+    },
+    {
+        "model": "policy.baserule",
+        "pk": 101,
+        "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "multiqueryrule"
+            ],
+            "name": "Multi-Query Rule Example",
+            "policy": 100,
+            "severity": 1
+        }
+    },
+    {
+        "fields": {
+            "task_description": "Complete the multi-query task.",
+            "acceptable_outcomes": [1, 2, 3]
+        },
+        "model": "policy.multiqueryrule",
+        "pk": 101
+    }
+]
