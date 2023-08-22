@@ -1,14 +1,14 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule
+from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule, RuleTypes
 
 
 @login_required
@@ -87,7 +87,8 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    return render(request, 'policy/create.html', {})
+    rule_types = [{'value': rt.value, 'name': rt.name} for rt in RuleTypes]
+    return render(request, 'policy/create.html', {'rule_types': rule_types})
 
 
 @login_required
@@ -175,15 +176,32 @@ def edit(request, policy_id):
 
 
 @login_required
-def create_rule(request):
+def render_add_rule_dropdown(request):
+    """Render the dropdown for adding a new rule to a policy."""
+    rule_types = [{'value': rt.value, 'name': rt.name} for rt in RuleTypes]
+    return render(request, 'policy/add_rule_dropdown.html', {'rule_types': rule_types})
+
+
+@login_required
+def create_rule(request, rule_type=None):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
+    rule_id = request.GET.get('rule_id', 0)
+    next_rule_id = int(rule_id) + 1
+
+    if rule_type == RuleTypes.REGEX.value:
+        template_name = 'policy/create_regex_rule.html'
+    elif rule_type == RuleTypes.MULTI_QUERY.value:
+        template_name = 'policy/create_multi_query_rule.html'
+    else:
+        return HttpResponseBadRequest('Invalid rule type')
+
     return render(
         request,
-        'policy/create_rule.html',
+        template_name,
         {
-            'rule_id': request.GET.get('rule_id', 0),
-            'next_rule_id': int(request.GET.get('rule_id', 0)) + 1,
+            'rule_id': rule_id,
+            'next_rule_id': next_rule_id,
             'severities': severities,
         },
     )

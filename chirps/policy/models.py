@@ -9,7 +9,7 @@ from polymorphic.models import PolymorphicModel
 from severity.models import Severity
 
 
-class Rules(Enum):
+class RuleTypes(Enum):
     """Enumeration of all the rules."""
 
     REGEX = 'RegexRule'
@@ -68,7 +68,7 @@ class BaseRule(PolymorphicModel):
 class RegexRule(BaseRule):
     """Regex rule."""
 
-    type = Rules.REGEX
+    type = RuleTypes.REGEX
 
     # Query to run against the asset
     query_string = models.TextField()
@@ -83,7 +83,7 @@ class RegexRule(BaseRule):
 class MultiQueryRule(BaseRule):
     """Multi-query rule."""
 
-    type = Rules.MULTI_QUERY
+    type = RuleTypes.MULTI_QUERY
 
     # Description of the task to be completed
     task_description = models.TextField()
