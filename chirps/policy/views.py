@@ -71,15 +71,24 @@ def create(request):
         # Create the rules
         for rule in form.cleaned_data['rules']:
             # Retrieve the Severity instance from the database using the provided value
-            severity_instance = Severity.objects.get(value=rule['rule_severity'])
+            severity_instance = Severity.objects.get(value=rule['severity'])
 
-            RegexRule.objects.create(
-                name=rule['rule_name'],
-                query_string=rule['rule_query_string'],
-                regex_test=rule['rule_regex'],
-                severity=severity_instance,
-                policy=policy_version,
-            )
+            if rule['type'] == RuleTypes.REGEX.value:
+                RegexRule.objects.create(
+                    name=rule['name'],
+                    query_string=rule['query_string'],
+                    regex_test=rule['regex_test'],
+                    severity=severity_instance,
+                    policy=policy_version,
+                )
+            elif rule['type'] == RuleTypes.MULTI_QUERY.value:
+                MultiQueryRule.objects.create(
+                    name=rule['name'],
+                    task_description=rule['task_description'],
+                    acceptable_outcomes=rule['acceptable_outcomes'],
+                    severity=severity_instance,
+                    policy=policy_version,
+                )
 
         # Add a success message
         messages.success(request, 'Policy created successfully.')

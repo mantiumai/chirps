@@ -1,7 +1,7 @@
 """Forms for the Policy app."""
 from django import forms
 
-from .models import Policy
+from .models import Policy, RuleTypes
 
 
 class PolicyForm(forms.Form):
@@ -15,19 +15,21 @@ class PolicyForm(forms.Form):
         super().clean()
         rules = []
 
-        # For each of the form field IDs, build a list of Rules
-        rule_key_prefixes = ['rule_name', 'rule_query_string', 'rule_regex', 'rule_severity']
-
         # Walk through all of the field keys, building a rule for each one
         for rule_id in self.get_form_field_keys():
             rule = {}
 
-            # Walk through all of the key prefixes, adding them to the rule dictionary
-            # The key for the rule dictionary is JUST the prefix, not the prefix + rule ID
-            for prefix in rule_key_prefixes:
-                rule[f'{prefix}'] = self.data[f'{prefix}_{rule_id}']
+            rule['name'] = self.data[f'rule_name_{rule_id}']
+            rule['severity'] = self.data[f'rule_severity_{rule_id}']
+            rule['type'] = self.data[f'rule_type_{rule_id}']
 
-            # Add the rule to the list of rules
+            if rule['type'] == RuleTypes.REGEX.value:
+                rule['query_string'] = self.data[f'rule_query_string_{rule_id}']
+                rule['regex_test'] = self.data[f'rule_regex_{rule_id}']
+            elif rule['type'] == RuleTypes.MULTI_QUERY.value:
+                rule['task_description'] = self.data[f'rule_task_description_{rule_id}']
+                rule['acceptable_outcomes'] = self.data[f'rule_acceptable_outcomes_{rule_id}']
+
             rules.append(rule)
 
         self.cleaned_data['rules'] = rules
