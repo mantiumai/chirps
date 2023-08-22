@@ -42,7 +42,7 @@
 
     <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
         <div class="accordion" id="custom-panel-accordion">
-            {% include 'policy/dashboard_policy_list.html' with policy_list=user_policies edit_mode=True%}
+            {% include 'policy/dashboard_regex_policy_list.html' with policy_list=user_policies edit_mode=True%}
         </div>
     </div>
 
@@ -56,7 +56,7 @@
                 </h2>
                 <div id="regexAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="regexAccordionHeading" data-bs-parent="#template-panel-accordion">
                     <div class="accordion-body">
-                        {% include 'policy/dashboard_policy_list.html' with policy_list=regex_templates edit_mode=True %}
+                        {% include 'policy/dashboard_regex_policy_list.html' with policy_list=regex_templates edit_mode=True %}
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 </h2>
                 <div id="multiQueryAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="multiQueryAccordionHeading" data-bs-parent="#template-panel-accordion">
                     <div class="accordion-body">
-                        {% include 'policy/dashboard_policy_list.html' with policy_list=multiquery_templates edit_mode=True %}
+                        {% include 'policy/dashboard_multiquery_policy_list.html' with policy_list=multiquery_templates edit_mode=True %}
                     </div>
                 </div>
             </div>
