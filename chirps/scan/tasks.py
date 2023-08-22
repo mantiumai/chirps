@@ -7,7 +7,7 @@ from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
 
-from .models import Finding, Result, ScanAsset, ScanAssetFailure
+from .models import BaseFinding, BaseResult, ScanAsset, ScanAssetFailure
 
 logger = getLogger(__name__)
 
@@ -92,14 +92,14 @@ def scan_task(scan_asset_id):
         for search_result in results:
 
             # Create the result. We'll flip the result flag to True if any findings are found
-            result = Result(rule=rule, text=search_result.data, scan_asset=scan_asset)
+            result = BaseResult(rule=rule, text=search_result.data, scan_asset=scan_asset)
             result.save()
 
             # Run the regex against the text
             for match in re.finditer(rule.regex_test, search_result.data):
 
                 # Persist the finding
-                finding = Finding(
+                finding = BaseFinding(
                     result=result,
                     offset=match.start(),
                     length=match.end() - match.start(),

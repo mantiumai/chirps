@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
-from policy.models import RegexRule
+from policy.models import BaseRule, RegexRule
 
 
 class ScanTemplate(models.Model):
@@ -175,17 +175,17 @@ class ScanAssetFailure(models.Model):
     traceback = models.TextField()
 
 
-class Result(models.Model):
-    """Model for a single result from a rule."""
+class BaseResult(models.Model):
+    """Base model for a single result from a rule."""
 
     # Scan asset that the result belongs to
     scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='results')
 
-    # The raw text (encrypted at REST) that was scanned
-    text = EncryptedTextField()
-
     # The rule that was used to scan the text
-    rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
+    rule = models.ForeignKey(BaseRule, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
 
     def has_findings(self) -> bool:
         """Return True if the result has findings, False otherwise."""
@@ -196,7 +196,7 @@ class Result(models.Model):
 
     def findings_count(self) -> int:
         """Return the number of findings associated with this result."""
-        findings_query = Finding.objects.filter(result=self)
+        findings_query = BaseFinding.objects.filter(result=self)
         return findings_query.count()
 
     def __str__(self):
@@ -204,17 +204,36 @@ class Result(models.Model):
         return f'{self.rule.name} - {self.scan_asset.scan.id}'
 
 
-class Finding(models.Model):
-    """Model to identify the location of a finding within a result."""
+class RegexResult(BaseResult):
+    """Model for a single result from a Regex rule."""
 
-    source_id = models.TextField(blank=True, null=True)
-    result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name='findings')
-    offset = models.IntegerField()
-    length = models.IntegerField()
+    # The rule that was used to scan the text
+    rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
+
+    # The raw text (encrypted at REST) that was scanned
+    text = EncryptedTextField()
+
+
+class BaseFinding(models.Model):
+    """Base model to identify the location of a finding within a result."""
+
+    result = models.ForeignKey(BaseResult, on_delete=models.CASCADE, related_name='findings')
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
-        """Stringify the offset and length separated by a colon"""
-        return f'{self.offset}:{self.length}'
+        """Stringify the finding"""
+        return f'{self.result}'
+
+
+class RegexFinding(BaseFinding):
+    """Model to identify the location of a finding within a Regex result."""
+
+    result = models.ForeignKey(RegexResult, on_delete=models.CASCADE, related_name='findings')
+    source_id = models.TextField(blank=True, null=True)
+    offset = models.IntegerField()
+    length = models.IntegerField()
 
     def text(self):
         """Return the text of the finding."""

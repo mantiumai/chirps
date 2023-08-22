@@ -13,14 +13,14 @@ from embedding.models import Embedding
 from policy.models import Policy
 
 from .forms import ScanForm
-from .models import Finding, ScanAsset, ScanRun, ScanTemplate, ScanVersion
+from .models import BaseFinding, ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from .tasks import scan_task
 
 
 @login_required
 def finding_detail(request, finding_id):
     """Render the finding detail page."""
-    finding = get_object_or_404(Finding, pk=finding_id, result__scan__user=request.user)
+    finding = get_object_or_404(BaseFinding, pk=finding_id, result__scan__user=request.user)
     return render(request, 'scan/finding_detail.html', {'finding': finding})
 
 
