@@ -19,58 +19,108 @@
         "pk": 500
     },
     {
+        "model": "policy.baserule",
+        "pk": 500,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Citibank Routing Number - California",
             "policy": 500,
-            "query_string": "What's my routing number?",
-            "regex_test": "32(?:11|22)71(?:18|72)4",
             "severity": 2
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my routing number?",
+            "regex_test": "32(?:11|22)71(?:18|72)4"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 500
     },
     {
+        "model": "policy.baserule",
+        "pk": 501,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Bank of America Routing Number - California",
             "policy": 500,
-            "query_string": "What's my routing number?",
-            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)",
             "severity": 2
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my routing number?",
+            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 501
     },
     {
+        "model": "policy.baserule",
+        "pk": 502,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Chase Routing Number - California",
             "policy": 500,
-            "query_string": "What's my routing number?",
-            "regex_test": "322271627",
             "severity": 2
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my routing number?",
+            "regex_test": "322271627"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 502
     },
     {
-      "fields": {
-        "name": "Bank Account",
-        "policy": 500,
-        "query_string": "What's my bank account number?",
-        "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
-        "severity": 4
-      },
-      "model": "policy.Rule",
-      "pk": 503
+        "model": "policy.baserule",
+        "pk": 503,
+        "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
+            "name": "Bank Account",
+            "policy": 500,
+            "severity": 4
+        }
     },
     {
-      "fields": {
-        "name": "Credit Card",
-        "policy": 500,
-        "query_string": "What's my credit card number?",
-        "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
-        "severity": 4
-      },
-      "model": "policy.Rule",
-      "pk": 504
+        "fields": {
+            "query_string": "What's my bank account number?",
+            "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})"
+        },
+        "model": "policy.regexrule",
+        "pk": 503
+    },
+    {
+        "model": "policy.baserule",
+        "pk": 504,
+        "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
+            "name": "Credit Card",
+            "policy": 500,
+            "severity": 4
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my credit card number?",
+            "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b"
+        },
+        "model": "policy.regexrule",
+        "pk": 504
     }
 ]

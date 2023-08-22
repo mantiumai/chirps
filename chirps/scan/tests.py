@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages import get_messages
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse_lazy
-from policy.models import Policy, PolicyVersion, Rule
+from policy.models import Policy, PolicyVersion, RegexRule
 from severity.models import Severity
 
 from .models import ScanAsset, ScanAssetFailure, ScanRun, ScanTemplate
@@ -72,7 +72,7 @@ class ScanTest(TestCase):
         policy.current_version = policy_version
         policy.save()
         severity = Severity.objects.get(value=1)
-        Rule.objects.create(query_string='some query', policy=policy_version, severity=severity)
+        RegexRule.objects.create(query_string='some query', policy=policy_version, severity=severity)
 
         asset = PineconeAsset.objects.create(user=user, api_key='foo')
         asset.save()

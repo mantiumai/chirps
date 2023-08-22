@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
 from fernet_fields import EncryptedTextField
-from policy.models import Rule
+from policy.models import RegexRule
 
 
 class ScanTemplate(models.Model):
@@ -185,7 +185,7 @@ class Result(models.Model):
     text = EncryptedTextField()
 
     # The rule that was used to scan the text
-    rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
+    rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
 
     def has_findings(self) -> bool:
         """Return True if the result has findings, False otherwise."""
