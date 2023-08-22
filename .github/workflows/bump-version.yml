@@ -16,16 +16,15 @@ jobs:
     # https://github.com/marketplace/actions/bump2version-action#bump2version-action
     runs-on: ubuntu-20.04
     steps:
+
     - name: actions/checkout
       uses: actions/checkout@v2
       with:
           persist-credentials: false
 
-    # Read the current version from the 'VERSION' file.
     - name: current_version
       run: echo "current_version=$(cat VERSION)" >> $GITHUB_ENV
 
-    # Use the bump2version-action to bump the minor version in the 'VERSION' file.
     - name: FragileTech/bump-version
       uses: FragileTech/bump-version@main
       with:
