@@ -3,7 +3,10 @@
         "model": "asset.baseasset",
         "pk": 1,
         "fields": {
-            "polymorphic_ctype": ["asset", "mantiumasset"],
+            "polymorphic_ctype": [
+                "asset",
+                "mantiumasset"
+            ],
             "name": "ZimTest",
             "user": 1
         }
@@ -12,7 +15,10 @@
         "model": "asset.baseasset",
         "pk": 2,
         "fields": {
-            "polymorphic_ctype": ["asset", "redisasset"],
+            "polymorphic_ctype": [
+                "asset",
+                "redisasset"
+            ],
             "name": "Dummy Redis",
             "user": 1
         }
@@ -21,7 +27,10 @@
         "model": "asset.baseasset",
         "pk": 3,
         "fields": {
-            "polymorphic_ctype": ["asset", "pineconeasset"],
+            "polymorphic_ctype": [
+                "asset",
+                "pineconeasset"
+            ],
             "name": "Dummy Pinecone",
             "user": 1
         }
@@ -78,87 +87,157 @@
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 100,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "SSN",
+            "severity": 4,
+            "policy": 100
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 100,
+        "fields": {
             "query_string": "What's my social security number?",
             "query_embedding": null,
-            "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
-            "severity": 4,
-            "policy": 100
+            "regex_test": "\\b\\d{3}-\\d{2}-\\d{4}\\b"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 101,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Address",
+            "severity": 2,
+            "policy": 100
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 101,
+        "fields": {
             "query_string": "What's my address?",
             "query_embedding": null,
-            "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b",
-            "severity": 2,
-            "policy": 100
+            "regex_test": "\\b\\d{1,5}\\s+([a-zA-Z]+\\s+)*[a-zA-Z]+,\\s*[a-zA-Z]{2}\\s+\\d{5}(?:-\\d{4})?\\b"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 102,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Bank Account",
+            "severity": 4,
+            "policy": 100
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 102,
+        "fields": {
             "query_string": "What's my bank account number?",
             "query_embedding": null,
-            "regex_test": "\\d{10,12}",
-            "severity": 4,
-            "policy": 100
+            "regex_test": "\\d{10,12}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 103,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Credit Card",
-            "query_string": "What's my credit card number?",
-            "query_embedding": null,
-            "regex_test": "(?:\\d[ -]*?){13,16}",
             "severity": 4,
             "policy": 100
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 103,
+        "fields": {
+            "query_string": "What's my credit card number?",
+            "query_embedding": null,
+            "regex_test": "(?:\\d[ -]*?){13,16}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 104,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Email Address",
+            "severity": 2,
+            "policy": 100
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 104,
+        "fields": {
             "query_string": "What's my email address?",
             "query_embedding": null,
-            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-            "severity": 2,
-            "policy": 100
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 105,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Phone number",
-            "query_string": "What's my phone number?",
-            "query_embedding": null,
-            "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b",
             "severity": 2,
             "policy": 100
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 105,
+        "fields": {
+            "query_string": "What's my phone number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 106,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Salary",
-            "query_string": "What's my salary?",
-            "query_embedding": null,
-            "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?",
             "severity": 2,
             "policy": 100
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 106,
+        "fields": {
+            "query_string": "What's my salary?",
+            "query_embedding": null,
+            "regex_test": "\\$\\d+(,\\d{3})*(\\.\\d{2})?"
         }
     },
     {
@@ -179,4 +258,4 @@
             "user_permissions": []
         }
     }
-    ]
+]

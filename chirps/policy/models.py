@@ -1,6 +1,7 @@
 """Models for the policy application."""
 from django.contrib.auth.models import User
 from django.db import models
+from polymorphic.models import PolymorphicModel
 from severity.models import Severity
 
 
@@ -37,19 +38,10 @@ class PolicyVersion(models.Model):
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
 
 
-class Rule(models.Model):
-    """A step to execute within a policy."""
+class BaseRule(PolymorphicModel):
+    """Base class that all rules will inherit from."""
 
     name = models.CharField(max_length=256)
-
-    # Query to run against the asset
-    query_string = models.TextField()
-
-    # Embedding of the query string
-    query_embedding = models.TextField(null=True, blank=True)
-
-    # Regular expression to run against the response documents
-    regex_test = models.TextField()
 
     # ForeignKey relationship to the Severity model
     severity = models.ForeignKey(Severity, on_delete=models.CASCADE)
@@ -60,3 +52,16 @@ class Rule(models.Model):
     def __str__(self):
         """Stringify the name"""
         return self.name
+
+
+class RegexRule(BaseRule):
+    """A step to execute within a policy."""
+
+    # Query to run against the asset
+    query_string = models.TextField()
+
+    # Embedding of the query string
+    query_embedding = models.TextField(null=True, blank=True)
+
+    # Regular expression to run against the response documents
+    regex_test = models.TextField()

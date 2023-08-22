@@ -8,7 +8,7 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, Rule
+from .models import Policy, PolicyVersion, RegexRule
 
 
 @login_required
@@ -66,7 +66,7 @@ def create(request):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            Rule.objects.create(
+            RegexRule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
@@ -108,7 +108,7 @@ def clone(request, policy_id):
 
     # Clone the rules
     for rule in policy.current_version.rules.all():
-        Rule.objects.create(
+        RegexRule.objects.create(
             name=rule.name,
             query_string=rule.query_string,
             regex_test=rule.regex_test,
@@ -142,7 +142,7 @@ def edit(request, policy_id):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            Rule.objects.create(
+            RegexRule.objects.create(
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],

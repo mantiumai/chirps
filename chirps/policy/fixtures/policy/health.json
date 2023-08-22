@@ -19,14 +19,24 @@
         "pk": 600
     },
     {
+        "model": "policy.baserule",
+        "pk": 600,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "HIPAA PHI National Drug Code",
             "policy": 600,
-            "query_string": "What's my drug code?",
-            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}",
             "severity": 2
+        }
+    },
+    {
+        "fields": {
+            "query_string": "What's my drug code?",
+            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}"
         },
-        "model": "policy.Rule",
+        "model": "policy.regexrule",
         "pk": 600
     }
 ]

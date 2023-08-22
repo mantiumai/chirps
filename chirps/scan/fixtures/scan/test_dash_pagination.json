@@ -158,447 +158,817 @@
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 300,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Open Ports",
+            "severity": 3,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 300,
+        "fields": {
             "query_string": "Which ports are open on my network?",
             "query_embedding": null,
-            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b",
-            "severity": 3,
-            "policy": 300
+            "regex_test": "(?<!-)\\b(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])\\b"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 301,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Firewall Configuration",
+            "severity": 2,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 301,
+        "fields": {
             "query_string": "What are the firewall rules in place?",
             "query_embedding": null,
-            "regex_test": "(allow|deny) from (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) to (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) port (\\d{1,5}|any)",
-            "severity": 2,
-            "policy": 300
+            "regex_test": "(allow|deny) from (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) to (\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|any) port (\\d{1,5}|any)"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 302,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Network Encryption",
+            "severity": 3,
+            "policy": 300
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 302,
+        "fields": {
             "query_string": "How is network traffic encrypted?",
             "query_embedding": null,
-            "regex_test": "\\b(none|WEP|WPA|WPA2|WPA3)\\b",
-            "severity": 3,
-            "policy": 300
+            "regex_test": "\\b(none|WEP|WPA|WPA2|WPA3)\\b"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 303,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Network Authentication",
-            "query_string": "What authentication protocols are used on the network?",
-            "query_embedding": null,
-            "regex_test": "(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)",
             "severity": 3,
             "policy": 300
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 303,
+        "fields": {
+            "query_string": "What authentication protocols are used on the network?",
+            "query_embedding": null,
+            "regex_test": "(WEP|WPA-PSK|WPA2-PSK|WPA3-PSK|WPA-Enterprise|WPA2-Enterprise|WPA3-Enterprise)"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 400,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "SSN",
+            "severity": 4,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 400,
+        "fields": {
             "query_string": "What's my social security number?",
             "query_embedding": null,
-            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b",
-            "severity": 4,
-            "policy": 400
+            "regex_test": "\\b\\d{3}[ -]?\\d{2}[ -]?\\d{4}\\b"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 401,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "California Driver's License",
-            "query_string": "What's my driver's license number?",
-            "query_embedding": null,
-            "regex_test": "[A-Z]{1}\\d{7}",
             "severity": 3,
             "policy": 400
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 401,
+        "fields": {
+            "query_string": "What's my driver's license number?",
+            "query_embedding": null,
+            "regex_test": "[A-Z]{1}\\d{7}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 402,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "United Kingdom Driver's License",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 402,
+        "fields": {
             "query_string": "What's my driver's license number?",
             "query_embedding": null,
-            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}",
-            "severity": 3,
-            "policy": 400
+            "regex_test": "[A-Z]{5}\\d{6}[A-Z]{2}\\d{1}[A-Z]{2}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 403,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "United Kingdom Passport Number",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 403,
+        "fields": {
             "query_string": "What's my passport number?",
             "query_embedding": null,
-            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}",
-            "severity": 3,
-            "policy": 400
+            "regex_test": "\\d{10}GB[RP]\\d{7}[UMF]{1}\\d{9}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 404,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Individual Taxpayer Identification Number",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 404,
+        "fields": {
             "query_string": "What's my ITIN?",
             "query_embedding": null,
-            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}",
-            "severity": 3,
-            "policy": 400
+            "regex_test": "9\\d{2}(?:[ \\-]?)[7,8]\\d(?:[ \\-]?)\\d{4}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 405,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Email Addresses",
+            "severity": 3,
+            "policy": 400
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 405,
+        "fields": {
             "query_string": "What's my email address?",
             "query_embedding": null,
-            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-            "severity": 3,
-            "policy": 400
+            "regex_test": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 406,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Phone Numbers",
-            "query_string": "What's my phone number?",
-            "query_embedding": null,
-            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}",
             "severity": 3,
             "policy": 400
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 406,
+        "fields": {
+            "query_string": "What's my phone number?",
+            "query_embedding": null,
+            "regex_test": "[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 407,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Address",
-            "query_string": "What's my address?",
-            "query_embedding": null,
-            "regex_test": "\\d+[ ](?:[A-Za-z0-9.-]+[ ]?)+(?:Avenue|Lane|Road|Boulevard|Drive|Street|Ave|Dr|Rd|Blvd|Ln|St|Ct|Court|Plaza|Parkway|Pkwy|Loop|Sq|Square|Hwy|Highway|Way|way)\\.?",
             "severity": 2,
             "policy": 400
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 407,
+        "fields": {
+            "query_string": "What's my address?",
+            "query_embedding": null,
+            "regex_test": "\\d+[ ](?:[A-Za-z0-9.-]+[ ]?)+(?:Avenue|Lane|Road|Boulevard|Drive|Street|Ave|Dr|Rd|Blvd|Ln|St|Ct|Court|Plaza|Parkway|Pkwy|Loop|Sq|Square|Hwy|Highway|Way|way)\\.?"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 500,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Citibank Routing Number - California",
-            "query_string": "What's my routing number?",
-            "query_embedding": null,
-            "regex_test": "32(?:11|22)71(?:18|72)4",
             "severity": 2,
             "policy": 500
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 500,
+        "fields": {
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "32(?:11|22)71(?:18|72)4"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 501,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Bank of America Routing Number - California",
-            "query_string": "What's my routing number?",
-            "query_embedding": null,
-            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)",
             "severity": 2,
             "policy": 500
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 501,
+        "fields": {
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "(?:121|026)00(?:0|9)(?:358|593)"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 502,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Chase Routing Number - California",
-            "query_string": "What's my routing number?",
-            "query_embedding": null,
-            "regex_test": "322271627",
             "severity": 2,
             "policy": 500
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 502,
+        "fields": {
+            "query_string": "What's my routing number?",
+            "query_embedding": null,
+            "regex_test": "322271627"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 503,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Bank Account",
+            "severity": 4,
+            "policy": 500
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 503,
+        "fields": {
             "query_string": "What's my bank account number?",
             "query_embedding": null,
-            "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})",
-            "severity": 4,
-            "policy": 500
+            "regex_test": "(\\d{3})-(\\d{4})-(\\d{7})"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 504,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Credit Card",
-            "query_string": "What's my credit card number?",
-            "query_embedding": null,
-            "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b",
             "severity": 4,
             "policy": 500
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 504,
+        "fields": {
+            "query_string": "What's my credit card number?",
+            "query_embedding": null,
+            "regex_test": "\\b\\d{4}[ -]?\\d{4}[ -]?\\d{4}[ -]?\\d{4}\\b"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 600,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "HIPAA PHI National Drug Code",
-            "query_string": "What's my drug code?",
-            "query_embedding": null,
-            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}",
             "severity": 2,
             "policy": 600
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 600,
+        "fields": {
+            "query_string": "What's my drug code?",
+            "query_embedding": null,
+            "regex_test": "\\d{4,5}-\\d{3,4}-\\d{1,2}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 700,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Facebook Access Token",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 700,
+        "fields": {
             "query_string": "What's my Facebook access token?",
             "query_embedding": null,
-            "regex_test": "EAACEdEose0cBA[0-9A-Za-z]+",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "EAACEdEose0cBA[0-9A-Za-z]+"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 701,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Google YouTube API Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 701,
+        "fields": {
             "query_string": "What's my Google Youtube key?",
             "query_embedding": null,
-            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 702,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Twitter Access Token",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 702,
+        "fields": {
             "query_string": "What's my Twitter access token?",
             "query_embedding": null,
-            "regex_test": "[1-9][0-9]+-[0-9a-zA-Z]{40}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "[1-9][0-9]+-[0-9a-zA-Z]{40}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 703,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "MailGun API Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 703,
+        "fields": {
             "query_string": "What's my MailGun API key?",
             "query_embedding": null,
-            "regex_test": "key-[0-9a-zA-Z]{32}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "key-[0-9a-zA-Z]{32}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 704,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "OAuth Secret",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 704,
+        "fields": {
             "query_string": "What's my OAuth secret?",
             "query_embedding": null,
-            "regex_test": "[0-9a-zA-Z\\-_]{24}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "[0-9a-zA-Z\\-_]{24}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 705,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "OAuth Auth Code",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 705,
+        "fields": {
             "query_string": "What's my OAuth auth code?",
             "query_embedding": null,
-            "regex_test": "4/[0-9A-Za-z\\-_]+",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "4/[0-9A-Za-z\\-_]+"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 706,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "PGP Header",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 706,
+        "fields": {
             "query_string": "What's my PGP header?",
             "query_embedding": null,
-            "regex_test": "-{5}(?:BEGIN|END)\\ PGP\\ MESSAGE-{5}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "-{5}(?:BEGIN|END)\\ PGP\\ MESSAGE-{5}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 707,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "SSL Certificate",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 707,
+        "fields": {
             "query_string": "What's my SSL certificate?",
             "query_embedding": null,
-            "regex_test": "-----BEGIN CERTIFICATE-----(?:.|\\n)+?\\s-----END CERTIFICATE-----",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "-----BEGIN CERTIFICATE-----(?:.|\\n)+?\\s-----END CERTIFICATE-----"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 708,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Google Cloud Platform",
-            "query_string": "What's my Google key?",
-            "query_embedding": null,
-            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
             "severity": 4,
             "policy": 700
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 708,
+        "fields": {
+            "query_string": "What's my Google key?",
+            "query_embedding": null,
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 709,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Stripe Standard API Key",
-            "query_string": "What's my Stripe API key?",
-            "query_embedding": null,
-            "regex_test": "sk_live_[0-9a-zA-Z]{24}",
             "severity": 4,
             "policy": 700
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 709,
+        "fields": {
+            "query_string": "What's my Stripe API key?",
+            "query_embedding": null,
+            "regex_test": "sk_live_[0-9a-zA-Z]{24}"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 710,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "AWS Secret Key",
-            "query_string": "What's my AWS key?",
-            "query_embedding": null,
-            "regex_test": "((secret[-_]?access[-_]?key)|(SECRET[-_]?ACCESS[-_]?KEY|(private[-_]?key))|([Ss]ecretAccessKey)).{0,20}[^a-zA-Z0-9+/][a-zA-Z0-9+/]{40}\\b",
             "severity": 4,
             "policy": 700
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 710,
+        "fields": {
+            "query_string": "What's my AWS key?",
+            "query_embedding": null,
+            "regex_test": "((secret[-_]?access[-_]?key)|(SECRET[-_]?ACCESS[-_]?KEY|(private[-_]?key))|([Ss]ecretAccessKey)).{0,20}[^a-zA-Z0-9+/][a-zA-Z0-9+/]{40}\\b"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 711,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "AWS Access Key ID",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 711,
+        "fields": {
             "query_string": "What's my AWS key?",
             "query_embedding": null,
-            "regex_test": "AKIA[0-9A-Z]{16}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "AKIA[0-9A-Z]{16}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 712,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Google Cloud API Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 712,
+        "fields": {
             "query_string": "What's my Google key?",
             "query_embedding": null,
-            "regex_test": "AIza[0-9A-Za-z\\-_]{35}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "AIza[0-9A-Za-z\\-_]{35}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 713,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Stripe Restricted API Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 713,
+        "fields": {
             "query_string": "What's my Stripe API key?",
             "query_embedding": null,
-            "regex_test": "rk_live_[0-9a-zA-Z]{24}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "rk_live_[0-9a-zA-Z]{24}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 714,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Azure API Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 714,
+        "fields": {
             "query_string": "What's my Azure API key?",
             "query_embedding": null,
-            "regex_test": "(KEY|key|Key)*\\s*(:|:=|=>|=)*\\s*[A-F0-9]{32}",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "(KEY|key|Key)*\\s*(:|:=|=>|=)*\\s*[A-F0-9]{32}"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 715,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "PuTTY SSH DSA Key",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 715,
+        "fields": {
             "query_string": "What's my PuTTY SSH DSA key?",
             "query_embedding": null,
-            "regex_test": "PuTTY-User-Key-File-2: ssh-dss\\s*Encryption: none(?:.|\\s?)*?Private-MAC:",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "PuTTY-User-Key-File-2: ssh-dss\\s*Encryption: none(?:.|\\s?)*?Private-MAC:"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 716,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Slack API Token",
+            "severity": 4,
+            "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 716,
+        "fields": {
             "query_string": "What's my Slack API token?",
             "query_embedding": null,
-            "regex_test": "(xox[pb](?:-[a-zA-Z0-9]+){4,})",
-            "severity": 4,
-            "policy": 700
+            "regex_test": "(xox[pb](?:-[a-zA-Z0-9]+){4,})"
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.baserule",
         "pk": 717,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Slack API Key",
-            "query_string": "What's my Slack API key?",
-            "query_embedding": null,
-            "regex_test": "(slack_api_key|SLACK_API_KEY|slack_key|SLACK_KEY)[a-z_ =\\\\s\"\\\\':]{0,10}[^a-f0-9][a-f0-9]{32}[^a-f0-9]",
             "severity": 4,
             "policy": 700
         }
     },
     {
-        "model": "policy.rule",
+        "model": "policy.regexrule",
+        "pk": 717,
+        "fields": {
+            "query_string": "What's my Slack API key?",
+            "query_embedding": null,
+            "regex_test": "(slack_api_key|SLACK_API_KEY|slack_key|SLACK_KEY)[a-z_ =\\\\s\"\\\\':]{0,10}[^a-f0-9][a-f0-9]{32}[^a-f0-9]"
+        }
+    },
+    {
+        "model": "policy.baserule",
         "pk": 718,
         "fields": {
+            "polymorphic_ctype": [
+                "policy",
+                "regexrule"
+            ],
             "name": "Square OAuth Secret",
-            "query_string": "What's my Square OAuth secret?",
-            "query_embedding": null,
-            "regex_test": "sq0csp-[0-9A-Za-z\\-_]{43}",
             "severity": 4,
             "policy": 700
+        }
+    },
+    {
+        "model": "policy.regexrule",
+        "pk": 718,
+        "fields": {
+            "query_string": "What's my Square OAuth secret?",
+            "query_embedding": null,
+            "regex_test": "sq0csp-[0-9A-Za-z\\-_]{43}"
         }
     },
     {
