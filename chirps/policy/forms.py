@@ -50,6 +50,7 @@ class PolicyForm(forms.Form):
 
         # Push all of the rules from the current policy into the dictionary
         for rule in policy.current_version.rules.all():
+            data[f'rule_type_{index}'] = rule.rule_type
             data[f'rule_name_{index}'] = rule.name
             data[f'rule_query_string_{index}'] = rule.query_string
             data[f'rule_regex_{index}'] = rule.regex_test

@@ -1,8 +1,16 @@
 """Models for the policy application."""
+from enum import Enum
+
 from django.contrib.auth.models import User
 from django.db import models
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
+
+
+class RuleType(Enum):
+    """Enum for the different types of rules."""
+
+    REGEX = 'regex'
 
 
 class Policy(models.Model):
@@ -43,6 +51,8 @@ class BaseRule(PolymorphicModel):
 
     name = models.CharField(max_length=256)
 
+    rule_type = models.CharField(max_length=20)
+
     # ForeignKey relationship to the Severity model
     severity = models.ForeignKey(Severity, on_delete=models.CASCADE)
 
@@ -65,3 +75,8 @@ class RegexRule(BaseRule):
 
     # Regular expression to run against the response documents
     regex_test = models.TextField()
+
+    def save(self, *args, **kwargs):
+        """Save the RegexRule instance with the rule_type set to 'regex'."""
+        self.rule_type = RuleType.REGEX.value
+        super().save(*args, **kwargs)
