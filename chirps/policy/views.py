@@ -1,14 +1,14 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule, RuleTypes
+from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule, RuleTypes, rule_templates
 
 
 @login_required
@@ -184,12 +184,7 @@ def create_rule(request, rule_type=None):
     rule_id = request.GET.get('rule_id', 0)
     next_rule_id = int(rule_id) + 1
 
-    if rule_type == RuleTypes.REGEX.value:
-        template_name = 'policy/create_regex_rule.html'
-    elif rule_type == RuleTypes.MULTI_QUERY.value:
-        template_name = 'policy/create_multi_query_rule.html'
-    else:
-        return HttpResponseBadRequest('Invalid rule type')
+    template_name = rule_templates.get(rule_type)
 
     return render(
         request,

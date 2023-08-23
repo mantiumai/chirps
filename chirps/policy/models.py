@@ -12,8 +12,14 @@ from severity.models import Severity
 class RuleTypes(Enum):
     """Enumeration of all the rules."""
 
-    REGEX = 'RegexRule'
-    MULTI_QUERY = 'MultiQueryRule'
+    REGEX = 'regex'
+    MULTI_QUERY = 'multi_query'
+
+
+rule_templates = {
+    RuleTypes.REGEX.value: 'policy/create_regex_rule.html',
+    RuleTypes.MULTI_QUERY.value: 'policy/create_multi_query_rule.html',
+}
 
 
 class Policy(models.Model):
