@@ -25,10 +25,3 @@
         </div>
     </div>
 </div>
-
-<div id="rule_replace_me">
-    <button class='btn btn-primary ml-2 mr-0' hx-get="{% url 'policy_create_rule' %}"
-                                              hx-vals='{"rule_id": "{{next_rule_id}}"}'
-                                              hx-target="#rule_replace_me"
-                                              hx-swap="outerHTML">Add Rule</button>
-</div>

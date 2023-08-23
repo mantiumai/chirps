@@ -12,5 +12,4 @@ urlpatterns = [
     path('create_rule/<str:rule_type>/', views.create_rule, name='create_rule'),
     path('delete_rule/<int:rule_id>', views.delete_rule, name='policy_delete_rule'),
     path('edit/<int:policy_id>', views.edit, name='policy_edit'),
-    path('render_add_rule_dropdown/', views.render_add_rule_dropdown, name='render_add_rule_dropdown'),
 ]

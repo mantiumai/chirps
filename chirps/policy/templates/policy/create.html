@@ -24,10 +24,25 @@
                     </div>
 
                     <div id="policy_rule_list">
-
-                        <div id="rule_replace_me" hx-get="{% url 'render_add_rule_dropdown' %}" hx-trigger="load, click" hx-swap="outerHTML">
-                            <!-- Add Rule dropdown will be loaded here -->
+                        <div id="rule_replace_me">
+                            <div id="dropdown_menu_items">
+                                <ul class="dropdown-menu" aria-labelledby="addRuleDropdown">
+                                    {% for rule_type in rule_types %}
+                                    <li>
+                                        <a class="dropdown-item" href="#"
+                                            hx-get="{% url 'create_rule' rule_type.value %}" hx-trigger="click"
+                                            hx-target="#rule_replace_me" hx-swap="beforeend">
+                                            Add {{ rule_type.name }} Rule
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="addRuleDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Add Rule
+                        </button>
                     </div>
 
                     <div class="d-flex mt-3">

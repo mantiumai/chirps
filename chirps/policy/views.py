@@ -178,13 +178,6 @@ def edit(request, policy_id):
 
 
 @login_required
-def render_add_rule_dropdown(request):
-    """Render the dropdown for adding a new rule to a policy."""
-    rule_types = [{'value': rt.value, 'name': rt.name} for rt in RuleTypes]
-    return render(request, 'policy/add_rule_dropdown.html', {'rule_types': rule_types})
-
-
-@login_required
 def create_rule(request, rule_type=None):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
