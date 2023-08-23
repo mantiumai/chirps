@@ -10,6 +10,10 @@ class PolicyForm(forms.Form):
     name = forms.CharField(label='Policy Name', max_length=100)
     description = forms.CharField(label='Policy Description', max_length=1000)
 
+    def _rule_field_id(self, field_name: str, rule_id: int) -> str:
+        """Build a unique ID for a rule field."""
+        return f'rule_{field_name}_{rule_id}'
+
     def clean(self):
         """Create the 'rules' cleaned data field."""
         super().clean()
@@ -19,16 +23,17 @@ class PolicyForm(forms.Form):
         for rule_id in self.get_form_field_keys():
             rule = {}
 
-            rule['name'] = self.data[f'rule_name_{rule_id}']
-            rule['severity'] = self.data[f'rule_severity_{rule_id}']
-            rule['type'] = self.data[f'rule_type_{rule_id}']
+            rule_type = rule_id.split('_')[0]
+            rule['name'] = self.data[self._rule_field_id('name', rule_id)]
+            rule['severity'] = self.data[self._rule_field_id('severity', rule_id)]
+            rule['type'] = rule_type
 
-            if rule['type'] == RuleTypes.REGEX.value:
-                rule['query_string'] = self.data[f'rule_query_string_{rule_id}']
-                rule['regex_test'] = self.data[f'rule_regex_{rule_id}']
-            elif rule['type'] == RuleTypes.MULTI_QUERY.value:
-                rule['task_description'] = self.data[f'rule_task_description_{rule_id}']
-                rule['acceptable_outcomes'] = self.data[f'rule_acceptable_outcomes_{rule_id}']
+            if rule_type == RuleTypes.REGEX.value:
+                rule['query_string'] = self.data[self._rule_field_id('query_string', rule_id)]
+                rule['regex_test'] = self.data[self._rule_field_id('regex_test', rule_id)]
+            elif rule_type == RuleTypes.MULTIQUERY.value:
+                rule['task_description'] = self.data[self._rule_field_id('task_description', rule_id)]
+                rule['acceptable_outcomes'] = self.data[self._rule_field_id('acceptable_outcomes', rule_id)]
 
             rules.append(rule)
 

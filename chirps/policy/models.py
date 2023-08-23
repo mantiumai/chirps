@@ -13,12 +13,12 @@ class RuleTypes(Enum):
     """Enumeration of all the rules."""
 
     REGEX = 'regex'
-    MULTI_QUERY = 'multi_query'
+    MULTIQUERY = 'multiquery'
 
 
 rule_templates = {
     RuleTypes.REGEX.value: 'policy/create_regex_rule.html',
-    RuleTypes.MULTI_QUERY.value: 'policy/create_multi_query_rule.html',
+    RuleTypes.MULTIQUERY.value: 'policy/create_multi_query_rule.html',
 }
 
 
@@ -89,7 +89,7 @@ class RegexRule(BaseRule):
 class MultiQueryRule(BaseRule):
     """Multi-query rule."""
 
-    type = RuleTypes.MULTI_QUERY
+    type = RuleTypes.MULTIQUERY
 
     # Description of the task to be completed
     task_description = models.TextField()

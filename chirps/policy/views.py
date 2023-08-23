@@ -74,7 +74,7 @@ def create(request):
                     severity=severity_instance,
                     policy=policy_version,
                 )
-            elif rule['type'] == RuleTypes.MULTI_QUERY.value:
+            elif rule['type'] == RuleTypes.MULTIQUERY.value:
                 MultiQueryRule.objects.create(
                     name=rule['name'],
                     task_description=rule['task_description'],
