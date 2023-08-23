@@ -1,6 +1,13 @@
 <div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
     <div class="card-body cardbody-color p-4">
         <div class="row">
+            <div class="col-4">
+                <select class="form-control" name="rule_type_{{rule_id}}" id="rule_type_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Rule Type</option>
+                    <option value="regex">Regex Rule</option>
+                    <!-- Add more rule types as options here -->
+                </select>
+            </div>
             <div class="col-6">
                 <input class="form-control" type="text" name="rule_name_{{rule_id}}" id="rule_name_{{rule_id}}" placeholder="Name" required></input>
             </div>

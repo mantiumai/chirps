@@ -11,6 +11,14 @@ from .forms import PolicyForm
 from .models import Policy, PolicyVersion, RegexRule
 
 
+def create_rule_instance(rule_type, **kwargs):
+    """Create an instance of the rule."""
+    if rule_type == 'regex':
+        return RegexRule(**kwargs)
+    else:
+        raise ValueError(f'Invalid rule type: {rule_type}')
+
+
 @login_required
 def dashboard(request):
     """Render the dashboard for the policy app.
@@ -66,13 +74,15 @@ def create(request):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            RegexRule.objects.create(
+            rule_instance = create_rule_instance(
+                rule['rule_type'],
+                severity=severity_instance,
+                policy=policy_version,
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
-                severity=severity_instance,
-                policy=policy_version,
             )
+            rule_instance.save()
 
         # Add a success message
         messages.success(request, 'Policy created successfully.')
@@ -108,13 +118,15 @@ def clone(request, policy_id):
 
     # Clone the rules
     for rule in policy.current_version.rules.all():
-        RegexRule.objects.create(
+        rule_instance = create_rule_instance(
+            rule.content_type.model,
             name=rule.name,
             query_string=rule.query_string,
             regex_test=rule.regex_test,
             severity=rule.severity,
             policy=policy_version,
         )
+        rule_instance.save()
 
     # Redirect to the edit page for the new policy
     return redirect('policy_edit', policy_id=cloned_policy.id)
@@ -142,13 +154,15 @@ def edit(request, policy_id):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            RegexRule.objects.create(
+            rule_instance = create_rule_instance(
+                rule['rule_type'],
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
                 severity=severity_instance,
                 policy=new_policy_version,
             )
+            rule_instance.save()
 
         # Update the current version of the policy as well as the name and description
         policy.current_version = new_policy_version

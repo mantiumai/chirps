@@ -16,7 +16,7 @@ class PolicyForm(forms.Form):
         rules = []
 
         # For each of the form field IDs, build a list of Rules
-        rule_key_prefixes = ['rule_name', 'rule_query_string', 'rule_regex', 'rule_severity']
+        rule_key_prefixes = ['rule_type', 'rule_name', 'rule_query_string', 'rule_regex', 'rule_severity']
 
         # Walk through all of the field keys, building a rule for each one
         for rule_id in self.get_form_field_keys():
