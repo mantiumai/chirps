@@ -75,11 +75,6 @@ def scan_task(scan_asset_id):
     rules_run = 0
     total_rules = len(policy_rules)
 
-    logger.info(
-        f'Total rules to be evaluated: {total_rules}',
-        extra={'scan_asset_id': scan_asset_id, 'total_rules': total_rules},
-    )
-
     # Walk through the list of rules and evaluate them
     for policy, rule in policy_rules:
 

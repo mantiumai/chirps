@@ -45,15 +45,15 @@ def _get_service_status() -> ServiceStatus:
         workers = celery_inspection.active()
 
         # Shape of the workers dictionary is {worker_name: [list of jobs]}
-        job_count = sum([len(jobs) for jobs in workers.values()])
+        job_count = sum(len(jobs) for jobs in workers.values())
 
     is_rabbit_running = os.system('rabbitmqctl ping') == 0
 
     if all(result is True for result in [is_celery_running, is_rabbit_running]):
-        status = 'green'
+        service_status = 'green'
     else:
-        status = 'red'
+        service_status = 'red'
 
     return ServiceStatus(
-        celery_status=is_celery_running, rabbitmq_status=is_rabbit_running, status=status, job_count=job_count
+        celery_status=is_celery_running, rabbitmq_status=is_rabbit_running, status=service_status, job_count=job_count
     )
