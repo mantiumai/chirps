@@ -42,7 +42,30 @@
 
     <div class="tab-pane fade show active" id="tabs-1" role="tabpanel" aria-labelledby="tab-1">
         <div class="accordion" id="custom-panel-accordion">
-            {% include 'policy/dashboard_regex_policy_list.html' with policy_list=user_policies edit_mode=True%}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="customRegexAccordionHeading">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#customRegexAccordionCollapse" aria-expanded="true" aria-controls="customRegexAccordionCollapse">
+                        Custom Regex Policies
+                    </button>
+                </h2>
+                <div id="customRegexAccordionCollapse" class="accordion-collapse collapse show" aria-labelledby="customRegexAccordionHeading" data-bs-parent="#custom-panel-accordion">
+                    <div class="accordion-body">
+                        {% include 'policy/dashboard_regex_policy_list.html' with policy_list=user_regex_policies edit_mode=True %}
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="customMultiQueryAccordionHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#customMultiQueryAccordionCollapse" aria-expanded="false" aria-controls="customMultiQueryAccordionCollapse">
+                        Custom Multi-Query Policies
+                    </button>
+                </h2>
+                <div id="customMultiQueryAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="customMultiQueryAccordionHeading" data-bs-parent="#custom-panel-accordion">
+                    <div class="accordion-body">
+                        {% include 'policy/dashboard_multiquery_policy_list.html' with policy_list=user_multiquery_policies edit_mode=True %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

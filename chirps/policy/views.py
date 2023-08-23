@@ -27,6 +27,14 @@ def dashboard(request):
         template for template in templates if template.current_version.rules.instance_of(MultiQueryRule).exists()
     ]
     user_policies = Policy.objects.filter(user=request.user, archived=False).order_by('id')
+
+    user_regex_policies = [
+        policy for policy in user_policies if policy.current_version.rules.instance_of(RegexRule).exists()
+    ]
+    user_multiquery_policies = [
+        policy for policy in user_policies if policy.current_version.rules.instance_of(MultiQueryRule).exists()
+    ]
+
     severities = Severity.objects.filter(archived=False).order_by('id')
     edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
     create_severity_form = CreateSeverityForm()
@@ -35,7 +43,8 @@ def dashboard(request):
         request,
         'policy/dashboard.html',
         {
-            'user_policies': user_policies,
+            'user_regex_policies': user_regex_policies,
+            'user_multiquery_policies': user_multiquery_policies,
             'regex_templates': regex_templates,
             'multiquery_templates': multiquery_templates,
             'severities': severities,
