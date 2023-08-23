@@ -5,8 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("scan", "0007_alter_result_rule"),
-        ("scan", "0007_alter_scanrun_status"),
+        ('scan', '0007_alter_result_rule'),
+        ('scan', '0007_alter_scanrun_status'),
     ]
 
     operations = []
