@@ -20,21 +20,7 @@ def dashboard(request):
     """
     # Fetch a list of all the available template and custom user policies
     templates = Policy.objects.filter(is_template=True).order_by('id')
-    regex_templates = [
-        template for template in templates if template.current_version.rules.instance_of(RegexRule).exists()
-    ]
-    multiquery_templates = [
-        template for template in templates if template.current_version.rules.instance_of(MultiQueryRule).exists()
-    ]
     user_policies = Policy.objects.filter(user=request.user, archived=False).order_by('id')
-
-    user_regex_policies = [
-        policy for policy in user_policies if policy.current_version.rules.instance_of(RegexRule).exists()
-    ]
-    user_multiquery_policies = [
-        policy for policy in user_policies if policy.current_version.rules.instance_of(MultiQueryRule).exists()
-    ]
-
     severities = Severity.objects.filter(archived=False).order_by('id')
     edit_severity_forms = {severity.id: EditSeverityForm(instance=severity) for severity in severities}
     create_severity_form = CreateSeverityForm()
@@ -43,10 +29,8 @@ def dashboard(request):
         request,
         'policy/dashboard.html',
         {
-            'user_regex_policies': user_regex_policies,
-            'user_multiquery_policies': user_multiquery_policies,
-            'regex_templates': regex_templates,
-            'multiquery_templates': multiquery_templates,
+            'user_policies': user_policies,
+            'templates': templates,
             'severities': severities,
             'edit_severity_forms': edit_severity_forms,
             'create_severity_form': create_severity_form,
