@@ -4,8 +4,8 @@
         <i class="fa-solid fa-circle-play"></i>
     </button>
 
-    <button class="btn btn-sm btn-danger disabled">
-        <i class="fa-solid fa-circle-stop"></i>
+    <button class="btn btn-sm btn-danger">
+        <i class="fa-solid fa-circle-stop" hx-get="{% url 'scan_vcr_stop' scan.id %}" hx-target="#vcr-{{scan.id}}"></i>
     </button>
 
 {% else %}

@@ -1,0 +1,26 @@
+{% load static %}
+
+
+{% if service_status.status == 'green' %}
+
+    <button class="btn btn-success btn-sm position-relative"
+            hx-get="{% url 'worker_status_details' %}" hx-target="#modals-here" hx-ext="loading-states"
+            _="on htmx:afterOnLoad wait 10ms then add .show to #server-status-modal then add .show to #modal-backdrop">
+            <i data-loading-class="fa-spinner fa-spin" data-loading-class-remove="fa-server" class="fa-solid fa-server text-white"></i>
+        {% if service_status.job_count %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success text-white">
+                {{service_status.job_count}}
+            </span>
+    {% endif %}
+    </button>
+
+{% else %}
+    <button class="btn btn-danger" hx-get="{% url 'worker_status_details' %}" hx-target="#modals-here" hx-ext="loading-states"
+        _="on htmx:afterOnLoad wait 10ms then add .show to #server-status-modal then add .show to #modal-backdrop">
+
+        <i data-loading-class="fa-spinner fa-spin" data-loading-class-remove="fa-server" class="fa-solid fa-server text-white"></i>
+        <span class="position-absolute bottom-0 start-100 translate-middle badge rounded-pill bg-white">
+            <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+        </span>
+    </button>
+{% endif %}
