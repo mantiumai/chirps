@@ -6,7 +6,9 @@ from asset.models import BaseAsset, SearchResult
 from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
+from policy.models import RegexRule
 
+from .exceptions import GenericScanTaskException
 from .models import RegexFinding, RegexResult, ScanAsset, ScanAssetFailure
 
 logger = getLogger(__name__)
@@ -78,35 +80,13 @@ def scan_task(scan_asset_id):
     # Walk through the list of rules and evaluate them
     for policy, rule in policy_rules:
 
-        if asset.REQUIRES_EMBEDDINGS:
-            # template policies should not be bound to a user
-            add_user_filter = not policy.is_template
-            user = scan_run.scan_version.scan.user if add_user_filter else None
-            embedding = create_embedding(rule.query_string, asset.embedding_model, asset.embedding_model_service, user)
-            query = embedding.vectors
+        if type(rule) is RegexRule:
+            _execute_regex_rule(rule=rule, scan_asset=scan_asset, asset=asset)
         else:
-            query = rule.query_string
-
-        # Issue the search query to the asset provider
-        results: list[SearchResult] = asset.search(query, max_results=100)
-
-        for search_result in results:
-
-            # Create the result. We'll flip the result flag to True if any findings are found
-            result = RegexResult(rule=rule, text=search_result.data, scan_asset=scan_asset)
-            result.save()
-
-            # Run the regex against the text
-            for match in re.finditer(rule.regex_test, search_result.data):
-
-                # Persist the finding
-                finding = RegexFinding(
-                    result=result,
-                    offset=match.start(),
-                    length=match.end() - match.start(),
-                    source_id=search_result.source_id,
-                )
-                finding.save()
+            # This is a runtime failure and we should cause the entire scan to fail
+            error = f'Unknown rule type ({type(rule)})'
+            logger.error(error, extra={'scan_asset_id': scan_asset_id})
+            raise GenericScanTaskException(error)
 
         # Update the progress counter based on the number of rules that have been evaluated
         rules_run += 1
@@ -138,3 +118,37 @@ def scan_task(scan_asset_id):
     scan_run.save()
 
     logger.info('Scan complete', extra={'scan_id': scan_asset.id})
+
+
+def _execute_regex_rule(rule: RegexRule, scan_asset: ScanAsset, asset: BaseAsset):
+    """Execute a regex rule against an asset."""
+    if asset.REQUIRES_EMBEDDINGS:
+
+        # If using a template policy, we don't need to filter by user
+        add_user_filter = not rule.policy.is_template
+        user = scan_asset.scan.scan_version.scan.user if add_user_filter else None
+        embedding = create_embedding(rule.query_string, asset.embedding_model, asset.embedding_model_service, user)
+        query = embedding.vectors
+    else:
+        query = rule.query_string
+
+    # Issue the search query to the asset provider
+    results: list[SearchResult] = asset.search(query, max_results=100)
+
+    for search_result in results:
+
+        # Create the result. We'll flip the result flag to True if any findings are found
+        result = RegexResult(rule=rule, text=search_result.data, scan_asset=scan_asset)
+        result.save()
+
+        # Run the regex against the text
+        for match in re.finditer(rule.regex_test, search_result.data):
+
+            # Persist the finding
+            finding = RegexFinding(
+                result=result,
+                offset=match.start(),
+                length=match.end() - match.start(),
+                source_id=search_result.source_id,
+            )
+            finding.save()

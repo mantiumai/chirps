@@ -39,6 +39,11 @@ class PolicyVersion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     policy = models.ForeignKey(Policy, on_delete=models.CASCADE)
 
+    @property
+    def is_template(self):
+        """Convenience method to check if the parent policy is a template"""
+        return self.policy.is_template
+
 
 class BaseRule(PolymorphicModel):
     """Base class that all rules will inherit from."""
