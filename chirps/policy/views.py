@@ -181,7 +181,13 @@ def edit(request, policy_id):
     return render(
         request,
         'policy/edit.html',
-        {'policy': policy, 'form': form, 'severities': severities, 'rule_types': rule_types},
+        {
+            'policy': policy,
+            'form': form,
+            'severities': severities,
+            'rule_types': rule_types,
+            'rule_class_templates': rule_class_templates,
+        },
     )
 
 
@@ -189,7 +195,7 @@ def edit(request, policy_id):
 def create_rule(request, rule_type: str):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
-    template_name = rule_class_templates.get(rule_type, {}).get('template')
+    template_name = rule_class_templates.get(rule_type, {}).get('templates').get('create')
     rule_id = request.GET.get('rule_id', 0)
     next_rule_id = int(request.GET.get('rule_id', 0)) + 1
 

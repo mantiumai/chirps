@@ -83,5 +83,11 @@ class RegexRule(BaseRule):
 
 
 rule_class_templates = {
-    RuleType.REGEX.value: {'class': RegexRule, 'template': 'policy/create_regex_rule.html'},
+    RuleType.REGEX.value: {
+        'class': RegexRule,
+        'templates': {
+            'edit': 'policy/edit_regex_rule.html',
+            'create': 'policy/create_regex_rule.html',
+        },
+    },
 }

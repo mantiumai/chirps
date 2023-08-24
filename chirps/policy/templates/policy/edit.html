@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load policy_filters %}
 {% block title %}Edit Policy{% endblock %}
 
 {% block content %}
@@ -27,42 +28,10 @@
                     <div id="policy_rule_list">
 
                         {% for rule in policy.current_version.rules.all %}
-                        <div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
-                            <div class="card-body cardbody-color p-4">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <input type="hidden" name="rule_type_{{rule.id}}" value="{{rule.rule_type}}">
-                                        <input class="form-control" type="text" name="rule_name_{{rule.id}}"
-                                            id="rule_name_{{rule.id}}" placeholder="Name" required
-                                            value="{{rule.name}}"></input>
-                                    </div>
-                                    <div class="col-4">
-                                        <input class="form-control" type="text" name="rule_query_string_{{rule.id}}"
-                                            id="rule_query_string_{{rule.id}}" placeholder="Query String" required
-                                            value="{{rule.query_string}}"></input>
-                                    </div>
-                                    <div class="col-4">
-                                        <input class="form-control" type="text" name="rule_regex_{{rule.id}}"
-                                            id="rule_regex_{{rule.id}}" placeholder="Regular Expression Test" required
-                                            value="{{rule.regex_test}}"></input>
-                                    </div>
-                                    <div class="col-3">
-                                        <select class="form-control" name="rule_severity_{{rule.id}}"
-                                            id="rule_severity_{{rule.id}}" required>
-                                            {% for severity in severities %}
-                                            <option value="{{ severity.value }}">{{ severity.name }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                    </div>
-                                    <div class="col-1">
-                                        <button class="form-control btn btn-danger"
-                                            hx-delete="{% url 'policy_delete_rule' 0 %}"><i
-                                                class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Include the rule edit template for the rule type -->
+                        {% with template=rule_class_templates|get_edit_rule_template:rule.rule_type %}
+                            {% include template with rule=rule severities=severities %}
+                        {% endwith %}
                         {% endfor %}
                         <div id="policy_rule_list">
                             <div id="rule_replace_me">
