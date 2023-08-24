@@ -82,18 +82,7 @@ def create(request):
         policy.save()
 
         # Create the rules
-        for rule in form.cleaned_data['rules']:
-            # Retrieve the Severity instance from the database using the provided value
-            severity_instance = Severity.objects.get(value=rule['rule_severity'])
-
-            save_rule(
-                rule['rule_type'],
-                severity=severity_instance,
-                policy=policy_version,
-                name=rule['rule_name'],
-                query_string=rule['rule_query_string'],
-                regex_test=rule['rule_regex'],
-            )
+        create_rules(form.cleaned_data['rules'], policy_version)
 
         # Add a success message
         messages.success(request, 'Policy created successfully.')
@@ -160,19 +149,8 @@ def edit(request, policy_id):
         # Create a new policy version
         new_policy_version = PolicyVersion.objects.create(number=policy.current_version.number + 1, policy=policy)
 
-        # Persist all of the rules against the new version
-        for rule in form.cleaned_data['rules']:
-            # Retrieve the Severity instance from the database using the provided value
-            severity_instance = Severity.objects.get(value=rule['rule_severity'])
-
-            save_rule(
-                rule['rule_type'],
-                name=rule['rule_name'],
-                query_string=rule['rule_query_string'],
-                regex_test=rule['rule_regex'],
-                severity=severity_instance,
-                policy=new_policy_version,
-            )
+        # Create the rules
+        create_rules(form.cleaned_data['rules'], new_policy_version)
 
         # Update the current version of the policy as well as the name and description
         policy.current_version = new_policy_version
