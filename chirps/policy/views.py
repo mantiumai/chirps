@@ -168,7 +168,7 @@ def edit(request, policy_id):
 
     form = PolicyForm.from_policy(policy=policy)
     severities = Severity.objects.filter(archived=False)
-    rule_types = [{'value': k, 'name': k} for k in RULES.keys()]
+    rule_types = [{'value': r, 'name': r} for r in RULES]
     return render(
         request,
         'policy/edit.html',
