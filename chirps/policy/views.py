@@ -92,7 +92,7 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    return render(request, 'policy/create.html', {'rule_types': [rule for rule in RULES]})
+    return render(request, 'policy/create.html', {'rule_types': list(RULES)})
 
 
 @login_required
@@ -174,7 +174,7 @@ def edit(request, policy_id):
             'policy': policy,
             'form': form,
             'severities': severities,
-            'rule_types': [rule for rule in RULES],
+            'rule_types': list(RULES),
             'rule_classes': RULES,
         },
     )
