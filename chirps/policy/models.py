@@ -1,16 +1,10 @@
 """Models for the policy application."""
-from enum import Enum
+from typing import Any
 
 from django.contrib.auth.models import User
 from django.db import models
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
-
-
-class RuleType(Enum):
-    """Enum for the different types of rules."""
-
-    REGEX = 'regex'
 
 
 class Policy(models.Model):
@@ -51,7 +45,7 @@ class BaseRule(PolymorphicModel):
 
     name = models.CharField(max_length=256)
 
-    rule_type = models.CharField(max_length=20)
+    rule_type = None
 
     # ForeignKey relationship to the Severity model
     severity = models.ForeignKey(Severity, on_delete=models.CASCADE)
@@ -79,12 +73,16 @@ class RegexRule(BaseRule):
     edit_template = 'policy/edit_regex_rule.html'
     create_template = 'policy/create_regex_rule.html'
 
-    def save(self, *args, **kwargs):
-        """Save the RegexRule instance with the rule_type set to 'regex'."""
-        self.rule_type = RuleType.REGEX.value
-        super().save(*args, **kwargs)
+    rule_type = 'regex'
 
 
-rule_classes = {
-    RuleType.REGEX.value: RegexRule,
-}
+def rule_classes(base_class: Any) -> dict[str, type]:
+    """Get all subclasses of a given class recursively."""
+    subclasses_dict = {}
+    for subclass in base_class.__subclasses__():
+        subclasses_dict[subclass.rule_type] = subclass
+        subclasses_dict.update(rule_classes(subclass))
+    return subclasses_dict
+
+
+RULES = rule_classes(BaseRule)

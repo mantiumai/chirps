@@ -3,6 +3,7 @@
         <div class="row">
             <div class="col-6">
                 <input type="hidden" name="rule_type_{{rule.id}}" value="{{rule.rule_type}}">
+                <input type="hidden" name="rule_query_embedding_{{rule.id}}" value="{{rule.query_embedding}}">
                 <input class="form-control" type="text" name="rule_name_{{rule.id}}"
                     id="rule_name_{{rule.id}}" placeholder="Name" required
                     value="{{rule.name}}"></input>
@@ -13,8 +14,8 @@
                     value="{{rule.query_string}}"></input>
             </div>
             <div class="col-4">
-                <input class="form-control" type="text" name="rule_regex_{{rule.id}}"
-                    id="rule_regex_{{rule.id}}" placeholder="Regular Expression Test" required
+                <input class="form-control" type="text" name="rule_regex_test_{{rule.id}}"
+                    id="rule_regex_test_{{rule.id}}" placeholder="Regular Expression Test" required
                     value="{{rule.regex_test}}"></input>
             </div>
             <div class="col-3">
