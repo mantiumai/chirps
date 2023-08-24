@@ -61,6 +61,10 @@ class BaseRule(PolymorphicModel):
 class RegexRule(BaseRule):
     """A step to execute within a policy."""
 
+    rule_type = 'regex'
+    edit_template = 'policy/edit_regex_rule.html'
+    create_template = 'policy/create_regex_rule.html'
+
     # Query to run against the asset
     query_string = models.TextField()
 
@@ -69,11 +73,6 @@ class RegexRule(BaseRule):
 
     # Regular expression to run against the response documents
     regex_test = models.TextField()
-
-    edit_template = 'policy/edit_regex_rule.html'
-    create_template = 'policy/create_regex_rule.html'
-
-    rule_type = 'regex'
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:
