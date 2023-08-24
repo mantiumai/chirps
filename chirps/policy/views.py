@@ -119,7 +119,7 @@ def clone(request, policy_id):
     # Clone the rules
     for rule in policy.current_version.rules.all():
         rule_instance = create_rule_instance(
-            rule.content_type.model,
+            rule.rule_type,
             name=rule.name,
             query_string=rule.query_string,
             regex_test=rule.regex_test,
