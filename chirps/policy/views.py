@@ -20,6 +20,17 @@ def save_rule(rule_type: str, **kwargs) -> None:
     rule(**kwargs).save()
 
 
+def create_rules(rules: list[dict], policy_version: PolicyVersion) -> None:
+    """Create and save a list of rules."""
+    for rule in rules:
+        # Retrieve the Severity instance from the database using the provided value
+        severity = rule.pop('severity')
+        severity_instance = Severity.objects.get(value=severity)
+
+        type_ = rule.pop('type')
+        save_rule(type_, severity=severity_instance, policy=policy_version, **rule)
+
+
 @login_required
 def dashboard(request):
     """Render the dashboard for the policy app.
