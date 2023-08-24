@@ -8,15 +8,16 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, RegexRule
+from .models import Policy, PolicyVersion, rule_type_models
 
 
-def create_rule_instance(rule_type, **kwargs):
-    """Create an instance of the rule."""
-    if rule_type == 'regex':
-        return RegexRule(**kwargs)
-    else:
+def save_rule(rule_type: str, **kwargs) -> None:
+    """Create and save an instance of the rule."""
+    rule = rule_type_models.get(rule_type, None)
+    if rule is None:
         raise ValueError(f'Invalid rule type: {rule_type}')
+
+    rule(**kwargs).save()
 
 
 @login_required
@@ -74,7 +75,7 @@ def create(request):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            rule_instance = create_rule_instance(
+            save_rule(
                 rule['rule_type'],
                 severity=severity_instance,
                 policy=policy_version,
@@ -82,7 +83,6 @@ def create(request):
                 query_string=rule['rule_query_string'],
                 regex_test=rule['rule_regex'],
             )
-            rule_instance.save()
 
         # Add a success message
         messages.success(request, 'Policy created successfully.')
@@ -118,7 +118,7 @@ def clone(request, policy_id):
 
     # Clone the rules
     for rule in policy.current_version.rules.all():
-        rule_instance = create_rule_instance(
+        save_rule(
             rule.rule_type,
             name=rule.name,
             query_string=rule.query_string,
@@ -126,7 +126,6 @@ def clone(request, policy_id):
             severity=rule.severity,
             policy=policy_version,
         )
-        rule_instance.save()
 
     # Redirect to the edit page for the new policy
     return redirect('policy_edit', policy_id=cloned_policy.id)
@@ -154,7 +153,7 @@ def edit(request, policy_id):
             # Retrieve the Severity instance from the database using the provided value
             severity_instance = Severity.objects.get(value=rule['rule_severity'])
 
-            rule_instance = create_rule_instance(
+            save_rule(
                 rule['rule_type'],
                 name=rule['rule_name'],
                 query_string=rule['rule_query_string'],
@@ -162,7 +161,6 @@ def edit(request, policy_id):
                 severity=severity_instance,
                 policy=new_policy_version,
             )
-            rule_instance.save()
 
         # Update the current version of the policy as well as the name and description
         policy.current_version = new_policy_version

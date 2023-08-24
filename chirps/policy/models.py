@@ -80,3 +80,8 @@ class RegexRule(BaseRule):
         """Save the RegexRule instance with the rule_type set to 'regex'."""
         self.rule_type = RuleType.REGEX.value
         super().save(*args, **kwargs)
+
+
+rule_type_models = {
+    RuleType.REGEX.value: RegexRule,
+}
