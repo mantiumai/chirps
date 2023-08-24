@@ -492,6 +492,7 @@ class CreateRuleViewTests(TestCase):
     def test_single_rule(self):
         """Verify that a single rule is parsed correctly."""
         rule_data = {
+            'rule_type': 'regex',
             'rule_name': 'Test Rule',
             'rule_query_string': 'Test Query String',
             'rule_regex': 'Test Regex',
@@ -503,6 +504,7 @@ class CreateRuleViewTests(TestCase):
                 'name': 'Test Policy',
                 'description': 'Test Description',
                 'rule_name_0': 'Test Rule',
+                'rule_type_0': 'regex',
                 'rule_query_string_0': 'Test Query String',
                 'rule_regex_0': 'Test Regex',
                 'rule_severity_0': 'Test Severity',
@@ -516,7 +518,7 @@ class CreateRuleViewTests(TestCase):
 
     def test_create_rule_with_severities(self):
         """Verify that the create_rule view returns a correct response with severities in the context."""
-        response = self.client.get(reverse('policy_create_rule'), {'rule_id': 0})
+        response = self.client.get(reverse('policy_create_rule', kwargs={'rule_type': 'regex'}), {'rule_id': 0})
         self.assertEqual(response.status_code, 200)
         self.assertTrue('severities' in response.context)
         severities = Severity.objects.filter(archived=False)
