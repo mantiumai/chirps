@@ -73,7 +73,7 @@
                                             <a class="dropdown-item" href="#"
                                                 hx-get="{% url 'policy_create_rule' rule_type.value %}" hx-trigger="click"
                                                 hx-target="#rule_replace_me" hx-swap="beforeend">
-                                                Add {{ rule_type.name }} Rule
+                                                Add {{ rule_type.value.title }} Rule
                                             </a>
                                         </li>
                                         {% endfor %}
