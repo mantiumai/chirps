@@ -31,6 +31,7 @@
                             <div class="card-body cardbody-color p-4">
                                 <div class="row">
                                     <div class="col-6">
+                                        <input type="hidden" name="rule_type_{{rule.id}}" value="{{rule.rule_type}}">
                                         <input class="form-control" type="text" name="rule_name_{{rule.id}}"
                                             id="rule_name_{{rule.id}}" placeholder="Name" required
                                             value="{{rule.name}}"></input>
