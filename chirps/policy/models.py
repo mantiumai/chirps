@@ -82,6 +82,6 @@ class RegexRule(BaseRule):
         super().save(*args, **kwargs)
 
 
-rule_type_models = {
-    RuleType.REGEX.value: RegexRule,
+rule_class_templates = {
+    RuleType.REGEX.value: {'class': RegexRule, 'template': 'policy/create_regex_rule.html'},
 }

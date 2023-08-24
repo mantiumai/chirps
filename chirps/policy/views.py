@@ -8,12 +8,12 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, rule_type_models
+from .models import Policy, PolicyVersion, RuleType, rule_class_templates
 
 
 def save_rule(rule_type: str, **kwargs) -> None:
     """Create and save an instance of the rule."""
-    rule = rule_type_models.get(rule_type, None)
+    rule = rule_class_templates.get(rule_type, {}).get('class')
     if rule is None:
         raise ValueError(f'Invalid rule type: {rule_type}')
 
@@ -90,7 +90,8 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    return render(request, 'policy/create.html', {})
+    rule_types = [{'value': rt.value, 'name': rt.name} for rt in RuleType]
+    return render(request, 'policy/create.html', {'rule_types': rule_types})
 
 
 @login_required
@@ -176,22 +177,23 @@ def edit(request, policy_id):
 
     form = PolicyForm.from_policy(policy=policy)
     severities = Severity.objects.filter(archived=False)
-    return render(request, 'policy/edit.html', {'policy': policy, 'form': form, 'severities': severities})
+    rule_types = [{'value': rt.value, 'name': rt.name} for rt in RuleType]
+    return render(
+        request,
+        'policy/edit.html',
+        {'policy': policy, 'form': form, 'severities': severities, 'rule_types': rule_types},
+    )
 
 
 @login_required
-def create_rule(request):
+def create_rule(request, rule_type: str):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
-    return render(
-        request,
-        'policy/create_rule.html',
-        {
-            'rule_id': request.GET.get('rule_id', 0),
-            'next_rule_id': int(request.GET.get('rule_id', 0)) + 1,
-            'severities': severities,
-        },
-    )
+    template_name = rule_class_templates.get(rule_type, {}).get('template')
+    rule_id = request.GET.get('rule_id', 0)
+    next_rule_id = int(request.GET.get('rule_id', 0)) + 1
+
+    return render(request, template_name, {'rule_id': rule_id, 'next_rule_id': next_rule_id, 'severities': severities})
 
 
 @login_required
