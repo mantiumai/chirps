@@ -76,18 +76,15 @@ class RegexRule(BaseRule):
     # Regular expression to run against the response documents
     regex_test = models.TextField()
 
+    edit_template = 'policy/edit_regex_rule.html'
+    create_template = 'policy/create_regex_rule.html'
+
     def save(self, *args, **kwargs):
         """Save the RegexRule instance with the rule_type set to 'regex'."""
         self.rule_type = RuleType.REGEX.value
         super().save(*args, **kwargs)
 
 
-rule_class_templates = {
-    RuleType.REGEX.value: {
-        'class': RegexRule,
-        'templates': {
-            'edit': 'policy/edit_regex_rule.html',
-            'create': 'policy/create_regex_rule.html',
-        },
-    },
+rule_classes = {
+    RuleType.REGEX.value: RegexRule,
 }

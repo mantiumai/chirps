@@ -8,12 +8,12 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, RuleType, rule_class_templates
+from .models import Policy, PolicyVersion, RuleType, rule_classes
 
 
 def save_rule(rule_type: str, **kwargs) -> None:
     """Create and save an instance of the rule."""
-    rule = rule_class_templates.get(rule_type, {}).get('class')
+    rule = rule_classes.get(rule_type)
     if rule is None:
         raise ValueError(f'Invalid rule type: {rule_type}')
 
@@ -186,7 +186,7 @@ def edit(request, policy_id):
             'form': form,
             'severities': severities,
             'rule_types': rule_types,
-            'rule_class_templates': rule_class_templates,
+            'rule_classes': rule_classes,
         },
     )
 
@@ -195,7 +195,7 @@ def edit(request, policy_id):
 def create_rule(request, rule_type: str):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
-    template_name = rule_class_templates.get(rule_type, {}).get('templates').get('create')
+    template_name = rule_classes.get(rule_type).create_template
     rule_id = request.GET.get('rule_id', 0)
     next_rule_id = int(request.GET.get('rule_id', 0)) + 1
 

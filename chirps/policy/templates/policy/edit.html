@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load policy_filters %}
 {% block title %}Edit Policy{% endblock %}
 
 {% block content %}
@@ -29,8 +28,8 @@
 
                         {% for rule in policy.current_version.rules.all %}
                         <!-- Include the rule edit template for the rule type -->
-                        {% with template=rule_class_templates|get_edit_rule_template:rule.rule_type %}
-                            {% include template with rule=rule severities=severities %}
+                        {% with template=rule.edit_template %}
+                        {% include template with rule=rule severities=severities %}
                         {% endwith %}
                         {% endfor %}
                         <div id="policy_rule_list">
@@ -40,8 +39,8 @@
                                         {% for rule_type in rule_types %}
                                         <li>
                                             <a class="dropdown-item" href="#"
-                                                hx-get="{% url 'policy_create_rule' rule_type.value %}" hx-trigger="click"
-                                                hx-target="#rule_replace_me" hx-swap="beforeend">
+                                                hx-get="{% url 'policy_create_rule' rule_type.value %}"
+                                                hx-trigger="click" hx-target="#rule_replace_me" hx-swap="beforeend">
                                                 Add {{ rule_type.value.title }} Rule
                                             </a>
                                         </li>
