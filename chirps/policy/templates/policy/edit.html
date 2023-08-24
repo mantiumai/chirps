@@ -32,15 +32,16 @@
                         {% include template with rule=rule severities=severities %}
                         {% endwith %}
                         {% endfor %}
-                        <div id="policy_rule_list">
+                        <div id="new_policy_rule_list" data-rule-count="0">
                             <div id="rule_replace_me">
                                 <div id="dropdown_menu_items">
                                     <ul class="dropdown-menu" aria-labelledby="addRuleDropdown">
                                         {% for rule_type in rule_types %}
                                         <li>
-                                            <a class="dropdown-item" href="#"
+                                            <a class="dropdown-item" href="#" onclick="updateRuleLink(this)"
                                                 hx-get="{% url 'policy_create_rule' rule_type.value %}"
-                                                hx-trigger="click" hx-target="#rule_replace_me" hx-swap="beforeend">
+                                                hx-trigger="click" hx-target="#rule_replace_me" hx-swap="beforeend"
+                                                hx-vals='{"rule_id": 0}'>
                                                 Add {{ rule_type.value.title }} Rule
                                             </a>
                                         </li>
@@ -70,6 +71,13 @@
     document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
+
+    function updateRuleLink(link) {
+        const ruleList = document.getElementById('new_policy_rule_list');
+        const ruleCount = parseInt(ruleList.getAttribute('data-rule-count'));
+        link.setAttribute('hx-vals', `{"rule_id": ${ruleCount}}`);
+        ruleList.setAttribute('data-rule-count', ruleCount + 1);
+    }
 </script>
 
 {% endblock %}

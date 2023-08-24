@@ -7,50 +7,52 @@
     <h1 class="text-success">New Policy</h1>
     <hr>
     <div class="card my-4">
-    <div class="card-body cardbody-color p-4">
-        <div class="form-group">
-            <form method="POST" action="{% url 'policy_create' %}">
-                {% csrf_token %}
+        <div class="card-body cardbody-color p-4">
+            <div class="form-group">
+                <form method="POST" action="{% url 'policy_create' %}">
+                    {% csrf_token %}
 
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input class="form-control" type="text" name="name" id="name" placeholder="Name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input class="form-control" type="text" name="description" id="description" placeholder="Description" required></input>
-                </div>
-
-                <div id="policy_rule_list">
-                    <div id="rule_replace_me">
-                        <div id="dropdown_menu_items">
-                            <ul class="dropdown-menu" aria-labelledby="addRuleDropdown">
-                                {% for rule_type in rule_types %}
-                                <li>
-                                    <a class="dropdown-item" href="#"
-                                        hx-get="{% url 'policy_create_rule' rule_type.value %}" hx-trigger="click"
-                                        hx-target="#rule_replace_me" hx-swap="beforeend">
-                                        Add {{ rule_type.value.title }} Rule
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name" placeholder="Name" required>
                     </div>
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="addRuleDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Add Rule
-                    </button>
-                </div>
 
-                <div class="d-flex mt-3">
-                    <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'policy_dashboard' %}">Cancel</a>
-                    <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input class="form-control" type="text" name="description" id="description"
+                            placeholder="Description" required></input>
+                    </div>
+
+                    <div id="policy_rule_list" data-rule-count="0">
+                        <div id="rule_replace_me">
+                            <div id="dropdown_menu_items">
+                                <ul class="dropdown-menu" aria-labelledby="addRuleDropdown">
+                                    {% for rule_type in rule_types %}
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="updateRuleLink(this)"
+                                            hx-get="{% url 'policy_create_rule' rule_type.value %}" hx-trigger="click"
+                                            hx-target="#rule_replace_me" hx-swap="beforeend" hx-vals='{"rule_id": 0}'>
+                                            Add {{ rule_type.value.title }} Rule
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="addRuleDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Add Rule
+                        </button>
+                    </div>
+
+                    <div class="d-flex mt-3">
+                        <a class="btn btn-danger ml-auto mr-0" type="button"
+                            href="{% url 'policy_dashboard' %}">Cancel</a>
+                        <button class="btn btn-primary ml-2 mr-0" type="submit">Create</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
@@ -58,6 +60,14 @@
     document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
+
+    function updateRuleLink(link) {
+        const ruleList = document.getElementById('policy_rule_list');
+        const ruleCount = parseInt(ruleList.getAttribute('data-rule-count'));
+        link.setAttribute('hx-vals', `{"rule_id": ${ruleCount}}`);
+        ruleList.setAttribute('data-rule-count', ruleCount + 1);
+    }
+
 </script>
 
 

@@ -23,6 +23,8 @@ def save_rule(rule_type: str, **kwargs) -> None:
 def create_rules(rules: list[dict], policy_version: PolicyVersion) -> None:
     """Create and save a list of rules."""
     for rule in rules:
+        # throw away ID, it's only used by the UI
+        rule.pop('id')
         # Retrieve the Severity instance from the database using the provided value
         severity = rule.pop('severity')
         severity_instance = Severity.objects.get(value=severity)
@@ -90,7 +92,7 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    rule_types = [{'value': r.rule_type, 'name': r.rule_type} for r in RULES]
+    rule_types = [{'value': r.rule_type, 'name': r.rule_type} for r in RULES.values()]
     return render(request, 'policy/create.html', {'rule_types': rule_types})
 
 
@@ -186,9 +188,8 @@ def create_rule(request, rule_type: str):
     severities = Severity.objects.filter(archived=False)
     template_name = RULES.get(rule_type).create_template
     rule_id = request.GET.get('rule_id', 0)
-    next_rule_id = int(request.GET.get('rule_id', 0)) + 1
 
-    return render(request, template_name, {'rule_id': rule_id, 'next_rule_id': next_rule_id, 'severities': severities})
+    return render(request, template_name, {'rule_id': rule_id, 'severities': severities})
 
 
 @login_required
