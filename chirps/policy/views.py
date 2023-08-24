@@ -92,8 +92,7 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    rule_types = [{'value': r.rule_type, 'name': r.rule_type} for r in RULES.values()]
-    return render(request, 'policy/create.html', {'rule_types': rule_types})
+    return render(request, 'policy/create.html', {'rule_types': [rule for rule in RULES]})
 
 
 @login_required
@@ -168,7 +167,6 @@ def edit(request, policy_id):
 
     form = PolicyForm.from_policy(policy=policy)
     severities = Severity.objects.filter(archived=False)
-    rule_types = [{'value': r, 'name': r} for r in RULES]
     return render(
         request,
         'policy/edit.html',
@@ -176,7 +174,7 @@ def edit(request, policy_id):
             'policy': policy,
             'form': form,
             'severities': severities,
-            'rule_types': rule_types,
+            'rule_types': [rule for rule in RULES],
             'rule_classes': RULES,
         },
     )

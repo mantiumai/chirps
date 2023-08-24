@@ -30,9 +30,9 @@
                                     {% for rule_type in rule_types %}
                                     <li>
                                         <a class="dropdown-item" href="#" onclick="updateRuleLink(this)"
-                                            hx-get="{% url 'policy_create_rule' rule_type.value %}" hx-trigger="click"
+                                            hx-get="{% url 'policy_create_rule' rule_type %}" hx-trigger="click"
                                             hx-target="#rule_replace_me" hx-swap="beforeend" hx-vals='{"rule_id": 0}'>
-                                            Add {{ rule_type.value.title }} Rule
+                                            Add {{ rule_type.title }} Rule
                                         </a>
                                     </li>
                                     {% endfor %}
