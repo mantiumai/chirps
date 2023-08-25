@@ -1,9 +1,7 @@
 """Models for the policy application."""
-import json
 from typing import Any
 
 from django.contrib.auth.models import User
-from django.core.validators import validate_comma_separated_integer_list
 from django.db import models
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
@@ -85,18 +83,10 @@ class MultiQueryRule(BaseRule):
     create_template = 'policy/create_multiquery_rule.html'
 
     # Description of the task to be completed
-    task_description = models.TextField()
+    task_description = models.TextField(max_length=256)
 
-    # Acceptable outcomes of the task
-    acceptable_outcomes = models.TextField(validators=[validate_comma_separated_integer_list])
-
-    def set_acceptable_outcomes(self, outcomes_list):
-        """Set the acceptable outcomes for the rule."""
-        self.acceptable_outcomes = json.dumps(outcomes_list)
-
-    def get_acceptable_outcomes(self):
-        """Get the acceptable outcomes for the rule."""
-        return json.loads(self.acceptable_outcomes)
+    # Success outcome of the task
+    success_outcome = models.CharField(max_length=256)
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:

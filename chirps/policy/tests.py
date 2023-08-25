@@ -590,29 +590,13 @@ class MultiQueryRuleModelTests(TestCase):
         rule = MultiQueryRule.objects.create(
             name='Test MultiQuery Rule',
             task_description='Test Task Description',
-            acceptable_outcomes='1,2,3',
+            success_outcome='Success',
             severity=self.severity,
             policy=self.policy_version,
         )
 
         self.assertEqual(rule.name, 'Test MultiQuery Rule')
         self.assertEqual(rule.task_description, 'Test Task Description')
-        self.assertEqual(rule.acceptable_outcomes, '1,2,3')
+        self.assertEqual(rule.success_outcome, 'Success')
         self.assertEqual(rule.severity, self.severity)
         self.assertEqual(rule.policy, self.policy_version)
-
-    def test_set_get_acceptable_outcomes(self):
-        """Verify that set_acceptable_outcomes and get_acceptable_outcomes work as expected."""
-        rule = MultiQueryRule.objects.create(
-            name='Test MultiQuery Rule',
-            task_description='Test Task Description',
-            acceptable_outcomes='1,2,3',
-            severity=self.severity,
-            policy=self.policy_version,
-        )
-
-        rule.set_acceptable_outcomes([4, 5, 6])
-        self.assertEqual(rule.acceptable_outcomes, '[4, 5, 6]')
-
-        outcomes = rule.get_acceptable_outcomes()
-        self.assertEqual(outcomes, [4, 5, 6])
