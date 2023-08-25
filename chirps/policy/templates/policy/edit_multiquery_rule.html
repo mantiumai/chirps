@@ -1,0 +1,36 @@
+<div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
+    <div class="card-body cardbody-color p-4">
+        <div class="row">
+            <input type="hidden" name="rule_type_multiquery_{{rule.id}}" value="{{rule.rule_type}}" />
+            <input type="hidden" name="rule_query_embedding_multiquery_{{rule.id}}" value="{{rule.query_embedding}}" />
+            <div class="col-6">
+                <input class="form-control" type="text" name="rule_name_multiquery_{{rule.id}}"
+                    id="rule_name_multiquery_{{rule.id}}" placeholder="Name" required
+                    value="{{rule.name}}"></input>
+            </div>
+            <div class="col-6">
+                <input class="form-control" type="text" name="rule_task_description_multiquery_{{rule.id}}"
+                    id="rule_task_description_multiquery_{{rule.id}}" placeholder="Task Description" required
+                    value="{{rule.task_description}}"></input>
+            </div>
+            <div class="col-4">
+                <input class="form-control" type="text" name="rule_acceptable_outcomes_multiquery_{{rule.id}}"
+                    id="rule_acceptable_outcomes_multiquery_{{rule.id}}"
+                    placeholder="Acceptable Outcomes (comma separated)" required
+                    value="{{rule.acceptable_outcomes}}"></input>
+            </div>
+            <div class="col-3">
+                <select class="form-control" name="rule_severity_multiquery_{{rule.id}}"
+                    id="rule_severity_multiquery_{{rule.id}}" required>
+                    {% for severity in severities %}
+                    <option value="{{ severity.value }}" {% if severity.value == rule.severity %}selected{% endif %}>{{ severity.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-1">
+                <button class="form-control btn btn-danger" hx-delete="{% url 'policy_delete_rule' rule.id %}"><i
+                        class="fa-solid fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,9 @@
 """Models for the policy application."""
+import json
 from typing import Any
 
 from django.contrib.auth.models import User
+from django.core.validators import validate_comma_separated_integer_list
 from django.db import models
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
@@ -73,6 +75,28 @@ class RegexRule(BaseRule):
 
     # Regular expression to run against the response documents
     regex_test = models.TextField()
+
+
+class MultiQueryRule(BaseRule):
+    """Multi-query rule."""
+
+    rule_type = 'multiquery'
+    edit_template = 'policy/edit_multiquery_rule.html'
+    create_template = 'policy/create_multiquery_rule.html'
+
+    # Description of the task to be completed
+    task_description = models.TextField()
+
+    # Acceptable outcomes of the task
+    acceptable_outcomes = models.TextField(validators=[validate_comma_separated_integer_list])
+
+    def set_acceptable_outcomes(self, outcomes_list):
+        """Set the acceptable outcomes for the rule."""
+        self.acceptable_outcomes = json.dumps(outcomes_list)
+
+    def get_acceptable_outcomes(self):
+        """Get the acceptable outcomes for the rule."""
+        return json.loads(self.acceptable_outcomes)
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:
