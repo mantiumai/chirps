@@ -8,7 +8,7 @@ from django.urls import reverse
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, RegexRule
+from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule
 
 cfixtures = ['policy/network.json']
 
@@ -572,3 +572,47 @@ class CreateRuleViewTests(TestCase):
         self.assertEqual(len(form.cleaned_data['rules']), 2)
         self.assertEqual(form.cleaned_data['rules'][0], rule_data1)
         self.assertEqual(form.cleaned_data['rules'][1], rule_data2)
+
+
+class MultiQueryRuleModelTests(TestCase):
+    """Test the MultiQueryRule model."""
+
+    fixtures = ['severity/default_severities.json']
+
+    def setUp(self):
+        """Create a sample policy and policy version before performing any tests."""
+        self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
+        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
+        self.severity = Severity.objects.first()
+
+    def test_create_multiquery_rule(self):
+        """Verify that a MultiQueryRule is created correctly."""
+        rule = MultiQueryRule.objects.create(
+            name='Test MultiQuery Rule',
+            task_description='Test Task Description',
+            acceptable_outcomes='1,2,3',
+            severity=self.severity,
+            policy=self.policy_version,
+        )
+
+        self.assertEqual(rule.name, 'Test MultiQuery Rule')
+        self.assertEqual(rule.task_description, 'Test Task Description')
+        self.assertEqual(rule.acceptable_outcomes, '1,2,3')
+        self.assertEqual(rule.severity, self.severity)
+        self.assertEqual(rule.policy, self.policy_version)
+
+    def test_set_get_acceptable_outcomes(self):
+        """Verify that set_acceptable_outcomes and get_acceptable_outcomes work as expected."""
+        rule = MultiQueryRule.objects.create(
+            name='Test MultiQuery Rule',
+            task_description='Test Task Description',
+            acceptable_outcomes='1,2,3',
+            severity=self.severity,
+            policy=self.policy_version,
+        )
+
+        rule.set_acceptable_outcomes([4, 5, 6])
+        self.assertEqual(rule.acceptable_outcomes, '[4, 5, 6]')
+
+        outcomes = rule.get_acceptable_outcomes()
+        self.assertEqual(outcomes, [4, 5, 6])
