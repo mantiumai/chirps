@@ -1,0 +1,33 @@
+<div class="card my-4 rule-row" hx-target="closest .rule-row" hx-swap="outerHTML">
+    <div class="card-body cardbody-color p-4">
+        <div class="row">
+            <input type="hidden" name="rule_type_multiquery_{{rule_id}}" value="multiquery" />
+            <div class="col-6">
+                <input class="form-control" type="text" name="rule_name_multiquery_{{rule_id}}"
+                    id="rule_name_multiquery_{{rule_id}}" placeholder="Name" required></input>
+            </div>
+            <div class="col-6">
+                <input class="form-control" type="text" name="rule_task_description_multiquery_{{rule_id}}"
+                    id="rule_task_description_multiquery_{{rule_id}}" placeholder="Task Description" required></input>
+            </div>
+            <div class="col-4">
+                <input class="form-control" type="text" name="rule_success_outcome_multiquery_{{rule_id}}"
+                    id="rule_success_outcome_multiquery_{{rule_id}}"
+                    placeholder="Success Outcome" required></input>
+            </div>
+            <div class="col-3">
+                <select class="form-control" name="rule_severity_multiquery_{{rule_id}}"
+                    id="rule_severity_multiquery_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Severity</option>
+                    {% for severity in severities %}
+                    <option value="{{ severity.value }}">{{ severity.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-1">
+                <button class="form-control btn btn-danger" hx-delete="{% url 'policy_delete_rule' 0 %}"><i
+                        class="fa-solid fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

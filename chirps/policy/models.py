@@ -75,6 +75,20 @@ class RegexRule(BaseRule):
     regex_test = models.TextField()
 
 
+class MultiQueryRule(BaseRule):
+    """Multi-query rule."""
+
+    rule_type = 'multiquery'
+    edit_template = 'policy/edit_multiquery_rule.html'
+    create_template = 'policy/create_multiquery_rule.html'
+
+    # Description of the task to be completed
+    task_description = models.TextField(max_length=256)
+
+    # Success outcome of the task
+    success_outcome = models.CharField(max_length=256)
+
+
 def rule_classes(base_class: Any) -> dict[str, type]:
     """Get all subclasses of a given class recursively."""
     subclasses_dict = {}
