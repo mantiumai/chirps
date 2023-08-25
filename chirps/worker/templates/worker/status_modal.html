@@ -1,0 +1,43 @@
+<!-- Status Details Modal -->
+<div id="modal-backdrop" class="modal-backdrop fade show" style="display:block;"></div>
+<div class="modal fade show" id="server-status-modal" tabindex="-1" style="display:block;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="statusDetailsModalLabel">Worker Status Details</h5>
+            <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="statusDetailsModalBody">
+            <p><strong>Celery Online: </strong>{{service_status.celery_status}}</p>
+            <p><strong>Running Jobs: </strong>{{service_status.job_count}}</p>
+            <p><strong>RabbitMQ Online: </strong>{{service_status.rabbitmq_status}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+/* Helper function to gracefully close the modal. Standard Bootstrap 5 modal
+ * closing doesn't work with HTMX swapped elements, so we have to do it manually.
+ */
+function closeModal() {
+	var container = document.getElementById("modals-here")
+	var backdrop = document.getElementById("modal-backdrop")
+	var modal = document.getElementById("server-status-modal")
+
+	modal.classList.remove("show")
+	backdrop.classList.remove("show")
+
+	setTimeout(function() {
+		container.removeChild(backdrop)
+		container.removeChild(modal)
+	}, 200)
+}
+</script>

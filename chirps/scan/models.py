@@ -89,7 +89,13 @@ class ScanRun(models.Model):
     status = models.CharField(
         max_length=32,
         default='Queued',
-        choices=[('Queued', 'Queued'), ('Running', 'Running'), ('Complete', 'Complete'), ('Failed', 'Failed')],
+        choices=[
+            ('Queued', 'Queued'),
+            ('Running', 'Running'),
+            ('Complete', 'Complete'),
+            ('Failed', 'Failed'),
+            ('Canceled', 'Canceled'),
+        ],
     )
 
     def is_running(self):
@@ -142,7 +148,11 @@ class ScanAsset(models.Model):
             return 'N/A'
 
         # We're using the Django Celery Results backend, so we can query the results from there
-        result = TaskResult.objects.get(task_id=self.celery_task_id)
+        try:
+            result = TaskResult.objects.get(task_id=self.celery_task_id)
+        except TaskResult.DoesNotExist:
+            return 'Unable to get Celery task status'
+
         return result.status
 
     def celery_task_output(self) -> str:

@@ -15,4 +15,5 @@ urlpatterns = [
     path('findings/<int:scan_run_id>/', views.findings_count, name='scan_findings_count'),
     path('vcr/<int:scan_id>/', views.vcr_control, name='scan_vcr'),
     path('vcr_start/<int:scan_id>/', views.vcr_start, name='scan_vcr_start'),
+    path('vcr_stop/<int:scan_id>/', views.vcr_stop, name='scan_vcr_stop'),
 ]

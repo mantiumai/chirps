@@ -1,29 +1,37 @@
 """Worker application views"""
 import os
-import subprocess
+from dataclasses import dataclass
 
-from django.http import JsonResponse
-from requests import Request
+from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 
 from chirps.celery import app
 
 
-def is_redis_running() -> bool:
-    """Check redis status"""
-    cmd = 'docker-compose -f /workspace/.devcontainer/docker-compose.yml ps | grep redis'
-    try:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True, check=True)
-    except subprocess.CalledProcessError:
-        return False
+@dataclass
+class ServiceStatus:
+    """Helper model for the status of a services across the application."""
 
-    if result.returncode == 0 and 'redis' in result.stdout and 'Up' in result.stdout:
-        return True
-
-    return False
+    status: str
+    celery_status: bool
+    rabbitmq_status: bool
+    job_count: int
 
 
-def worker_status(request: Request) -> JsonResponse:
-    """Get the status of the Celery worker"""
+@login_required
+def status(request: HttpRequest) -> HttpResponse:
+    """Return the status widget."""
+    return render(request, 'worker/status.html', {'service_status': _get_service_status()})
+
+
+@login_required
+def status_details(request: HttpRequest) -> HttpResponse:
+    """Fetch the status details modal."""
+    return render(request, 'worker/status_modal.html', {'service_status': _get_service_status()})
+
+
+def _get_service_status() -> ServiceStatus:
     celery_inspection = app.control.inspect()   # type: ignore
     celery_statuses = celery_inspection.ping()
 
@@ -31,13 +39,21 @@ def worker_status(request: Request) -> JsonResponse:
     if celery_statuses:
         is_celery_running = all(v['ok'] == 'pong' for v in celery_statuses.values())
 
+    # Check how many Celery jobs are running
+    job_count = 0
+    if is_celery_running:
+        workers = celery_inspection.active()
+
+        # Shape of the workers dictionary is {worker_name: [list of jobs]}
+        job_count = sum(len(jobs) for jobs in workers.values())
+
     is_rabbit_running = os.system('rabbitmqctl ping') == 0
 
-    service_statuses = {'celery': is_celery_running, 'rabbitmq': is_rabbit_running, 'redis': is_redis_running()}
-
-    if all(result is True for result in service_statuses.values()):
-        status = 'green'
+    if all(result is True for result in [is_celery_running, is_rabbit_running]):
+        service_status = 'green'
     else:
-        status = 'red'
+        service_status = 'red'
 
-    return JsonResponse({'overall_status': status, 'service_statuses': service_statuses})
+    return ServiceStatus(
+        celery_status=is_celery_running, rabbitmq_status=is_rabbit_running, status=service_status, job_count=job_count
+    )

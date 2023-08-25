@@ -46,7 +46,7 @@ def task_failure_handler(self, exc, task_id, args, kwargs, einfo):
 
 @shared_task(on_failure=task_failure_handler)
 def scan_task(scan_asset_id):
-    """Scan task."""
+    """Execute policies against a single asset"""
     logger.info('Starting scan task', extra={'scan_asset_id': scan_asset_id})
 
     try:
@@ -66,16 +66,17 @@ def scan_task(scan_asset_id):
     # This magic is handled by django-polymorphic
     asset = BaseAsset.objects.get(id=scan_asset.asset.id)
 
-    # Iterate through the selected policies and fetch their rules
+    # Build a complete list of all the rules, across policies, that need to be evaluated
     policy_rules = []
     for policy in scan_run.scan_version.policies.all():
         for rule in policy.current_version.rules.all():
             policy_rules.append((policy, rule))
 
-    total_rules = len(policy_rules)
     rules_run = 0
+    total_rules = len(policy_rules)
+
+    # Walk through the list of rules and evaluate them
     for policy, rule in policy_rules:
-        logger.info('Starting rule evaluation', extra={'id': rule.id})
 
         if asset.REQUIRES_EMBEDDINGS:
             # template policies should not be bound to a user

@@ -1,5 +1,6 @@
 """Views for the scan application."""
 from collections import defaultdict
+from logging import getLogger
 
 from asset.models import BaseAsset
 from django.contrib import messages
@@ -9,12 +10,17 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+from django.utils import timezone
 from embedding.models import Embedding
 from policy.models import Policy
+
+from chirps.celery import app as celery_app
 
 from .forms import ScanForm
 from .models import BaseFinding, ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from .tasks import scan_task
+
+logger = getLogger(__name__)
 
 
 @login_required
@@ -391,4 +397,30 @@ def vcr_start(request, scan_id):
 
 @login_required
 def vcr_stop(request, scan_id):   # pylint: disable=unused-argument
-    """TBD"""
+    """Stop or cancel a job that is currently running (or queued)."""
+    scan = get_object_or_404(ScanTemplate, pk=scan_id, user=request.user)
+
+    if scan.is_running():
+
+        # Grab the running scan
+        scan_run = ScanRun.objects.get(scan_version__scan=scan, status__in=['Running', 'Queued'])
+
+        # Each asset that is part of the scan has a task associated with it
+        # Walk through each available task and cancel it using Celery job control
+
+        for scan_asset in scan_run.run_assets.all():
+
+            print(f'Processing scan asset {scan_asset.id}')
+            if scan_asset.celery_task_id is not None:
+                celery_app.control.revoke(scan_asset.celery_task_id, terminate=True)
+                print(f'Terminated Celery task {scan_asset.celery_task_id}')
+
+            scan_asset.finished_at = timezone.now()
+            scan_asset.save()
+
+        scan_run.status = 'Canceled'
+        scan_run.finished_at = timezone.now()
+        scan_run.save()
+
+    # Return the VCR controls
+    return render(request, 'scan/vcr.html', {'scan': scan})

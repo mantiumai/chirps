@@ -57,9 +57,8 @@
       </div>
       <!-- Status indicator -->
       <div class="ms-auto">
-        <div id="worker-status" hx-get="/worker/status/" hx-trigger="load, every 5s" hx-swap="none">
-          <div class="worker-status-indicator" title="Worker status" hx-trigger="click"
-            hx-swap="none"></div>
+        <div id="worker-status" hx-get="/worker/status/" hx-trigger="load, every 5s">
+          <i class="fa-solid fa-spinner fa-spin"></i>
         </div>
       </div>
     </div>
@@ -67,13 +66,15 @@
 </div>
 
 <!-- Status Details Modal -->
-<div class="modal fade" id="statusDetailsModal" tabindex="-1" aria-labelledby="statusDetailsModalLabel"
+{% comment %} <div class="modal fade" id="statusDetailsModal" tabindex="-1" aria-labelledby="statusDetailsModalLabel"
   aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="statusDetailsModalLabel">Worker Status Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
       <div class="modal-body" id="statusDetailsModalBody">
         <!-- Status details will be displayed here -->
@@ -83,8 +84,12 @@
       </div>
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 
+<div id="modals-here">
+
+</div>
+{% comment %}
 <script>
   document.body.addEventListener('htmx:configRequest', function (event) {
     if (event.target.id === 'worker-status') {
@@ -132,4 +137,4 @@
       statusDetailsModal.show();
     }
   });
-</script>
+</script> {% endcomment %}
