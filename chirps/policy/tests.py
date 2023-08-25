@@ -492,10 +492,13 @@ class CreateRuleViewTests(TestCase):
     def test_single_rule(self):
         """Verify that a single rule is parsed correctly."""
         rule_data = {
-            'rule_name': 'Test Rule',
-            'rule_query_string': 'Test Query String',
-            'rule_regex': 'Test Regex',
-            'rule_severity': 'Test Severity',
+            'id': '0',
+            'type': 'regex',
+            'name': 'Test Rule',
+            'query_string': 'Test Query String',
+            'regex_test': 'Test Regex',
+            'severity': 'Test Severity',
+            'query_embedding': '',
         }
 
         form = PolicyForm(
@@ -503,9 +506,11 @@ class CreateRuleViewTests(TestCase):
                 'name': 'Test Policy',
                 'description': 'Test Description',
                 'rule_name_0': 'Test Rule',
+                'rule_type_0': 'regex',
                 'rule_query_string_0': 'Test Query String',
-                'rule_regex_0': 'Test Regex',
+                'rule_regex_test_0': 'Test Regex',
                 'rule_severity_0': 'Test Severity',
+                'rule_query_embedding_0': '',
             }
         )
 
@@ -516,8 +521,54 @@ class CreateRuleViewTests(TestCase):
 
     def test_create_rule_with_severities(self):
         """Verify that the create_rule view returns a correct response with severities in the context."""
-        response = self.client.get(reverse('policy_create_rule'), {'rule_id': 0})
+        response = self.client.get(reverse('policy_create_rule', kwargs={'rule_type': 'regex'}), {'rule_id': 0})
         self.assertEqual(response.status_code, 200)
         self.assertTrue('severities' in response.context)
         severities = Severity.objects.filter(archived=False)
         self.assertEqual(list(response.context['severities']), list(severities))
+
+    def test_multiple_rules(self):
+        """Verify that multiple rules are parsed correctly."""
+        rule_data1 = {
+            'id': '0',
+            'type': 'regex',
+            'name': 'Test Rule 1',
+            'query_string': 'Test Query String 1',
+            'regex_test': 'Test Regex 1',
+            'severity': 'Test Severity 1',
+            'query_embedding': '',
+        }
+        rule_data2 = {
+            'id': '1',
+            'type': 'regex',
+            'name': 'Test Rule 2',
+            'query_string': 'Test Query String 2',
+            'regex_test': 'Test Regex 2',
+            'severity': 'Test Severity 2',
+            'query_embedding': '',
+        }
+
+        form = PolicyForm(
+            data={
+                'name': 'Test Policy',
+                'description': 'Test Description',
+                'rule_name_0': 'Test Rule 1',
+                'rule_type_0': 'regex',
+                'rule_query_string_0': 'Test Query String 1',
+                'rule_regex_test_0': 'Test Regex 1',
+                'rule_severity_0': 'Test Severity 1',
+                'rule_query_embedding_0': '',
+                'rule_name_1': 'Test Rule 2',
+                'rule_type_1': 'regex',
+                'rule_query_string_1': 'Test Query String 2',
+                'rule_regex_test_1': 'Test Regex 2',
+                'rule_severity_1': 'Test Severity 2',
+                'rule_query_embedding_1': '',
+            }
+        )
+
+        form.full_clean()
+        self.assertTrue(form.is_valid())
+        self.assertEqual(len(form.cleaned_data['rules']), 2)
+        self.assertEqual(form.cleaned_data['rules'][0], rule_data1)
+        self.assertEqual(form.cleaned_data['rules'][1], rule_data2)

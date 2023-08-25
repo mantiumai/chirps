@@ -8,7 +8,29 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import Policy, PolicyVersion, RegexRule
+from .models import RULES, Policy, PolicyVersion
+
+
+def save_rule(rule_type: str, **kwargs) -> None:
+    """Create and save an instance of the rule."""
+    rule = RULES.get(rule_type)
+    if rule is None:
+        raise ValueError(f'Invalid rule type: {rule_type}')
+
+    rule(**kwargs).save()
+
+
+def create_rules(rules: list[dict], policy_version: PolicyVersion) -> None:
+    """Create and save a list of rules."""
+    for rule in rules:
+        # throw away ID, it's only used by the UI
+        rule.pop('id')
+        # Retrieve the Severity instance from the database using the provided value
+        severity = rule.pop('severity')
+        severity_instance = Severity.objects.get(value=severity)
+
+        type_ = rule.pop('type')
+        save_rule(type_, severity=severity_instance, policy=policy_version, **rule)
 
 
 @login_required
@@ -62,17 +84,7 @@ def create(request):
         policy.save()
 
         # Create the rules
-        for rule in form.cleaned_data['rules']:
-            # Retrieve the Severity instance from the database using the provided value
-            severity_instance = Severity.objects.get(value=rule['rule_severity'])
-
-            RegexRule.objects.create(
-                name=rule['rule_name'],
-                query_string=rule['rule_query_string'],
-                regex_test=rule['rule_regex'],
-                severity=severity_instance,
-                policy=policy_version,
-            )
+        create_rules(form.cleaned_data['rules'], policy_version)
 
         # Add a success message
         messages.success(request, 'Policy created successfully.')
@@ -80,7 +92,7 @@ def create(request):
         # Redirect the user back to the dashboard
         return redirect('policy_dashboard')
 
-    return render(request, 'policy/create.html', {})
+    return render(request, 'policy/create.html', {'rule_types': list(RULES)})
 
 
 @login_required
@@ -108,7 +120,8 @@ def clone(request, policy_id):
 
     # Clone the rules
     for rule in policy.current_version.rules.all():
-        RegexRule.objects.create(
+        save_rule(
+            rule.rule_type,
             name=rule.name,
             query_string=rule.query_string,
             regex_test=rule.regex_test,
@@ -137,18 +150,8 @@ def edit(request, policy_id):
         # Create a new policy version
         new_policy_version = PolicyVersion.objects.create(number=policy.current_version.number + 1, policy=policy)
 
-        # Persist all of the rules against the new version
-        for rule in form.cleaned_data['rules']:
-            # Retrieve the Severity instance from the database using the provided value
-            severity_instance = Severity.objects.get(value=rule['rule_severity'])
-
-            RegexRule.objects.create(
-                name=rule['rule_name'],
-                query_string=rule['rule_query_string'],
-                regex_test=rule['rule_regex'],
-                severity=severity_instance,
-                policy=new_policy_version,
-            )
+        # Create the rules
+        create_rules(form.cleaned_data['rules'], new_policy_version)
 
         # Update the current version of the policy as well as the name and description
         policy.current_version = new_policy_version
@@ -164,22 +167,27 @@ def edit(request, policy_id):
 
     form = PolicyForm.from_policy(policy=policy)
     severities = Severity.objects.filter(archived=False)
-    return render(request, 'policy/edit.html', {'policy': policy, 'form': form, 'severities': severities})
+    return render(
+        request,
+        'policy/edit.html',
+        {
+            'policy': policy,
+            'form': form,
+            'severities': severities,
+            'rule_types': list(RULES),
+            'rule_classes': RULES,
+        },
+    )
 
 
 @login_required
-def create_rule(request):
+def create_rule(request, rule_type: str):
     """Render a single row of a Rule for the create policy page."""
     severities = Severity.objects.filter(archived=False)
-    return render(
-        request,
-        'policy/create_rule.html',
-        {
-            'rule_id': request.GET.get('rule_id', 0),
-            'next_rule_id': int(request.GET.get('rule_id', 0)) + 1,
-            'severities': severities,
-        },
-    )
+    template_name = RULES.get(rule_type).create_template
+    rule_id = request.GET.get('rule_id', 0)
+
+    return render(request, template_name, {'rule_id': rule_id, 'severities': severities})
 
 
 @login_required

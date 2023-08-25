@@ -1,7 +1,7 @@
 """Forms for the Policy app."""
 from django import forms
 
-from .models import Policy
+from .models import RULES, Policy
 
 
 class PolicyForm(forms.Form):
@@ -15,19 +15,22 @@ class PolicyForm(forms.Form):
         super().clean()
         rules = []
 
-        # For each of the form field IDs, build a list of Rules
-        rule_key_prefixes = ['rule_name', 'rule_query_string', 'rule_regex', 'rule_severity']
-
-        # Walk through all of the field keys, building a rule for each one
         for rule_id in self.get_form_field_keys():
-            rule = {}
+            rule_type = self.data[f'rule_type_{rule_id}']
+            rule_class = RULES[rule_type]
+            rule_fields = {f.name: f for f in rule_class._meta.get_fields() if f.is_relation is False}
 
-            # Walk through all of the key prefixes, adding them to the rule dictionary
-            # The key for the rule dictionary is JUST the prefix, not the prefix + rule ID
-            for prefix in rule_key_prefixes:
-                rule[f'{prefix}'] = self.data[f'{prefix}_{rule_id}']
+            rule = {
+                'id': rule_id,
+                'type': rule_type,
+                'name': self.data[f'rule_name_{rule_id}'],
+                'severity': self.data[f'rule_severity_{rule_id}'],
+            }
 
-            # Add the rule to the list of rules
+            for field_name in rule_fields:
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                    rule[field_name] = self.data[f'rule_{field_name}_{rule_id}']
+
             rules.append(rule)
 
         self.cleaned_data['rules'] = rules
@@ -44,16 +47,23 @@ class PolicyForm(forms.Form):
 
     @classmethod
     def from_policy(cls, policy: Policy) -> 'PolicyForm':
-        """Construct"""
+        """Create a PolicyForm from a Policy object."""
         index = 0
         data = {'name': policy.name, 'description': policy.description}
 
-        # Push all of the rules from the current policy into the dictionary
         for rule in policy.current_version.rules.all():
+            rule_type = rule.rule_type
+            rule_class = RULES[rule_type]
+            rule_fields = {f.name: f for f in rule_class._meta.get_fields() if f.is_relation is False}
+
+            data[f'rule_type_{index}'] = rule_type
             data[f'rule_name_{index}'] = rule.name
-            data[f'rule_query_string_{index}'] = rule.query_string
-            data[f'rule_regex_{index}'] = rule.regex_test
             data[f'rule_severity_{index}'] = rule.severity
+
+            for field_name in rule_fields:
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                    data[f'{field_name}_{index}'] = getattr(rule, field_name)
+
             index += 1
 
         return PolicyForm(data=data)
