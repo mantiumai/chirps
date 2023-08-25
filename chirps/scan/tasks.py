@@ -80,7 +80,7 @@ def scan_task(scan_asset_id):
     # Walk through the list of rules and evaluate them
     for policy, rule in policy_rules:
 
-        if type(rule) is RegexRule:
+        if isinstance(rule, RegexRule):
             _execute_regex_rule(rule=rule, scan_asset=scan_asset, asset=asset)
         else:
             # This is a runtime failure and we should cause the entire scan to fail
