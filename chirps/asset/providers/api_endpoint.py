@@ -6,7 +6,7 @@ import requests
 from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
-from requests import RequestException
+from requests import RequestException, Timeout
 
 logger = getLogger(__name__)
 
@@ -57,7 +57,10 @@ class APIEndpointAsset(BaseAsset):
         body = json.loads(json.dumps(self.body).replace('%query%', query))
 
         # Send the request
-        response = requests.post(self.url, headers=headers, json=body, timeout=15)
+        try:
+            response = requests.post(self.url, headers=headers, json=body, timeout=15)
+        except Timeout:
+            raise RequestException('Error: API request timed out')
 
         # Check if the request was successful
         if response.status_code != 200:
