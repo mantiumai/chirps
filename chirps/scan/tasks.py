@@ -1,12 +1,10 @@
 """Celery tasks for the scan application."""
-import re
 from logging import getLogger
 
-from asset.models import BaseAsset, SearchResult
+from asset.models import BaseAsset
 from celery import shared_task
 from django.utils import timezone
-from embedding.utils import create_embedding
-from policy.models import RegexFinding, RegexResult, RegexRule, RuleExecuteArgs
+from policy.models import RuleExecuteArgs
 
 from .models import ScanAsset, ScanAssetFailure
 
@@ -111,37 +109,3 @@ def scan_task(scan_asset_id):
     scan_run.save()
 
     logger.info('Scan complete', extra={'scan_id': scan_asset.id})
-
-
-def _execute_regex_rule(rule: RegexRule, scan_asset: ScanAsset, asset: BaseAsset):
-    """Execute a regex rule against an asset."""
-    if asset.REQUIRES_EMBEDDINGS:
-
-        # If using a template policy, we don't need to filter by user
-        add_user_filter = not rule.policy.is_template
-        user = scan_asset.scan.scan_version.scan.user if add_user_filter else None
-        embedding = create_embedding(rule.query_string, asset.embedding_model, asset.embedding_model_service, user)
-        query = embedding.vectors
-    else:
-        query = rule.query_string
-
-    # Issue the search query to the asset provider
-    results: list[SearchResult] = asset.search(query, max_results=100)
-
-    for search_result in results:
-
-        # Create the result. We'll flip the result flag to True if any findings are found
-        result = RegexResult(rule=rule, text=search_result.data, scan_asset=scan_asset)
-        result.save()
-
-        # Run the regex against the text
-        for match in re.finditer(rule.regex_test, search_result.data):
-
-            # Persist the finding
-            finding = RegexFinding(
-                result=result,
-                offset=match.start(),
-                length=match.end() - match.start(),
-                source_id=search_result.source_id,
-            )
-            finding.save()
