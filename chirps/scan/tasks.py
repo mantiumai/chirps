@@ -6,10 +6,9 @@ from asset.models import BaseAsset, SearchResult
 from celery import shared_task
 from django.utils import timezone
 from embedding.utils import create_embedding
-from policy.models import RegexRule
+from policy.models import RegexFinding, RegexResult, RegexRule, RuleExecuteArgs
 
-from .exceptions import GenericScanTaskException
-from .models import RegexFinding, RegexResult, ScanAsset, ScanAssetFailure
+from .models import ScanAsset, ScanAssetFailure
 
 logger = getLogger(__name__)
 
@@ -80,13 +79,7 @@ def scan_task(scan_asset_id):
     # Walk through the list of rules and evaluate them
     for policy, rule in policy_rules:
 
-        if isinstance(rule, RegexRule):
-            _execute_regex_rule(rule=rule, scan_asset=scan_asset, asset=asset)
-        else:
-            # This is a runtime failure and we should cause the entire scan to fail
-            error = f'Unknown rule type ({type(rule)})'
-            logger.error(error, extra={'scan_asset_id': scan_asset_id})
-            raise GenericScanTaskException(error)
+        rule.execute(RuleExecuteArgs(scan_asset=scan_asset, asset=asset))
 
         # Update the progress counter based on the number of rules that have been evaluated
         rules_run += 1

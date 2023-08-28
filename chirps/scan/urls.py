@@ -9,7 +9,6 @@ urlpatterns = [
     path('edit/<int:scan_id>/', views.edit, name='scan_edit'),
     path('run/<int:scan_run_id>/', views.view_scan_run, name='view_scan_run'),
     path('create/', views.create, name='scan_create'),
-    path('finding/<int:finding_id>/', views.finding_detail, name='finding_detail'),
     path('status/<int:scan_run_id>/', views.status, name='scan_status'),
     path('asset_status/<int:scan_asset_id>/', views.asset_status, name='scan_asset_status'),
     path('findings/<int:scan_run_id>/', views.findings_count, name='scan_findings_count'),

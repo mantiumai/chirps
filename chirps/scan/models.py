@@ -1,14 +1,10 @@
 """Models for the scan application."""
-from abc import abstractmethod
 
 from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django_celery_results.models import TaskResult
-from fernet_fields import EncryptedTextField
-from policy.models import BaseRule, RegexRule
 
 
 class ScanTemplate(models.Model):
@@ -185,91 +181,3 @@ class ScanAssetFailure(models.Model):
     scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='failures')
     exception = models.TextField()
     traceback = models.TextField()
-
-
-class BaseResult(models.Model):
-    """Base model for a single result from a rule."""
-
-    # Scan asset that the result belongs to
-    scan_asset = models.ForeignKey(ScanAsset, on_delete=models.CASCADE, related_name='results')
-
-    # The rule that was used to scan the text
-    rule = models.ForeignKey(BaseRule, on_delete=models.CASCADE)
-
-    class Meta:
-        abstract = True
-
-    def has_findings(self) -> bool:
-        """Return True if the result has findings, False otherwise."""
-        if self.findings_count():
-            return True
-
-        return False
-
-    @abstractmethod
-    def findings_count(self) -> int:
-        """Return the number of findings associated with this result."""
-        raise NotImplementedError
-
-    def __str__(self):
-        """Stringify the rule name and scan ID"""
-        return f'{self.rule.name} - {self.scan_asset.scan.id}'
-
-
-class RegexResult(BaseResult):
-    """Model for a single result from a Regex rule."""
-
-    # The rule that was used to scan the text
-    rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
-
-    # The raw text (encrypted at REST) that was scanned
-    text = EncryptedTextField()
-
-    def findings_count(self) -> int:
-        """Return the number of findings associated with this result."""
-        findings_query = self.findings.filter(result=self)
-        return findings_query.count()
-
-
-class BaseFinding(models.Model):
-    """Base model to identify the location of a finding within a result."""
-
-    result = models.ForeignKey(BaseResult, on_delete=models.CASCADE, related_name='findings')
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        """Stringify the finding"""
-        return f'{self.result}'
-
-
-class RegexFinding(BaseFinding):
-    """Model to identify the location of a finding within a Regex result."""
-
-    result = models.ForeignKey(RegexResult, on_delete=models.CASCADE, related_name='findings')
-    source_id = models.TextField(blank=True, null=True)
-    offset = models.IntegerField()
-    length = models.IntegerField()
-
-    def text(self):
-        """Return the text of the finding."""
-        return self.result.text[self.offset : self.offset + self.length]
-
-    def surrounding_text(self, preview_size: int = 20):
-        """return the text of the finding, with some surrounding context."""
-        buffer = self.result.text[self.offset - preview_size : self.offset - 1]
-        buffer += "<span class='text-danger'>"
-        buffer += self.result.text[self.offset : self.offset + self.length]
-        buffer += '</span>'
-        buffer += self.result.text[self.offset + self.length + 1 : self.offset + self.length + preview_size - 1]
-        return mark_safe(buffer)
-
-    def with_highlight(self):
-        """return the entire text searched by the finding's rule - highlight the finding."""
-        buffer = self.result.text[0 : self.offset - 1]
-        buffer += "<span class='bg-danger text-white'>"
-        buffer += self.result.text[self.offset : self.offset + self.length]
-        buffer += '</span>'
-        buffer += self.result.text[self.offset + self.length + 1 :]
-        return mark_safe(buffer)
