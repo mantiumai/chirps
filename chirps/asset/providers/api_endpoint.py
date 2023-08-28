@@ -1,11 +1,15 @@
 """Logic for interfacing with an API Endpoint Asset."""
 import json
+import json
 from logging import getLogger
 
 import requests
 from asset.models import BaseAsset, PingResult
+import requests
+from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
+from requests import RequestException
 from requests import RequestException, Timeout
 
 logger = getLogger(__name__)
