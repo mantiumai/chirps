@@ -173,7 +173,7 @@ class RegexResult(BaseResult):
     text = EncryptedTextField()
 
     def findings_count(self) -> int:
-        """Convienience method to get the number of findings associated with this result."""
+        """Convenience method to get the number of findings associated with this result."""
         return self.findings.count()
 
 
