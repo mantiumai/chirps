@@ -17,17 +17,10 @@ from policy.models import Policy
 from chirps.celery import app as celery_app
 
 from .forms import ScanForm
-from .models import BaseFinding, ScanAsset, ScanRun, ScanTemplate, ScanVersion
+from .models import ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from .tasks import scan_task
 
 logger = getLogger(__name__)
-
-
-@login_required
-def finding_detail(request, finding_id):
-    """Render the finding detail page."""
-    finding = get_object_or_404(BaseFinding, pk=finding_id, result__scan__user=request.user)
-    return render(request, 'scan/finding_detail.html', {'finding': finding})
 
 
 @login_required
@@ -65,6 +58,7 @@ def view_scan_run(request, scan_run_id):
     for scan_asset in scan_assets:
         # Iterate through the rule set
         for result in scan_asset.results.all():
+
             if result.has_findings():
                 results.append(result)
 

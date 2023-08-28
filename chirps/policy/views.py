@@ -8,7 +8,7 @@ from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
 from .forms import PolicyForm
-from .models import RULES, Policy, PolicyVersion
+from .models import RULES, BaseFinding, Policy, PolicyVersion
 
 
 def save_rule(rule_type: str, **kwargs) -> None:
@@ -213,3 +213,10 @@ def archive(request, policy_id):
     messages.info(request, 'Policy has been archived.')
 
     return redirect('policy_dashboard')
+
+
+@login_required
+def finding_detail(request, finding_id):
+    """Render the finding detail page."""
+    finding = get_object_or_404(BaseFinding, pk=finding_id, result__scan__user=request.user)
+    return render(request, 'scan/finding_detail.html', {'finding': finding})
