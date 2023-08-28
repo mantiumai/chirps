@@ -3,7 +3,7 @@ import json
 from logging import getLogger
 
 import requests
-from asset.models import BaseAsset, PingResult, SearchResult
+from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
 
@@ -40,8 +40,8 @@ class APIEndpointAsset(BaseAsset):
                 return 'Error: Decryption failed'
         return None
 
-    def search(self, query: str) -> list[SearchResult]:
-        """Search the API Endpoint asset with the specified query."""
+    def fetch_api_data(self, query: str) -> dict:
+        """Fetch data from the API using the provided query."""
         # Convert headers JSON string into a dictionary
         headers_dict = json.loads(self.headers) if self.headers else {}
 
