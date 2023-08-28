@@ -1,9 +1,12 @@
 """Logic for interfacing with an API Endpoint Asset."""
+import json
 from logging import getLogger
 
-from asset.models import BaseAsset, PingResult, SearchResult
+import requests
+from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
+from requests import RequestException, Timeout
 
 logger = getLogger(__name__)
 
@@ -38,9 +41,34 @@ class APIEndpointAsset(BaseAsset):
                 return 'Error: Decryption failed'
         return None
 
-    def search(self, query: str, max_results: int) -> list[SearchResult]:
-        """Search the API Endpoint asset with the specified query."""
-        raise NotImplementedError('The search method is not implemented for this asset.')
+    def fetch_api_data(self, query: str) -> dict:
+        """Fetch data from the API using the provided query."""
+        # Convert headers JSON string into a dictionary
+        headers_dict = json.loads(self.headers) if self.headers else {}
+
+        # Build the request headers
+        headers = headers_dict.copy()
+        if self.authentication_method == 'Bearer':
+            headers['Authorization'] = f'Bearer {self.api_key}'
+        elif self.authentication_method == 'Basic':
+            headers['Authorization'] = f'Basic {self.api_key}'
+
+        # Replace the %query% placeholder in the body
+        body = json.loads(json.dumps(self.body).replace('%query%', query))
+
+        # Send the request
+        try:
+            response = requests.post(self.url, headers=headers, json=body, timeout=15)
+        except Timeout as exc:
+            raise RequestException('Error: API request timed out') from exc
+
+        # Check if the request was successful
+        if response.status_code != 200:
+            raise RequestException(f'Error: API request failed with status code {response.status_code}')
+
+        # Parse the response and return the search results
+        response_data = response.json()
+        return response_data
 
     def test_connection(self) -> PingResult:
         """Ensure that the API Endpoint asset can be connected to."""

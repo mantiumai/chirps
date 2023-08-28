@@ -233,3 +233,64 @@ class RedisAssetTests(TestCase):
             asset = RedisAsset(host='localhost', port=12000)
             result = asset.test_connection()
             assert result.success is False
+
+
+class APIEndpointAssetTests(TestCase):
+    """Test the APIEndpointAsset."""
+
+    def setUp(self):
+        """Set up the APIEndpointAsset tests."""
+        # Login the user before performing any tests
+        self.client.post(reverse('login'), {'username': 'admin', 'password': 'admin'})
+
+        # Create an APIEndpointAsset instance for testing
+        self.api_endpoint_asset = APIEndpointAsset.objects.create(
+            name='Test API Endpoint Asset',
+            url='https://api.example.com/endpoint',
+            authentication_method='Bearer',
+            api_key='example-api-key',
+            headers='{"Content-Type": "application/json"}',
+            body='{"data": "%query%"}',
+        )
+
+    def test_fetch_api_data(self):
+        """Test that the search method sends the request and processes the response."""
+        # Define the mocked response data
+        mock_response_data = {
+            'chat': {
+                'instance': '46045911',
+                'application': '1077587932992295905',
+                'conversation': '4022404441860560655',
+                'speak': 'true',
+                'avatarFormat': 'webm',
+                'secure': 'true',
+                'message': 'hello',
+            }
+        }
+
+        # Mock the requests.post method to return the mocked response data
+        with mock.patch('requests.post') as mock_post:
+            mock_post.return_value.status_code = 200
+            mock_post.return_value.json.return_value = mock_response_data
+
+            # Call the search method and assert the results
+            search_results = self.api_endpoint_asset.fetch_api_data('test query')
+            self.assertEqual(len(search_results), 1)
+
+            # Assert that requests.post was called with the expected arguments
+            expected_url = self.api_endpoint_asset.url
+            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
+            expected_body = self.api_endpoint_asset.body.replace('%query%', 'test query')
+
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=15)
+
+            # Assert the search result attributes
+            result = search_results['chat']
+            self.assertEqual(result['instance'], '46045911')
+            self.assertEqual(result['application'], '1077587932992295905')
+            self.assertEqual(result['conversation'], '4022404441860560655')
+            self.assertEqual(result['speak'], 'true')
+            self.assertEqual(result['avatarFormat'], 'webm')
+            self.assertEqual(result['secure'], 'true')
+            self.assertEqual(result['message'], 'hello')
