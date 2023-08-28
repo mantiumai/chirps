@@ -6,6 +6,7 @@ import requests
 from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
+from requests import RequestException
 
 logger = getLogger(__name__)
 
@@ -56,11 +57,11 @@ class APIEndpointAsset(BaseAsset):
         body = json.loads(json.dumps(self.body).replace('%query%', query))
 
         # Send the request
-        response = requests.post(self.url, headers=headers, json=body)
+        response = requests.post(self.url, headers=headers, json=body, timeout=15)
 
         # Check if the request was successful
         if response.status_code != 200:
-            raise Exception(f'Error: API request failed with status code {response.status_code}')
+            raise RequestException(f'Error: API request failed with status code {response.status_code}')
 
         # Parse the response and return the search results
         response_data = response.json()
