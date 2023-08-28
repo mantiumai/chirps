@@ -283,7 +283,7 @@ class APIEndpointAssetTests(TestCase):
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
             expected_body = self.api_endpoint_asset.body.replace('%query%', 'test query')
 
-            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body)
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=15)
 
             # Assert the search result attributes
             result = search_results['chat']
