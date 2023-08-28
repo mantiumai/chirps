@@ -234,6 +234,10 @@ class MultiQueryRule(BaseRule):
     # Success outcome of the task
     success_outcome = models.CharField(max_length=256)
 
+    def execute(self, args: RuleExecuteArgs) -> None:
+        """Execute the rule against an asset."""
+        raise NotImplementedError(f'{self.__class__.__name__} does not implement execute()')
+
 
 def rule_classes(base_class: Any) -> dict[str, type]:
     """Get all subclasses of a given class recursively."""
