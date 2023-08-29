@@ -241,7 +241,6 @@ class MultiQueryRule(BaseRule):
         """Execute the rule against an asset."""
         user = args.scan_asset.scan.scan_version.scan.user
         asset: APIEndpointAsset = args.asset
-        # query the user profile table to get the openai_api_key
         openai_api_key = user.profile.openai_key
         model_name = 'gpt-4-0613'
         model = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name)

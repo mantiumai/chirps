@@ -60,10 +60,11 @@ class AttackAgent(Agent):
         if target_response is not None:
             self.message_history.append(AIMessage(content=target_response))
 
-        act_message = self.model(self.message_history)
-        self.message_history.append(act_message)
+        # Generate the attack message
+        attack_message = self.model(self.message_history)
+        self.message_history.append(attack_message)
 
-        return act_message.content
+        return attack_message.content
 
     def generate_attack(self, target_response: str | None = None) -> str:
         """Generate an attack message using retries if a ValueError occurs."""

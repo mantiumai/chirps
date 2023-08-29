@@ -2,11 +2,17 @@
 
 import re
 from unittest import skip
+from unittest.mock import patch
 
+from account.models import Profile
+from asset.providers.api_endpoint import APIEndpointAsset
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from langchain.schema import AIMessage
 from policy.forms import PolicyForm
-from policy.models import MultiQueryRule, Policy, PolicyVersion, RegexRule
+from policy.models import MultiQueryRule, Policy, PolicyVersion, RegexRule, RuleExecuteArgs
+from scan.models import ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from severity.models import Severity
 
 cfixtures = ['policy/network.json']
@@ -580,9 +586,58 @@ class MultiQueryRuleModelTests(TestCase):
 
     def setUp(self):
         """Create a sample policy and policy version before performing any tests."""
+        self.test_username = 'testuser'
+        self.test_password = 'testpassword'
+        self.test_openai_key = 'fake_openai_key'
+        self.test_cohere_key = 'fake_cohere_key'
+
+        self.user = User.objects.create_user(
+            username=self.test_username, password=self.test_password, email='testuser@example.com'
+        )
+        self.user.save()
+
+        # Create a profile for the test user
+        self.profile = Profile.objects.create(user=self.user)
+
+        self.profile.openai_key = self.test_openai_key
+        self.profile.cohere_key = self.test_cohere_key
+        self.profile.save()
+
         self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
         self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
         self.severity = Severity.objects.first()
+
+        # Create a sample ScanTemplate
+        self.scan_template = ScanTemplate.objects.create(name='Test Scan Template', description='Test Scan Description')
+
+        # Create a sample ScanVersion
+        self.scan_version = ScanVersion.objects.create(number=1, scan=self.scan_template)
+
+        # Set up the APIEndpointAsset object with the necessary parameters
+        self.api_endpoint_asset = APIEndpointAsset.objects.create(
+            description='Test API Endpoint',
+            url='https://example.com/api',
+            authentication_method='Bearer',
+            api_key='test_api_key',
+            headers='{"Content-Type": "application/json"}',
+            body='{"data": "%query%"}',
+        )
+
+        # Add assets and policies to the ScanVersion
+        self.scan_version.assets.add(self.api_endpoint_asset)
+        self.scan_version.policies.add(self.policy)
+
+        # Create a sample ScanRun
+        self.scan_run = ScanRun.objects.create(
+            scan_version=self.scan_version,
+            status='Running',
+        )
+        # Create a sample ScanAsset
+        self.scan_asset = ScanAsset.objects.create(
+            scan=self.scan_run,
+            asset=self.api_endpoint_asset,
+            progress=0,
+        )
 
     def test_create_multiquery_rule(self):
         """Verify that a MultiQueryRule is created correctly."""
@@ -599,3 +654,30 @@ class MultiQueryRuleModelTests(TestCase):
         self.assertEqual(rule.success_outcome, 'Success')
         self.assertEqual(rule.severity, self.severity)
         self.assertEqual(rule.policy, self.policy_version)
+
+    def test_execute_function(self):
+        """Test the execute function of the MultiQueryRule model."""
+        # Create a MultiQueryRule
+        rule = MultiQueryRule.objects.create(
+            name='Test MultiQuery Rule',
+            task_description='Test Task Description',
+            success_outcome='Success',
+            severity=self.severity,
+            policy=self.policy_version,
+        )
+
+        # Define a mock response for the ChatOpenAI class
+        def mock_chatopenai_response(*args, **kwargs):
+            return AIMessage(content='Test attack')
+
+        # Patch the ChatOpenAI class's __call__ method to return the mock response
+        with patch('policy.models.ChatOpenAI.__call__', side_effect=mock_chatopenai_response):
+            # Create a RuleExecuteArgs object with the necessary parameters
+            scan_asset = ScanAsset.objects.create(asset=self.api_endpoint_asset, scan=self.scan_run)
+            rule_execute_args = RuleExecuteArgs(scan_asset=scan_asset, asset=self.api_endpoint_asset)
+            rule_execute_args.scan_asset.scan.scan_version.scan.user = self.user
+
+            # Call the execute function with the RuleExecuteArgs object
+            rule.execute(rule_execute_args)
+
+            # Add your assertions here to verify the expected behavior
