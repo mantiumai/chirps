@@ -125,7 +125,12 @@ def create(request):
                     policies_and_rules.append((policy, rule))
 
             # Check if any non-template policies don't have an associated embedding for their rule's query_string
-            rule_strings = [rule.query_string for policy, rule in policies_and_rules if not policy.is_template]
+            rule_strings = []
+            for policy, rule in policies_and_rules:
+                if not policy.is_template:
+                    if hasattr(rule, 'query_string'):
+                        rule_strings.append(rule.query_string)
+
             rule_count = len(rule_strings)
 
             rule_embedding_count = Embedding.objects.filter(text__in=rule_strings).count()

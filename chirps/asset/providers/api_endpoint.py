@@ -60,7 +60,7 @@ class APIEndpointAsset(BaseAsset):
 
         # Send the request
         try:
-            response = requests.post(self.url, headers=headers, json=body, timeout=15)
+            response = requests.post(self.url, headers=headers, json=body, timeout=30)
         except Timeout as exc:
             raise RequestException('Error: API request timed out') from exc
 

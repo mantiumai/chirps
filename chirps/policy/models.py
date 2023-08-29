@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
 from langchain.chat_models import ChatOpenAI
-from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent
+from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent, EvaluationAgent
 from policy.llms.utils import num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
@@ -247,10 +247,12 @@ class MultiQueryRule(BaseRule):
         attacker = AttackAgent(model, asset.description, self.task_description)
         attacker.reset()
 
+        evaluator = EvaluationAgent(model)
+
         target_response = None
 
         # breakpoint()
-        for _ in range(20):
+        for _ in range(5):
             num_tokens = num_tokens_from_messages(attacker.message_history)
 
             if num_tokens >= MAX_TOKENS:
@@ -258,13 +260,17 @@ class MultiQueryRule(BaseRule):
                 attacker.truncate()
 
             # Generate a new question
+            print(f'target_response: {target_response}')
             question = attacker.generate_attack(target_response)
             print(f'attacker: {question}')
 
-            target_response = asset.fetch_api_data(question)
+            response = asset.fetch_api_data(question)
+            target_response = str(response)
             print(f'asset: {target_response}')
 
-            if self.success_outcome in target_response:
+            response_evaluation = evaluator.evaluate(target_response)
+
+            if response_evaluation == 'Yes':
                 print('***Success!***')
                 break
 
