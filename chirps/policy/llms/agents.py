@@ -1,3 +1,4 @@
+"""Agent classes used for interacting with LLMs."""
 import tenacity
 from langchain.schema import AIMessage, SystemMessage
 
