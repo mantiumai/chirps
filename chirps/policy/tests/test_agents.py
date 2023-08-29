@@ -14,23 +14,18 @@ from severity.models import Severity
 
 
 class MultiQueryRuleTestCase(TestCase):
+    """Test the MultiQueryRule model."""
+
     def setUp(self):
         # Create a test user with a known username, password, and API keys for both OpenAI and Cohere
-        self.test_username = 'testuser'
-        self.test_password = 'testpassword'
-        self.test_openai_key = 'fake_openai_key'
-        self.test_cohere_key = 'fake_cohere_key'
-
-        self.user = User.objects.create_user(
-            username=self.test_username, password=self.test_password, email='testuser@example.com'
-        )
+        self.user = User.objects.create_user(username='testuser', password='testpassword', email='testuser@example.com')
         self.user.save()
 
         # Create a profile for the test user
         self.profile = Profile.objects.create(user=self.user)
 
-        self.profile.openai_key = self.test_openai_key
-        self.profile.cohere_key = self.test_cohere_key
+        self.profile.openai_key = 'fake_openai_key'
+        self.profile.cohere_key = 'fake_cohere_key'
         self.profile.save()
 
         self.severity = Severity.objects.create(
@@ -66,6 +61,7 @@ class MultiQueryRuleTestCase(TestCase):
         )
 
     def test_create_multiquery_rule(self):
+        """Test the creation of a MultiQueryRule."""
         self.assertEqual(self.rule.name, 'Test MultiQuery Rule')
         self.assertEqual(self.rule.task_description, 'Test task description')
         self.assertEqual(self.rule.success_outcome, 'Test success outcome')
@@ -73,16 +69,23 @@ class MultiQueryRuleTestCase(TestCase):
         self.assertEqual(self.rule.policy, self.policy_version)
 
     def test_execute(self):
+        """Test the execute method of the MultiQueryRule."""
+
         class MockModel:
+            """Mock Model class."""
+
             def __call__(self, message_history):
                 return AIMessage(content='Test attack')
 
         class MockChatOpenAI(ChatOpenAI):
+            """Mock ChatOpenAI class."""
+
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
                 self.model_name = 'test-model'
 
             def get_model(self):
+                """Return a mock model."""
                 return MockModel()
 
         def mock_openai_create(*args, **kwargs):
