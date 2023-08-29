@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load scan_extras %}
 {% load scan_filters %}
 {% load static %}
 {% block title %}Scans{% endblock %}
@@ -7,7 +8,7 @@
 <div class="d-flex">
     <h1 class="my-auto ml-0 mr-auto text-success">Scan Result</h1>
 </div>
-<hr/>
+<hr />
 
 <div class="row">
     <div class="col-8">
@@ -34,6 +35,12 @@
                         hx-trigger="load, every 1s">
                         <i id="scan-findings-spinner-{{scan_run.id}}" class="fa-solid fa-spinner fa-spin"></i>
                     </span>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-4" data-bs-toggle="tab" href="#tabs-4" role="tab" aria-controls="tabs-4"
+                    aria-selected="false">
+                    Conversations
                 </a>
             </li>
         </ul>
@@ -114,7 +121,8 @@
                                             <tbody>
                                                 {% for finding in rule.findings %}
                                                 <tr>
-                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}</td>
+                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}
+                                                    </td>
                                                     <td>{{ finding.source_id }}</td>
                                                     <td>{{ finding.result.scan_asset.asset.name }}</td>
                                                 </tr>
@@ -130,6 +138,31 @@
                 </table>
 
             </div>
+            <div class="tab-pane fade" id="tabs-4" role="tabpanel" aria-labelledby="tab-4">
+                {% for scan_asset in scan_run.run_assets.all %}
+                    {% for multiquery_result in scan_asset.multiquery_results.all %}
+                        <div class="card my-4">
+                            <div class="card-header">
+                                <h5>{{ multiquery_result.rule.name }} - {{ scan_asset.asset.name }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="conversation">
+                                    {% for line in multiquery_result.conversation|format_conversation %}
+                                        {% if line.type == 'attacker' %}
+                                            <strong>Attacker: </strong>{{ line.text }}<br>
+                                        {% elif line.type == 'asset' %}
+                                            <strong>Asset: </strong>{{ line.text }}<br>
+                                        {% else %}
+                                            {{ line.text }}<br>
+                                        {% endif %}
+                                        <br>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 
@@ -138,7 +171,9 @@
 
         <div class="row">
             <div class="col-3">Name: </div>
-            <div class="col"><a href="{% url 'scan_history_view' scan_run.scan_version.scan.id %}">{{scan_run.scan_version.scan.name}}</a></div>
+            <div class="col"><a
+                    href="{% url 'scan_history_view' scan_run.scan_version.scan.id %}">{{scan_run.scan_version.scan.name}}</a>
+            </div>
         </div>
 
         <div class="row">

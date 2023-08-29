@@ -173,6 +173,9 @@ class RegexResult(BaseResult):
     # The rule that was used to scan the text
     rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
 
+    # Scan asset that the result belongs to
+    scan_asset = models.ForeignKey('scan.ScanAsset', on_delete=models.CASCADE, related_name='regex_results')
+
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()
 
@@ -251,8 +254,11 @@ class MultiQueryRule(BaseRule):
 
         target_response = None
 
-        # breakpoint()
-        for _ in range(5):
+        # Create the MultiQueryResult object
+        result = MultiQueryResult(rule=self, scan_asset=args.scan_asset)
+        conversation = ''
+
+        for _ in range(2):
             num_tokens = num_tokens_from_messages(attacker.message_history)
 
             if num_tokens >= MAX_TOKENS:
@@ -260,19 +266,79 @@ class MultiQueryRule(BaseRule):
                 attacker.truncate()
 
             # Generate a new question
-            print(f'target_response: {target_response}')
             question = attacker.generate_attack(target_response)
-            print(f'attacker: {question}')
+            conversation += f'attacker: {question}\n'
 
             response = asset.fetch_api_data(question)
             target_response = str(response)
-            print(f'asset: {target_response}')
+            conversation += f'asset: {target_response}\n'
 
             response_evaluation = evaluator.evaluate(target_response)
 
             if response_evaluation == 'Yes':
                 print('***Success!***')
+
+                # Save the conversation to the result and save the result
+                result.conversation = conversation
+                result.save()
+
+                # Create and save the MultiQueryFinding object
+                finding = MultiQueryFinding(result=result, attacker_question=question, target_response=target_response)
+                finding.save()
+
                 break
+        else:
+            # If no successful evaluation, save the conversation without findings
+            result.conversation = conversation
+            result.save()
+
+
+class MultiQueryResult(BaseResult):
+    """Model for a single result from a MultiQuery rule."""
+
+    # The rule that was used to scan the asset
+    rule = models.ForeignKey(MultiQueryRule, on_delete=models.CASCADE)
+
+    # Scan asset that the result belongs to
+    scan_asset = models.ForeignKey('scan.ScanAsset', on_delete=models.CASCADE, related_name='multiquery_results')
+
+    # The entire conversation (encrypted at REST) between attacker and target
+    conversation = EncryptedTextField()
+
+    def findings_count(self) -> int:
+        """Get the number of findings associated with this result."""
+        return self.findings.count()
+
+    def conversation_with_highlight(self, finding_id: int):
+        """Return the conversation text, highlighting the finding specified by the finding_id."""
+        finding = self.findings.get(id=finding_id)
+        highlighted_conversation = finding.highlight_in_conversation(self.conversation)
+        return highlighted_conversation
+
+
+class MultiQueryFinding(BaseFinding):
+    """Model to identify the location of a finding within a MultiQuery result."""
+
+    result = models.ForeignKey(MultiQueryResult, on_delete=models.CASCADE, related_name='findings')
+    source_id = models.TextField(blank=True, null=True)
+
+    # Attacker question (encrypted at REST) that led to a successful evaluation
+    attacker_question = EncryptedTextField()
+
+    # Target response (encrypted at REST) that was successfully evaluated
+    target_response = EncryptedTextField()
+
+    def highlight_in_conversation(self, conversation: str):
+        """Return the conversation text with the finding highlighted."""
+        highlighted_conversation = conversation.replace(
+            f'{self.attacker_question}\n{self.target_response}',
+            f"<span class='bg-danger text-white'>{self.attacker_question}\n{self.target_response}</span>",
+        )
+        return mark_safe(highlighted_conversation)
+
+    def __str__(self):
+        """Stringify the finding"""
+        return f'{self.result} - {self.source_id}'
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:

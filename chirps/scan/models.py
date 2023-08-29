@@ -1,5 +1,7 @@
 """Models for the scan application."""
 
+from itertools import chain
+
 from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
@@ -118,7 +120,12 @@ class ScanRun(models.Model):
         for scan_asset in scan_assets:
 
             # Iterate through the rule set
-            for result in scan_asset.results.all():
+            multiquery_results = scan_asset.multiquery_results.all()
+            regex_results = scan_asset.regex_results.all()
+
+            all_results = list(chain(multiquery_results, regex_results))
+
+            for result in all_results:
                 count += result.findings_count()
 
         return count
