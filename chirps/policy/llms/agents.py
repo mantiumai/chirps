@@ -5,17 +5,17 @@ from langchain.schema import AIMessage, SystemMessage
 class Agent:
     """Base class representing an agent that interacts with a model and tracks a message history."""
 
-    def __init__(self, model: str, instructions: str | None = None):
+    def __init__(self, model: str, instructions: str | None = None) -> None:
         """Initialize the Agent with a model and optional instructions."""
         self.model = model
         self.instructions = instructions
         self.message_history = []
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the message history, keeping only the instructions."""
         self.message_history = [SystemMessage(content=self.instructions)]
 
-    def truncate(self):
+    def truncate(self) -> None:
         """Truncate the message history, keeping only the instructions and the first question."""
         self.message_history = [SystemMessage(content=self.instructions)] + self.message_history[:2]
 
@@ -23,7 +23,9 @@ class Agent:
 class AttackAgent(Agent):
     """A class representing an attacking agent that extends the Agent base class."""
 
-    def __init__(self, model: str, target_job_description: str, objective: str, instructions: str | None = None):
+    def __init__(
+        self, model: str, target_job_description: str, objective: str, instructions: str | None = None
+    ) -> None:
         """Initialize the AttackAgent with a model, target job description, objective, and optional instructions."""
         # The following instructions are based on code from the promptmap project by Utku Sen
         # URL: https://github.com/utkusen/promptmap
@@ -53,7 +55,7 @@ class AttackAgent(Agent):
         )
         super().__init__(model, instructions)
 
-    def _generate_attack(self, target_response):
+    def _generate_attack(self, target_response: str | None = None) -> str:
         """Generate an attack message based on the target_response."""
         if target_response is not None:
             self.message_history.append(AIMessage(content=target_response))
@@ -63,7 +65,7 @@ class AttackAgent(Agent):
 
         return act_message.content
 
-    def generate_attack(self, target_response):
+    def generate_attack(self, target_response: str | None = None) -> str:
         """Generate an attack message using retries if a ValueError occurs."""
         try:
             for attempt in tenacity.Retrying(
