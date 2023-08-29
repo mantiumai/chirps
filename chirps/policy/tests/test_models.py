@@ -651,6 +651,12 @@ class MultiQueryRuleModelTests(TestCase):
         def mock_chatopenai_response(*args, **kwargs):
             return AIMessage(content='Test attack')
 
+        # Define a mock response for the target API
+        def mock_target_api_response(response):
+            if 'Success' in response:
+                return 'Success'
+            return 'Not successful'
+
         # Patch the ChatOpenAI class's __call__ method to return the mock response
         with patch('policy.models.ChatOpenAI.__call__', side_effect=mock_chatopenai_response):
             # Create a RuleExecuteArgs object with the necessary parameters
@@ -663,7 +669,9 @@ class MultiQueryRuleModelTests(TestCase):
             rule_execute_args = RuleExecuteArgs(scan_asset=scan_asset, asset=api_endpoint_asset)
             rule_execute_args.scan_asset.scan.scan_version.scan.user = self.user
 
-            # Call the execute function with the RuleExecuteArgs object
-            rule.execute(rule_execute_args)
-
-            # Add your assertions here to verify the expected behavior
+            # Patch the APIEndpointAsset's fetch_api_data method to return the mock response
+            with patch(
+                'asset.providers.api_endpoint.APIEndpointAsset.fetch_api_data', side_effect=mock_target_api_response
+            ):
+                # Call the execute function with the RuleExecuteArgs object
+                rule.execute(rule_execute_args)

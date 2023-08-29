@@ -2,6 +2,9 @@
 import tenacity
 from langchain.schema import AIMessage, SystemMessage
 
+DEFAULT_MODEL = 'gpt-4-0613'
+MAX_TOKENS = 4096
+
 
 class Agent:
     """Base class representing an agent that interacts with a model and tracks a message history."""
@@ -79,7 +82,6 @@ class AttackAgent(Agent):
                 ),
             ):
                 with attempt:
-                    attack = self._generate_attack(target_response)
+                    return self._generate_attack(target_response)
         except tenacity.RetryError as e:
             print(f'Failed to parse action from message: {e}')
-        return attack

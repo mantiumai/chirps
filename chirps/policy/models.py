@@ -12,7 +12,8 @@ from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
 from langchain.chat_models import ChatOpenAI
-from policy.llms.agents import AttackAgent
+from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent
+from policy.llms.utils import num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
 
@@ -242,10 +243,30 @@ class MultiQueryRule(BaseRule):
         user = args.scan_asset.scan.scan_version.scan.user
         asset: APIEndpointAsset = args.asset
         openai_api_key = user.profile.openai_key
-        model_name = 'gpt-4-0613'
-        model = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name)
+        model = ChatOpenAI(openai_api_key=openai_api_key, model_name=DEFAULT_MODEL)
         attacker = AttackAgent(model, asset.description, self.task_description)
         attacker.reset()
+
+        target_response = None
+
+        # breakpoint()
+        for _ in range(20):
+            num_tokens = num_tokens_from_messages(attacker.message_history)
+
+            if num_tokens >= MAX_TOKENS:
+                print('***Truncating conversation***')
+                attacker.truncate()
+
+            # Generate a new question
+            question = attacker.generate_attack(target_response)
+            print(f'attacker: {question}')
+
+            target_response = asset.fetch_api_data(question)
+            print(f'asset: {target_response}')
+
+            if self.success_outcome in target_response:
+                print('***Success!***')
+                break
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:
