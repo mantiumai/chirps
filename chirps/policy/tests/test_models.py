@@ -5,10 +5,9 @@ from unittest import skip
 
 from django.test import TestCase
 from django.urls import reverse
+from policy.forms import PolicyForm
+from policy.models import MultiQueryRule, Policy, PolicyVersion, RegexRule
 from severity.models import Severity
-
-from .forms import PolicyForm
-from .models import MultiQueryRule, Policy, PolicyVersion, RegexRule
 
 cfixtures = ['policy/network.json']
 

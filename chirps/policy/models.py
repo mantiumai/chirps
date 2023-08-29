@@ -5,11 +5,14 @@ from dataclasses import dataclass
 from typing import Any
 
 from asset.models import SearchResult
+from asset.providers.api_endpoint import APIEndpointAsset
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
+from langchain.chat_models import ChatOpenAI
+from policy.llms.agents import AttackAgent
 from polymorphic.models import PolymorphicModel
 from severity.models import Severity
 
@@ -236,7 +239,14 @@ class MultiQueryRule(BaseRule):
 
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""
-        raise NotImplementedError(f'{self.__class__.__name__} does not implement execute()')
+        user = args.scan_asset.scan.scan_version.scan.user
+        asset: APIEndpointAsset = args.asset
+        # query the user profile table to get the openai_api_key
+        openai_api_key = user.profile.openai_key
+        model_name = 'gpt-4-0613'
+        model = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name)
+        attacker = AttackAgent(model, asset.description, self.task_description)
+        attacker.reset()
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:

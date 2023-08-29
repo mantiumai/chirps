@@ -1,15 +1,11 @@
 """Logic for interfacing with an API Endpoint Asset."""
 import json
-import json
 from logging import getLogger
 
 import requests
 from asset.models import BaseAsset, PingResult
-import requests
-from asset.models import BaseAsset, PingResult
 from django.db import models
 from fernet_fields import EncryptedCharField
-from requests import RequestException
 from requests import RequestException, Timeout
 
 logger = getLogger(__name__)
@@ -18,6 +14,8 @@ logger = getLogger(__name__)
 class APIEndpointAsset(BaseAsset):
     """Implementation of an API Endpoint asset."""
 
+    # what is the model served by this asset supposed to be doing?
+    description = models.TextField(blank=True, null=True, max_length=2048)
     url = models.URLField(max_length=2048, blank=False, null=False)
     authentication_method = models.CharField(
         max_length=10, choices=[('Basic', 'Basic'), ('Bearer', 'Bearer')], default='Bearer'
