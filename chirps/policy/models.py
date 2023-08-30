@@ -6,6 +6,7 @@ from typing import Any
 
 from asset.models import SearchResult
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
@@ -233,6 +234,9 @@ class MultiQueryRule(BaseRule):
 
     # Success outcome of the task
     success_outcome = models.CharField(max_length=256)
+
+    # The number of attack messages that should be generated in a scan
+    attack_count = models.IntegerField(default=10, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""
