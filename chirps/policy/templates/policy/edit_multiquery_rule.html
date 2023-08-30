@@ -27,6 +27,16 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-2 d-flex">
+                <input class="form-control" type="number" name="rule_attack_count_multiquery_{{rule.id}}"
+                    id="rule_attack_count_multiquery_{{rule.id}}"
+                    placeholder="Attack Count" min="1" max="100" required
+                    value="{{rule.attack_count}}"></input>
+                <span class="info-icon ml-2 align-self-center" data-toggle="tooltip" data-placement="right"
+                      title="The number of attack messages that should be generated in a scan">
+                    <i class="fa-solid fa-info-circle"></i>
+                </span>
+            </div>
             <div class="col-1">
                 <button class="form-control btn btn-danger" hx-delete="{% url 'policy_delete_rule' rule.id %}"><i
                         class="fa-solid fa-trash"></i></button>
