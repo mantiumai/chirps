@@ -47,7 +47,6 @@ class AgentTestCase(TestCase):
         self.profile.cohere_key = 'fake_cohere_key'
         self.profile.save()
 
-        self.instructions = 'Test instructions'
         self.target_job_description = 'Test target job description'
         self.objective = 'Test objective'
 
@@ -76,16 +75,15 @@ class AgentTestCase(TestCase):
         mock_openai_create.side_effect = lambda *args, **kwargs: self.mock_openai_create(
             *args, content='Test attack', **kwargs
         )
-        agent = AttackAgent(self.model, self.target_job_description, self.objective, self.instructions)
+        agent = AttackAgent(self.model, self.target_job_description, self.objective)
 
         with self.subTest('Test AttackAgent initialization'):
-            self.assertEqual(agent.instructions, self.instructions)
-            self.assertEqual(agent.message_history[0].content, self.instructions)
+            self.assertEqual(agent.message_history[0].content, agent.instructions)
 
         with self.subTest('Test AttackAgent reset'):
             agent.reset()
             self.assertEqual(len(agent.message_history), 1)
-            self.assertEqual(agent.message_history[0].content, self.instructions)
+            self.assertEqual(agent.message_history[0].content, agent.instructions)
 
         with self.subTest('Test AttackAgent truncate'):
             agent.message_history.append(AIMessage(content='Test question'))
