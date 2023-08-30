@@ -14,7 +14,7 @@ class Agent:
         """Initialize the Agent with a model and optional instructions."""
         self.model = model
         self.instructions = instructions
-        self.message_history = []
+        self.message_history = [SystemMessage(content=self.instructions)]
 
     def reset(self) -> None:
         """Reset the message history, keeping only the instructions."""
@@ -22,7 +22,7 @@ class Agent:
 
     def truncate(self) -> None:
         """Truncate the message history, keeping only the instructions and the first question."""
-        self.message_history = [SystemMessage(content=self.instructions)] + self.message_history[:2]
+        self.message_history = [SystemMessage(content=self.instructions)] + self.message_history[3:]
 
 
 class AttackAgent(Agent):

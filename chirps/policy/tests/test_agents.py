@@ -1,22 +1,41 @@
-"""Tests for the LLM agents."""
-
+# Test the Agent classes.
 from unittest.mock import patch
 
 from account.models import Profile
-from asset.providers.api_endpoint import APIEndpointAsset
 from django.contrib.auth.models import User
 from django.test import TestCase
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import AIMessage
-from policy.llms.agents import AttackAgent
-from policy.models import MultiQueryRule, Policy, PolicyVersion
-from severity.models import Severity
+from policy.llms.agents import AttackAgent, EvaluationAgent
 
 
-class MultiQueryRuleTestCase(TestCase):
-    """Test the MultiQueryRule model."""
+class AgentTestCase(TestCase):
+    """Test the Agent classes."""
+
+    def mock_openai_create(*args, content, **kwargs):
+        # Define a mock response here
+        response = {
+            'id': 'test-id',
+            'object': 'chat.completion',
+            'created': 1234567890,
+            'model': 'test-model',
+            'usage': {'prompt_tokens': 10, 'completion_tokens': 10, 'total_tokens': 20},
+            'choices': [
+                {
+                    'message': {
+                        'role': 'assistant',
+                        'content': content,
+                    },
+                    'index': 0,
+                    'logprobs': None,
+                    'finish_reason': 'stop',
+                }
+            ],
+        }
+        return response
 
     def setUp(self):
+        """Set up the test case."""
         # Create a test user with a known username, password, and API keys for both OpenAI and Cohere
         self.user = User.objects.create_user(username='testuser', password='testpassword', email='testuser@example.com')
         self.user.save()
@@ -28,48 +47,9 @@ class MultiQueryRuleTestCase(TestCase):
         self.profile.cohere_key = 'fake_cohere_key'
         self.profile.save()
 
-        self.severity = Severity.objects.create(
-            name='Test Severity',
-            value=1,
-            color='#FF0000',
-        )
-
-        self.policy = Policy.objects.create(
-            name='Test Policy',
-            description='Test Description',
-            user=self.user,
-        )
-
-        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
-
-        self.rule = MultiQueryRule.objects.create(
-            name='Test MultiQuery Rule',
-            task_description='Test task description',
-            success_outcome='Test success outcome',
-            severity=self.severity,
-            policy=self.policy_version,
-        )
-
-        # Set up the APIEndpointAsset object with the necessary parameters
-        self.api_endpoint_asset = APIEndpointAsset.objects.create(
-            description='Test API Endpoint',
-            url='https://example.com/api',
-            authentication_method='Bearer',
-            api_key='test_api_key',
-            headers='{"Content-Type": "application/json"}',
-            body='{"data": "%query%"}',
-        )
-
-    def test_create_multiquery_rule(self):
-        """Test the creation of a MultiQueryRule."""
-        self.assertEqual(self.rule.name, 'Test MultiQuery Rule')
-        self.assertEqual(self.rule.task_description, 'Test task description')
-        self.assertEqual(self.rule.success_outcome, 'Test success outcome')
-        self.assertEqual(self.rule.severity, self.severity)
-        self.assertEqual(self.rule.policy, self.policy_version)
-
-    def test_execute(self):
-        """Test the execute method of the MultiQueryRule."""
+        self.instructions = 'Test instructions'
+        self.target_job_description = 'Test target job description'
+        self.objective = 'Test objective'
 
         class MockModel:
             """Mock Model class."""
@@ -88,39 +68,55 @@ class MultiQueryRuleTestCase(TestCase):
                 """Return a mock model."""
                 return MockModel()
 
-        def mock_openai_create(*args, **kwargs):
-            # Define a mock response here
-            response = {
-                'id': 'test-id',
-                'object': 'chat.completion',
-                'created': 1234567890,
-                'model': 'test-model',
-                'usage': {'prompt_tokens': 10, 'completion_tokens': 10, 'total_tokens': 20},
-                'choices': [
-                    {
-                        'message': {
-                            'role': 'assistant',
-                            'content': 'Test attack',
-                        },
-                        'index': 0,
-                        'logprobs': None,
-                        'finish_reason': 'stop',
-                    }
-                ],
-            }
-            return response
+        self.model = MockChatOpenAI(openai_api_key=self.user.profile.openai_key, model_name='test-model')
 
-        with patch('openai.api_resources.chat_completion.ChatCompletion.create', side_effect=mock_openai_create):
-            with self.subTest('Test execute with mocked ChatOpenAI and Model'):
-                instructions = 'Test instructions'
-                model_name = 'test-model'
-                model = MockChatOpenAI(openai_api_key=self.user.profile.openai_key, model_name=model_name)
-                asset = self.api_endpoint_asset
-                attacker = AttackAgent(model, asset.description, self.rule.task_description, instructions)
-                attacker.reset()
-                self.assertEqual(len(attacker.message_history), 1)
-                self.assertEqual(attacker.message_history[0].content, instructions)
+    @patch('openai.api_resources.chat_completion.ChatCompletion.create')
+    def test_attack_agent(self, mock_openai_create):
+        """Test the AttackAgent class."""
+        mock_openai_create.side_effect = lambda *args, **kwargs: self.mock_openai_create(
+            *args, content='Test attack', **kwargs
+        )
+        agent = AttackAgent(self.model, self.target_job_description, self.objective, self.instructions)
 
-                attack = attacker.generate_attack(target_response='Test target response')
-                self.assertEqual(attack, 'Test attack')
-                self.assertEqual(len(attacker.message_history), 3)
+        with self.subTest('Test AttackAgent initialization'):
+            self.assertEqual(agent.instructions, self.instructions)
+            self.assertEqual(agent.message_history[0].content, self.instructions)
+
+        with self.subTest('Test AttackAgent reset'):
+            agent.reset()
+            self.assertEqual(len(agent.message_history), 1)
+            self.assertEqual(agent.message_history[0].content, self.instructions)
+
+        with self.subTest('Test AttackAgent truncate'):
+            agent.message_history.append(AIMessage(content='Test question'))
+            agent.message_history.append(AIMessage(content='Test target response'))
+            agent.message_history.append(AIMessage(content='Test attack'))
+            agent.message_history.append(AIMessage(content='Test response'))
+            agent.truncate()
+            self.assertEqual(len(agent.message_history), 3)
+            self.assertEqual(agent.message_history[1].content, 'Test attack')
+
+        with self.subTest('Test AttackAgent generate_attack'):
+            attack = agent.generate_attack(target_response='Test target response')
+            self.assertEqual(attack, 'Test attack')
+            self.assertEqual(len(agent.message_history), 5)
+
+    @patch('openai.api_resources.chat_completion.ChatCompletion.create')
+    def test_evaluation_agent(self, mock_openai_create):
+        """Test the EvaluationAgent class."""
+        mock_openai_create.side_effect = lambda *args, **kwargs: self.mock_openai_create(*args, content='Yes', **kwargs)
+        success_outcome = 'Test success outcome'
+        agent = EvaluationAgent(self.model, success_outcome)
+
+        with self.subTest('Test EvaluationAgent initialization'):
+            self.assertEqual(agent.message_history[0].content, agent.instructions)
+
+        with self.subTest('Test EvaluationAgent reset'):
+            agent.reset()
+            self.assertEqual(len(agent.message_history), 1)
+            self.assertEqual(agent.message_history[0].content, agent.instructions)
+
+        with self.subTest('Test EvaluationAgent evaluate'):
+            evaluation = agent.evaluate(target_response='Test target response')
+            self.assertEqual(evaluation, 'Yes')
+            self.assertEqual(len(agent.message_history), 2)
