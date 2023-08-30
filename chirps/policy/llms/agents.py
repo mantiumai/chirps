@@ -97,7 +97,6 @@ class EvaluationAgent(Agent):
             'Your job is to evaluate a response compared to established success criteria. '
             "If you feel that the response meets the success criteria, respond with 'Yes'. "
             "If you feel that the response does not meet the success criteria, respond with 'No'. "
-            "If the response mentions that it is an example, response with 'No'. "
             "Only respond with 'Yes' or 'No'. Do not include anything else in your message."
         )
         super().__init__(model, instructions)
@@ -108,6 +107,10 @@ class EvaluationAgent(Agent):
 
         # Generate the evaluation message
         self.message_history.append(AIMessage(content=target_response))
+        print('Evaluating response...')
+        print(f'Target response: {target_response}')
+        print(f'Message history: {self.message_history}')
         evaluation_message = self.model(self.message_history)
+        print(f'Evaluation message: {evaluation_message.content}')
 
         return evaluation_message.content

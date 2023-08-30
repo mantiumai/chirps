@@ -1,5 +1,6 @@
 """Custom filters for Scan application"""
 from django import template
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -19,4 +20,5 @@ def surrounding_text_with_preview_size(finding, preview_size):
     Returns:
         The result of calling the surrounding_text method with the provided preview size.
     """
-    return finding.surrounding_text(preview_size)
+    formatted_conversation = finding.surrounding_text(preview_size)
+    return mark_safe('<br><br>'.join([line['text'] for line in formatted_conversation]))

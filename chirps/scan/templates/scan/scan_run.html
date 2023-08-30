@@ -110,8 +110,8 @@
                             <td colspan="7">
                                 <div class="collapse" id="collapse{{rule.id}}">
                                     <div class="card card-body">
-                                        <table class="table">
-                                            <thead>
+                                        <table class="table table-bordered">
+                                            <thead class="thead-dark">
                                                 <tr>
                                                     <th scope="col">Finding</th>
                                                     <th scope="col">Source ID</th>
@@ -121,8 +121,7 @@
                                             <tbody>
                                                 {% for finding in rule.findings %}
                                                 <tr>
-                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}
-                                                    </td>
+                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size|safe}}</td>
                                                     <td>{{ finding.source_id }}</td>
                                                     <td>{{ finding.result.scan_asset.asset.name }}</td>
                                                 </tr>
@@ -149,7 +148,7 @@
                                 <div class="conversation">
                                     {% for line in multiquery_result.conversation|format_conversation %}
                                         {% if line.type == 'attacker' %}
-                                            <strong>Attacker: </strong>{{ line.text }}<br>
+                                            <strong>Chirps: </strong>{{ line.text }}<br>
                                         {% elif line.type == 'asset' %}
                                             <strong>Asset: </strong>{{ line.text }}<br>
                                         {% else %}
