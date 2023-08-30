@@ -1,4 +1,4 @@
-# Test the Agent classes.
+"""Tests for the Agent classes."""
 from unittest.mock import patch
 
 from account.models import Profile
@@ -12,8 +12,8 @@ from policy.llms.agents import AttackAgent, EvaluationAgent
 class AgentTestCase(TestCase):
     """Test the Agent classes."""
 
-    def mock_openai_create(*args, content, **kwargs):
-        # Define a mock response here
+    def mock_openai_create(self, *args, content, **kwargs):
+        """Mock the OpenAI API."""
         response = {
             'id': 'test-id',
             'object': 'chat.completion',

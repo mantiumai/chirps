@@ -1,5 +1,4 @@
-"""Tests for the policy application."""
-
+"""Tests for the policy application models."""
 import re
 from unittest import skip
 

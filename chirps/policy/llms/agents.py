@@ -85,7 +85,7 @@ class AttackAgent(Agent):
                 with attempt:
                     return self._generate_attack(target_response)
         except tenacity.RetryError as e:
-            print(f'Failed to parse action from message: {e}')
+            raise ValueError('Error: Unable to generate attack message') from e
 
 
 class EvaluationAgent(Agent):

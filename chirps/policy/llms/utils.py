@@ -1,3 +1,4 @@
+"""Utility functions for LLMs."""
 import tiktoken
 
 from .agents import DEFAULT_MODEL
