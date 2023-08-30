@@ -274,6 +274,7 @@ class MultiQueryRule(BaseRule):
             conversation += f'asset: {target_response}\n'
 
             response_evaluation = evaluator.evaluate(target_response)
+            print(f'Evaluation: {response_evaluation}')
 
             if response_evaluation == 'Yes':
                 print('***Success!***')
@@ -309,12 +310,6 @@ class MultiQueryResult(BaseResult):
         """Get the number of findings associated with this result."""
         return self.findings.count()
 
-    def conversation_with_highlight(self, finding_id: int):
-        """Return the conversation text, highlighting the finding specified by the finding_id."""
-        finding = self.findings.get(id=finding_id)
-        highlighted_conversation = finding.highlight_in_conversation(self.conversation)
-        return highlighted_conversation
-
 
 class MultiQueryFinding(BaseFinding):
     """Model to identify the location of a finding within a MultiQuery result."""
@@ -328,7 +323,16 @@ class MultiQueryFinding(BaseFinding):
     # Target response (encrypted at REST) that was successfully evaluated
     target_response = EncryptedTextField()
 
-    def highlight_in_conversation(self, conversation: str):
+    def surrounding_text(self, preview_size: int = 20):
+        """Return the surrounding text of the finding with the target message highlighted."""
+        highlighted_conversation = self.with_highlight(self.result.conversation)
+
+        # You can now further customize the returned text based on the `preview_size` parameter.
+        # For example, you can truncate the text before and after the highlighted section.
+
+        return highlighted_conversation
+
+    def with_highlight(self, conversation: str):
         """Return the conversation text with the finding highlighted."""
         highlighted_conversation = conversation.replace(
             f'{self.attacker_question}\n{self.target_response}',
