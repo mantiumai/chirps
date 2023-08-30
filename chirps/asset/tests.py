@@ -138,11 +138,13 @@ class AssetTests(TestCase):
 
         form_data = {
             'name': 'API Endpoint Asset',
+            'description': 'Test API Endpoint Asset',
             'url': 'https://api.example.com/endpoint',
             'authentication_method': 'Bearer',
             'api_key': 'example-api-key',
             'headers': '{"Content-Type": "application/json"}',
             'body': '{"data": "%query%"}',
+            'timeout': '30',
         }
         form = APIEndpointAssetForm(data=form_data)
         self.assertTrue(form.is_valid(), form.errors)
@@ -283,7 +285,7 @@ class APIEndpointAssetTests(TestCase):
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
             expected_body = self.api_endpoint_asset.body.replace('%query%', 'test query')
 
-            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=15)
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=30)
 
             # Assert the search result attributes
             result = search_results['chat']
