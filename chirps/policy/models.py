@@ -170,6 +170,9 @@ class RegexResult(BaseResult):
     # The rule that was used to scan the text
     rule = models.ForeignKey(RegexRule, on_delete=models.CASCADE)
 
+    # Scan asset that the result belongs to
+    scan_asset = models.ForeignKey('scan.ScanAsset', on_delete=models.CASCADE, related_name='regex_results')
+
     # The raw text (encrypted at REST) that was scanned
     text = EncryptedTextField()
 
@@ -241,6 +244,85 @@ class MultiQueryRule(BaseRule):
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""
         raise NotImplementedError(f'{self.__class__.__name__} does not implement execute()')
+
+
+class MultiQueryResult(BaseResult):
+    """Model for a single result from a MultiQuery rule."""
+
+    # The rule that was used to scan the asset
+    rule = models.ForeignKey(MultiQueryRule, on_delete=models.CASCADE)
+
+    # Scan asset that the result belongs to
+    scan_asset = models.ForeignKey('scan.ScanAsset', on_delete=models.CASCADE, related_name='multiquery_results')
+
+    # The entire conversation (encrypted at REST) between chirps_attacker and target
+    conversation = EncryptedTextField()
+
+    def findings_count(self) -> int:
+        """Get the number of findings associated with this result."""
+        return self.findings.count()
+
+
+class MultiQueryFinding(BaseFinding):
+    """Model to identify the location of a finding within a MultiQuery result."""
+
+    result = models.ForeignKey(MultiQueryResult, on_delete=models.CASCADE, related_name='findings')
+    source_id = models.TextField(blank=True, null=True)
+
+    # Chirps question (encrypted at REST) that led to a successful evaluation
+    chirps_question = EncryptedTextField()
+
+    # Target response (encrypted at REST) that was successfully evaluated
+    target_response = EncryptedTextField()
+
+    def format_conversation(self, conversation: str):
+        """Format a conversation for display in the UI."""
+        lines = conversation.split('\n')
+        formatted_lines = []
+
+        for line in lines:
+            if line.startswith('attacker:'):
+                identifier = '<strong>Chirps:</strong>'
+                if line[10:] in self.chirps_question:
+                    formatted_lines.append(
+                        {
+                            'type': 'attacker',
+                            'text': f"<span class='bg-danger text-white'>{identifier} {line[9:]}</span>",
+                        }
+                    )
+                else:
+                    formatted_lines.append({'type': 'attacker', 'text': f'{identifier} {line[9:]}'})
+            elif line.startswith('asset:'):
+                identifier = '<strong>Asset:</strong>'
+                if line[7:] in self.target_response:
+                    formatted_lines.append(
+                        {
+                            'type': 'asset',
+                            'text': f"<span class='bg-danger text-white'>{identifier} {line[6:]}</span>",
+                        }
+                    )
+                else:
+                    formatted_lines.append({'type': 'asset', 'text': f'{identifier} {line[6:]}'})
+
+        return formatted_lines
+
+    def surrounding_text(self, preview_size: int = 20):
+        """Return the surrounding text of the finding with the target message highlighted."""
+        formatted_conversation = self.format_conversation(self.result.conversation)
+        return formatted_conversation
+
+    def with_highlight(self, conversation: str):
+        """Return the conversation text with the finding highlighted."""
+        highlighted_conversation = conversation.replace(
+            f'attacker: {self.chirps_question}\nasset: {self.target_response}',
+            f"<span class='bg-danger text-white'>attacker: {self.chirps_question}\n"
+            f'asset: {self.target_response}</span>',
+        )
+        return mark_safe(highlighted_conversation)
+
+    def __str__(self):
+        """Stringify the finding"""
+        return f'{self.result} - {self.source_id}'
 
 
 def rule_classes(base_class: Any) -> dict[str, type]:

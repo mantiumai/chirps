@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('policy', '0007_delete_outcome'),
+        ('policy', '0008_alter_regexresult_scan_asset_multiqueryresult_and_more'),
     ]
 
     operations = [
