@@ -175,15 +175,20 @@ class APIEndpointAssetForm(ModelForm):
         model = APIEndpointAsset
         fields = [
             'name',
+            'description',
             'url',
             'authentication_method',
             'api_key',
             'headers',
             'body',
+            'timeout',
         ]
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a name for the asset'}),
+            'description': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'What is the job of the model served by this asset?'}
+            ),
             'url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'URL'}),
             'authentication_method': forms.Select(
                 choices=[('Basic', 'Basic'), ('Bearer', 'Bearer')], attrs={'class': 'form-control'}
@@ -191,6 +196,7 @@ class APIEndpointAssetForm(ModelForm):
             'api_key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'API Key'}),
             'headers': KeyValueWidget(attrs={'class': 'form-control'}),
             'body': KeyValueWidget(attrs={'class': 'form-control'}),
+            'timeout': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '30'}),
         }
 
 
