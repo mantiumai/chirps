@@ -21,7 +21,7 @@ class Agent:
         self.message_history = [SystemMessage(content=self.instructions)]
 
     def truncate(self) -> None:
-        """Truncate the message history, keeping only the instructions and the first question."""
+        """Truncate the message history, keeping only the instructions and dropping the oldest request/response pair."""
         self.message_history = [SystemMessage(content=self.instructions)] + self.message_history[3:]
 
 
