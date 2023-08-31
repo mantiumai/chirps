@@ -1,3 +1,4 @@
+"""Models for the worker application."""
 from django.db import models
 
 

@@ -1,3 +1,4 @@
+"""Celery tasks for the worker application."""
 from logging import getLogger
 from typing import Any
 
@@ -26,7 +27,6 @@ def ping_task() -> None:
 
     # First pass: add any new workers and update existing workers
     for worker in celery_statuses.keys():
-        logger.info(f'Worker found: {worker}')
         worker_obj, _created = CeleryWorker.objects.get_or_create(celery_name=worker)
         worker_obj.last_success = timezone.now()
         worker_obj.available = True
