@@ -1,12 +1,15 @@
 """Worker application views"""
 import os
 from dataclasses import dataclass
+from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
+from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 
-from chirps.celery import app
+from .models import CeleryWorker
 
 
 @dataclass
@@ -19,8 +22,7 @@ class ServiceStatus:
     job_count: int
 
 
-@login_required
-def status(request: HttpRequest) -> HttpResponse:
+def worker_status(request: HttpRequest) -> HttpResponse:
     """Return the status widget."""
     return render(request, 'worker/status.html', {'service_status': _get_service_status()})
 
@@ -32,20 +34,22 @@ def status_details(request: HttpRequest) -> HttpResponse:
 
 
 def _get_service_status() -> ServiceStatus:
-    celery_inspection = app.control.inspect()   # type: ignore
-    celery_statuses = celery_inspection.ping()
 
-    is_celery_running = False
-    if celery_statuses:
-        is_celery_running = all(v['ok'] == 'pong' for v in celery_statuses.values())
+    is_celery_running = True
+    for celery_worker in CeleryWorker.objects.all():
+        if celery_worker.available is False:
+            is_celery_running = False
+            break
+
+        if celery_worker.last_success < timezone.now() - timedelta(minutes=1):
+            is_celery_running = False
+            break
+
+    if CeleryWorker.objects.count() == 0:
+        is_celery_running = False
 
     # Check how many Celery jobs are running
-    job_count = 0
-    if is_celery_running:
-        workers = celery_inspection.active()
-
-        # Shape of the workers dictionary is {worker_name: [list of jobs]}
-        job_count = sum(len(jobs) for jobs in workers.values())
+    job_count = CeleryWorker.objects.all().aggregate(models.Sum('active_jobs'))['active_jobs__sum']
 
     is_rabbit_running = os.system('rabbitmqctl ping') == 0
 
