@@ -612,36 +612,35 @@ class MultiQueryResultModelTests(TestCase):
     def setUp(self):
         """Prepare for MultiQueryRule tests."""
         self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
-        user = User.objects.get(username='admin')
-        self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
-        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
-        self.severity = Severity.objects.first()
+        policy = Policy.objects.create(name='Test Policy', description='Test Description')
+        policy_version = PolicyVersion.objects.create(number=1, policy=policy)
+        severity = Severity.objects.first()
         self.rule = MultiQueryRule.objects.create(
             name='Test MultiQuery Rule',
             task_description='Test Task Description',
             success_outcome='Success',
-            severity=self.severity,
-            policy=self.policy_version,
+            severity=severity,
+            policy=policy_version,
         )
-        self.asset = APIEndpointAsset.objects.create(
+        asset = APIEndpointAsset.objects.create(
             name='Test Asset',
-            user=user,
+            user=User.objects.get(username='admin'),
             description='used for testing',
             url='https://www.test.com/chat',
             api_key='foo',
         )
-        self.scan_template = ScanTemplate.objects.create(
+        scan_template = ScanTemplate.objects.create(
             name='Test Scan Template',
             description='Test scan template description',
             user=None,
         )
-        self.scan_version = ScanVersion.objects.create(number=1, scan=self.scan_template)
-        self.scan_run = ScanRun.objects.create(scan_version=self.scan_version)
+        scan_version = ScanVersion.objects.create(number=1, scan=scan_template)
+        scan_run = ScanRun.objects.create(scan_version=scan_version)
         self.scan_asset = ScanAsset.objects.create(
             started_at='2022-01-01T00:00:00Z',
             finished_at='2022-01-01T01:00:00Z',
-            scan=self.scan_run,
-            asset_id=self.asset.id,
+            scan=scan_run,
+            asset_id=asset.id,
             celery_task_id='test_task_id',
             progress=50,
         )
@@ -673,41 +672,41 @@ class MultiQueryFindingModelTests(TestCase):
         """Prepare for MultiQueryRule tests."""
         self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
         user = User.objects.get(username='admin')
-        self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
-        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
-        self.severity = Severity.objects.first()
-        self.rule = MultiQueryRule.objects.create(
+        policy = Policy.objects.create(name='Test Policy', description='Test Description')
+        policy_version = PolicyVersion.objects.create(number=1, policy=policy)
+        severity = Severity.objects.first()
+        rule = MultiQueryRule.objects.create(
             name='Test MultiQuery Rule',
             task_description='Test Task Description',
             success_outcome='Success',
-            severity=self.severity,
-            policy=self.policy_version,
+            severity=severity,
+            policy=policy_version,
         )
-        self.asset = APIEndpointAsset.objects.create(
+        asset = APIEndpointAsset.objects.create(
             name='Test Asset',
             user=user,
             description='used for testing',
             url='https://www.test.com/chat',
             api_key='foo',
         )
-        self.scan_template = ScanTemplate.objects.create(
+        scan_template = ScanTemplate.objects.create(
             name='Test Scan Template',
             description='Test scan template description',
             user=None,
         )
-        self.scan_version = ScanVersion.objects.create(number=1, scan=self.scan_template)
-        self.scan_run = ScanRun.objects.create(scan_version=self.scan_version)
-        self.scan_asset = ScanAsset.objects.create(
+        scan_version = ScanVersion.objects.create(number=1, scan=scan_template)
+        scan_run = ScanRun.objects.create(scan_version=scan_version)
+        scan_asset = ScanAsset.objects.create(
             started_at='2022-01-01T00:00:00Z',
             finished_at='2022-01-01T01:00:00Z',
-            scan=self.scan_run,
-            asset_id=self.asset.id,
+            scan=scan_run,
+            asset_id=asset.id,
             celery_task_id='test_task_id',
             progress=50,
         )
         self.result = MultiQueryResult.objects.create(
-            rule=self.rule,
-            scan_asset=self.scan_asset,
+            rule=rule,
+            scan_asset=scan_asset,
             conversation="attacker: Hello\nasset: Hi\nattacker: What's up?\nasset: Not much",
         )
 
