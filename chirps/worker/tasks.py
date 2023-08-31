@@ -32,5 +32,3 @@ def ping_task() -> None:
         worker_obj.available = True
         worker_obj.active_jobs = len(celery_statuses[worker])
         worker_obj.save()
-
-    # TODO: Second pass: mark any workers that weren't returned in the inspection as unavailable
