@@ -287,26 +287,26 @@ class MultiQueryFinding(BaseFinding):
                     formatted_lines.append(
                         {
                             'type': 'attacker',
-                            'text': f"<span class='bg-danger text-white'>{identifier} {line[9:]}</span>",
+                            'text': f"<span class='bg-danger text-white'>{identifier} {line[10:]}</span>",
                         }
                     )
                 else:
-                    formatted_lines.append({'type': 'attacker', 'text': f'{identifier} {line[9:]}'})
+                    formatted_lines.append({'type': 'attacker', 'text': f'{identifier} {line[10:]}'})
             elif line.startswith('asset:'):
                 identifier = '<strong>Asset:</strong>'
                 if line[7:] in self.target_response:
                     formatted_lines.append(
                         {
                             'type': 'asset',
-                            'text': f"<span class='bg-danger text-white'>{identifier} {line[6:]}</span>",
+                            'text': f"<span class='bg-danger text-white'>{identifier} {line[7:]}</span>",
                         }
                     )
                 else:
-                    formatted_lines.append({'type': 'asset', 'text': f'{identifier} {line[6:]}'})
+                    formatted_lines.append({'type': 'asset', 'text': f'{identifier} {line[7:]}'})
 
         return formatted_lines
 
-    def surrounding_text(self, preview_size: int = 20):
+    def surrounding_text(self):
         """Return the surrounding text of the finding with the target message highlighted."""
         formatted_conversation = self.format_conversation(self.result.conversation)
         return formatted_conversation

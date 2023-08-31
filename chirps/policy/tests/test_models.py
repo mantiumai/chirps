@@ -1,11 +1,15 @@
-"""Tests for the policy application models."""
+"""Tests for the policy application."""
+
 import re
 from unittest import skip
 
+from asset.providers.api_endpoint import APIEndpointAsset
+from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from policy.forms import PolicyForm
-from policy.models import MultiQueryRule, Policy, PolicyVersion, RegexRule
+from policy.models import MultiQueryFinding, MultiQueryResult, MultiQueryRule, Policy, PolicyVersion, RegexRule
+from scan.models import ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from severity.models import Severity
 
 cfixtures = ['policy/network.json']
@@ -598,3 +602,164 @@ class MultiQueryRuleModelTests(TestCase):
         self.assertEqual(rule.success_outcome, 'Success')
         self.assertEqual(rule.severity, self.severity)
         self.assertEqual(rule.policy, self.policy_version)
+
+
+class MultiQueryResultModelTests(TestCase):
+    """Test the MultiQueryResult model."""
+
+    fixtures = ['scan/test_dash_pagination.json', 'severity/default_severities.json']
+
+    def setUp(self):
+        """Prepare for MultiQueryRule tests."""
+        self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
+        user = User.objects.get(username='admin')
+        self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
+        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
+        self.severity = Severity.objects.first()
+        self.rule = MultiQueryRule.objects.create(
+            name='Test MultiQuery Rule',
+            task_description='Test Task Description',
+            success_outcome='Success',
+            severity=self.severity,
+            policy=self.policy_version,
+        )
+        self.asset = APIEndpointAsset.objects.create(
+            name='Test Asset',
+            user=user,
+            description='used for testing',
+            url='https://www.test.com/chat',
+            api_key='foo',
+        )
+        self.scan_template = ScanTemplate.objects.create(
+            name='Test Scan Template',
+            description='Test scan template description',
+            user=None,
+        )
+        self.scan_version = ScanVersion.objects.create(number=1, scan=self.scan_template)
+        self.scan_run = ScanRun.objects.create(scan_version=self.scan_version)
+        self.scan_asset = ScanAsset.objects.create(
+            started_at='2022-01-01T00:00:00Z',
+            finished_at='2022-01-01T01:00:00Z',
+            scan=self.scan_run,
+            asset_id=self.asset.id,
+            celery_task_id='test_task_id',
+            progress=50,
+        )
+        self.result = MultiQueryResult.objects.create(
+            rule=self.rule,
+            scan_asset=self.scan_asset,
+            conversation='attacker: Hello\nasset: Hi',
+        )
+
+    def test_create_multiquery_result(self):
+        """Verify that a MultiQueryResult is created correctly."""
+        result = MultiQueryResult.objects.create(
+            rule=self.rule,
+            scan_asset=self.scan_asset,
+            conversation='attacker: Hello\nasset: Hi',
+        )
+
+        self.assertEqual(result.rule, self.rule)
+        self.assertEqual(result.scan_asset, self.scan_asset)
+        self.assertEqual(result.conversation, 'attacker: Hello\nasset: Hi')
+
+
+class MultiQueryFindingModelTests(TestCase):
+    """Test the MultiQueryFinding model."""
+
+    fixtures = ['scan/test_dash_pagination.json', 'severity/default_severities.json']
+
+    def setUp(self):
+        """Prepare for MultiQueryRule tests."""
+        self.client.post(reverse_lazy('login'), {'username': 'admin', 'password': 'admin'})
+        user = User.objects.get(username='admin')
+        self.policy = Policy.objects.create(name='Test Policy', description='Test Description')
+        self.policy_version = PolicyVersion.objects.create(number=1, policy=self.policy)
+        self.severity = Severity.objects.first()
+        self.rule = MultiQueryRule.objects.create(
+            name='Test MultiQuery Rule',
+            task_description='Test Task Description',
+            success_outcome='Success',
+            severity=self.severity,
+            policy=self.policy_version,
+        )
+        self.asset = APIEndpointAsset.objects.create(
+            name='Test Asset',
+            user=user,
+            description='used for testing',
+            url='https://www.test.com/chat',
+            api_key='foo',
+        )
+        self.scan_template = ScanTemplate.objects.create(
+            name='Test Scan Template',
+            description='Test scan template description',
+            user=None,
+        )
+        self.scan_version = ScanVersion.objects.create(number=1, scan=self.scan_template)
+        self.scan_run = ScanRun.objects.create(scan_version=self.scan_version)
+        self.scan_asset = ScanAsset.objects.create(
+            started_at='2022-01-01T00:00:00Z',
+            finished_at='2022-01-01T01:00:00Z',
+            scan=self.scan_run,
+            asset_id=self.asset.id,
+            celery_task_id='test_task_id',
+            progress=50,
+        )
+        self.result = MultiQueryResult.objects.create(
+            rule=self.rule,
+            scan_asset=self.scan_asset,
+            conversation="attacker: Hello\nasset: Hi\nattacker: What's up?\nasset: Not much",
+        )
+
+    def test_create_multiquery_finding(self):
+        """Verify that a MultiQueryFinding is created correctly."""
+        finding = MultiQueryFinding.objects.create(
+            result=self.result,
+            source_id='1',
+            chirps_question='Hello',
+            target_response='Hi',
+        )
+
+        self.assertEqual(finding.result, self.result)
+        self.assertEqual(finding.source_id, '1')
+        self.assertEqual(finding.chirps_question, 'Hello')
+        self.assertEqual(finding.target_response, 'Hi')
+
+    def test_format_conversation(self):
+        """Verify that the conversation is formatted correctly for display in the UI."""
+        finding = MultiQueryFinding.objects.create(
+            result=self.result,
+            source_id='1',
+            chirps_question="What's up?",
+            target_response='Not much',
+        )
+
+        formatted_conversation = finding.format_conversation(self.result.conversation)
+        expected_output = [
+            {'type': 'attacker', 'text': '<strong>Chirps:</strong> Hello'},
+            {'type': 'asset', 'text': '<strong>Asset:</strong> Hi'},
+            {
+                'type': 'attacker',
+                'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> What's up?</span>",
+            },
+            {'type': 'asset', 'text': "<span class='bg-danger text-white'><strong>Asset:</strong> Not much</span>"},
+        ]
+        self.assertEqual(formatted_conversation, expected_output)
+
+    def test_surrounding_text(self):
+        """Verify that the surrounding_text method returns the correct output."""
+        finding = MultiQueryFinding.objects.create(
+            result=self.result,
+            source_id='1',
+            chirps_question='Hello',
+            target_response='Hi',
+        )
+
+        surrounding_text = finding.surrounding_text()
+        expected_output = [
+            {'type': 'attacker', 'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> Hello</span>"},
+            {'type': 'asset', 'text': "<span class='bg-danger text-white'><strong>Asset:</strong> Hi</span>"},
+            {'type': 'attacker', 'text': "<strong>Chirps:</strong> What's up?"},
+            {'type': 'asset', 'text': '<strong>Asset:</strong> Not much'},
+        ]
+        self.assertEqual(surrounding_text, expected_output)
