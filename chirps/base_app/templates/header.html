@@ -57,7 +57,7 @@
       </div>
       <!-- Status indicator -->
       <div class="ms-auto">
-        <div id="worker-status" hx-get="/worker/status/" hx-trigger="load, every 5s">
+        <div id="worker-status" hx-get="{% url 'worker_status' %}" hx-trigger="load, every 5s">
           <i class="fa-solid fa-spinner fa-spin"></i>
         </div>
       </div>
@@ -65,76 +65,7 @@
   </nav>
 </div>
 
-<!-- Status Details Modal -->
-{% comment %} <div class="modal fade" id="statusDetailsModal" tabindex="-1" aria-labelledby="statusDetailsModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="statusDetailsModalLabel">Worker Status Details</h5>
-        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <div class="modal-body" id="statusDetailsModalBody">
-        <!-- Status details will be displayed here -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> {% endcomment %}
 
 <div id="modals-here">
 
 </div>
-{% comment %}
-<script>
-  document.body.addEventListener('htmx:configRequest', function (event) {
-    if (event.target.id === 'worker-status') {
-      event.detail.headers['HX-Response-Content-Type'] = 'application/json';
-    }
-  });
-
-  document.body.addEventListener('htmx:afterSwap', function (event) {
-    if (event.target.id === 'worker-status') {
-      let xhr = event.detail.xhr;
-      if (xhr) {
-        let response = JSON.parse(xhr.responseText);
-        let overallStatus = response.overall_status;
-        let serviceStatuses = response.service_statuses;
-        let indicator = document.querySelector("#worker-status .worker-status-indicator");
-        indicator.style.backgroundColor = overallStatus;
-        indicator.setAttribute('title', 'Click to see service statuses');
-
-        // Store the service statuses in the indicator element for later use
-        indicator.dataset.serviceStatuses = JSON.stringify(serviceStatuses);
-      }
-    }
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    let indicator = document.querySelector("#worker-status .worker-status-indicator");
-  });
-
-  document.addEventListener('click', function (event) {
-    let indicator = document.querySelector("#worker-status .worker-status-indicator");
-    if (event.target === indicator) {
-      let serviceStatuses = JSON.parse(indicator.dataset.serviceStatuses);
-
-      let statusesHTML = '';
-      for (const [service, status] of Object.entries(serviceStatuses)) {
-        statusesHTML += `<p><strong>${service} status:</strong> ${status ? 'Online' : 'Offline'}</p>`;
-      }
-
-      // Display the service statuses in the modal body
-      let modalBody = document.getElementById('statusDetailsModalBody');
-      modalBody.innerHTML = statusesHTML;
-
-      // Show the modal
-      let statusDetailsModal = new bootstrap.Modal(document.getElementById('statusDetailsModal'));
-      statusDetailsModal.show();
-    }
-  });
-</script> {% endcomment %}

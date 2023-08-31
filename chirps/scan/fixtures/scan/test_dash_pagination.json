@@ -31,7 +31,7 @@
         "model": "asset.baseasset",
         "pk": 1,
         "fields": {
-            "polymorphic_ctype": 14,
+            "polymorphic_ctype": ["asset", "redisasset"],
             "name": "local redis",
             "user": 1
         }

@@ -29,8 +29,8 @@ class Command(BaseCommand):
         """Start the celery server."""
         os.system('sudo mkdir -p /var/run/celery; sudo chmod 777 /var/run/celery')
         os.system('sudo mkdir -p /var/log/celery; sudo chmod 777 /var/log/celery')
-        os.system('celery multi start w1 -A chirps -l INFO')
+        os.system('celery multi start --beat w1 -A chirps -l INFO')
 
     def stop(self):
         """Stop the celery server."""
-        os.system('celery multi stopwait w1 -A chirps -l INFO')
+        os.system('celery multi stopwait w1 --beat -A chirps -l INFO')
