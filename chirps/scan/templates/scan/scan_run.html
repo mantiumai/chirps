@@ -7,7 +7,7 @@
 <div class="d-flex">
     <h1 class="my-auto ml-0 mr-auto text-success">Scan Result</h1>
 </div>
-<hr />
+<hr/>
 
 <div class="row">
     <div class="col-8">
@@ -67,13 +67,11 @@
 
             <div class="tab-pane fade" id="tabs-2" role="tabpanel" aria-labelledby="tab-2">
                 <div class="accordion" id="template-panel-accordion">
-                    {% include 'policy/dashboard_policy_list.html' with policy_list=scan_run.scan_version.policies.all
-                    edit_mode=False %}
+                    {% include 'policy/dashboard_policy_list.html' with policy_list=scan_run.scan_version.policies.all edit_mode=False %}
                 </div>
             </div>
 
             <div class="tab-pane fade" id="tabs-3" role="tabpanel" aria-labelledby="tab-3">
-
                 <table class="table">
                     <thead>
                         <tr>
@@ -84,100 +82,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for rule in unique_regex_rules %}
-                        <tr>
-                            <td>
-                                <span style="color:{{ rule.severity.color }};">
-                                    {{ rule.severity.name }} ({{ rule.severity.value }})
-                                </span>
-                            </td>
-                            <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
-                            <td>{{rule.finding_count}}</td>
-                            <td>
-                                <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse{{rule.id}}" aria-expanded="false"
-                                    aria-controls="collapse{{rule.id}}"> <i class="fa-solid fa-magnifying-glass"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="7">
-                                <div class="collapse" id="collapse{{rule.id}}">
-                                    <div class="card card-body">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Finding</th>
-                                                    <th scope="col">Source ID</th>
-                                                    <th scope="col">Asset</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for finding in rule.findings %}
-                                                <tr>
-                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}
-                                                    </td>
-                                                    <td>{{ finding.source_id }}</td>
-                                                    <td>{{ finding.result.scan_asset.asset.name }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-                        {% for rule in unique_multiquery_rules %}
-                        <tr>
-                            <td>
-                                <span style="color:{{ rule.severity.color }};">
-                                    {{ rule.severity.name }} ({{ rule.severity.value }})
-                                </span>
-                            </td>
-                            <td>{{rule.policy.policy.name}} : {{rule.name}}</td>
-                            <td>{{rule.finding_count}}</td>
-                            <td>
-                                <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseMultiQuery{{rule.id}}" aria-expanded="false"
-                                    aria-controls="collapseMultiQuery{{rule.id}}"> <i
-                                        class="fa-solid fa-magnifying-glass"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="7">
-                                <div class="collapse" id="collapseMultiQuery{{rule.id}}">
-                                    <div class="card card-body">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Conversation</th>
-                                                    <th scope="col">Source ID</th>
-                                                    <th scope="col">Asset</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for finding in rule.multiquery_findings %}
-                                                <tr>
-                                                    <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}
-                                                    </td>
-                                                    <td>{{ finding.source_id }}</td>
-                                                    <td>{{ finding.result.scan_asset.asset.name }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
+                        {% include 'scan/_rule_table_rows.html' with unique_rules=unique_regex_rules %}
+                        {% include 'scan/_rule_table_rows.html' with unique_rules=unique_multiquery_rules %}
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
@@ -187,9 +95,7 @@
 
         <div class="row">
             <div class="col-3">Name: </div>
-            <div class="col"><a
-                    href="{% url 'scan_history_view' scan_run.scan_version.scan.id %}">{{scan_run.scan_version.scan.name}}</a>
-            </div>
+            <div class="col"><a href="{% url 'scan_history_view' scan_run.scan_version.scan.id %}">{{scan_run.scan_version.scan.name}}</a></div>
         </div>
 
         <div class="row">
@@ -224,6 +130,9 @@
 
 <script>
     const ctx = document.getElementById('scan_findings_chart');
+    const severities = JSON.parse(document.getElementById('severities_js').textContent);
+    const severity_counts = JSON.parse(document.getElementById('severity_counts_js').textContent);
+
 
     new Chart(ctx, {
         type: 'doughnut',
