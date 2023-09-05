@@ -3,8 +3,10 @@
 from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import QuerySet
 from django.utils import timezone
 from django_celery_results.models import TaskResult
+from policy.models import MultiQueryResult, RegexResult
 
 
 class ScanTemplate(models.Model):
@@ -133,6 +135,19 @@ class ScanAsset(models.Model):
     asset = models.ForeignKey(BaseAsset, on_delete=models.CASCADE, related_name='scan_run_assets')
     celery_task_id = models.CharField(max_length=256, null=True)
     progress = models.IntegerField(default=0)
+
+    @property
+    def results(self) -> QuerySet:
+        """Fetch the combined results for this asset."""
+        return QuerySet.union(
+            RegexResult.objects.filter(scan_asset=self), MultiQueryResult.objects.filter(scan_asset=self)
+        )
+
+    def get_combined_results(self) -> QuerySet:
+        """Fetch the combined results for this asset."""
+        return QuerySet.union(
+            RegexResult.objects.filter(scan_asset=self), MultiQueryResult.objects.filter(scan_asset=self)
+        )
 
     def __str__(self) -> str:
         """Stringify the asset name"""

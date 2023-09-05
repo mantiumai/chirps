@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils import timezone
 from embedding.models import Embedding
-from policy.models import Policy
+from policy.models import MultiQueryRule, Policy, RegexRule
 
 from chirps.celery import app as celery_app
 
@@ -45,6 +45,24 @@ def view_scan_history(request, scan_id):
     )
 
 
+def get_unique_rules(results, rule_class):
+    """Return a list of unique rules from a list of results."""
+    unique_rules = {result.rule for result in results if isinstance(result.rule, rule_class)}
+
+    for rule in unique_rules:
+        rule.finding_count = 0
+        rule.findings = []
+
+        for result in results:
+            if result.rule.id == rule.id:
+                findings = list(result.findings.all())
+                count = len(findings)
+                rule.finding_count += count
+                rule.findings.extend(findings)
+
+    return unique_rules
+
+
 @login_required
 def view_scan_run(request, scan_run_id):
     """View details for a particular scan."""
@@ -57,37 +75,27 @@ def view_scan_run(request, scan_run_id):
     # Step 1: build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
         # Iterate through the rule set
-        for result in scan_asset.results.all():
+        for result in scan_asset.get_combined_results():
 
             if result.has_findings():
                 results.append(result)
 
-    # Step 2: aggregate results by rules with matching rule IDs
-    unique_rules = {result.rule for result in results}
+    unique_regex_rules = get_unique_rules(results, RegexRule)
+    unique_multiquery_rules = get_unique_rules(results, MultiQueryRule)
 
     # Next, walk through all of the results, aggregating the findings count for each unique rule ID
     finding_count = 0
     finding_severities = defaultdict(int)
 
-    # Walk through each unique rule
-    for rule in unique_rules:
-        rule.finding_count = 0
-        rule.findings = []
+    # Calculate finding_count and finding_severities
+    finding_count = 0
+    finding_severities = defaultdict(int)
 
-        # Iterate through each result that was hit for the rule
-        for result in results:
-
-            # Increment the number of findings for this rule
-            if result.rule.id == rule.id:
-                findings = list(result.findings.all())
-                count = len(findings)
-                rule.finding_count += count
-                finding_count += count
-                rule.findings.extend(findings)
-
-                # While we're in this loop, store off the number of times each severity is encountered
-                # This will be used to render the pie-chart in the UI
-                finding_severities[rule.severity] += count
+    for rule_set in [unique_regex_rules, unique_multiquery_rules]:
+        for rule in rule_set:
+            count = rule.finding_count
+            finding_count += count
+            finding_severities[rule.severity] += count
 
     # Retrieve finding_preview_size from the user's profile
     finding_preview_size = request.user.profile.finding_preview_size
@@ -98,7 +106,8 @@ def view_scan_run(request, scan_run_id):
         {
             'scan_run': scan_run,  # The scan run object
             'finding_count': finding_count,  # Total number of findings
-            'unique_rules': unique_rules,  # List of unique rules hit by findings
+            'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
+            'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
             'severities': list(finding_severities.keys()),  # List of all the severities encountered
             'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
             'finding_preview_size': finding_preview_size,
