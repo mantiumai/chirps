@@ -177,7 +177,7 @@
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: {{ severities }},
+            labels: {{ severities|safe }},
         datasets: [{
             label: '# of findings',
             data: {{ severity_counts }},
