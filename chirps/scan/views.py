@@ -75,7 +75,7 @@ def view_scan_run(request, scan_run_id):
     # Step 1: build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
         # Iterate through the rule set
-        for result in scan_asset.get_combined_results():
+        for result in scan_asset.results:
 
             if result.has_findings():
                 results.append(result)

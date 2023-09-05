@@ -143,12 +143,6 @@ class ScanAsset(models.Model):
             RegexResult.objects.filter(scan_asset=self), MultiQueryResult.objects.filter(scan_asset=self)
         )
 
-    def get_combined_results(self) -> QuerySet:
-        """Fetch the combined results for this asset."""
-        return QuerySet.union(
-            RegexResult.objects.filter(scan_asset=self), MultiQueryResult.objects.filter(scan_asset=self)
-        )
-
     def __str__(self) -> str:
         """Stringify the asset name"""
         return self.asset.name
