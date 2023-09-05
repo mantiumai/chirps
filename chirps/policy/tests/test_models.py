@@ -605,6 +605,8 @@ class MultiQueryRuleModelTests(TestCase):
 
 
 class BaseMultiQueryTest(TestCase):
+    """Base class for MultiQueryResult and MultiQueryFinding tests."""
+
     fixtures = ['scan/test_dash_pagination.json', 'severity/default_severities.json']
 
     def setUp(self):
