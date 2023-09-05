@@ -95,7 +95,7 @@ class AgentTestCase(TestCase):
             self.assertEqual(agent.message_history[1].content, 'Test attack')
 
         with self.subTest('Test AttackAgent generate_attack'):
-            attack = agent.generate_attack(target_response='Test target response')
+            attack = agent.generate_attack(asset_response='Test target response')
             self.assertEqual(attack, 'Test attack')
             self.assertEqual(len(agent.message_history), 5)
 
@@ -115,6 +115,6 @@ class AgentTestCase(TestCase):
             self.assertEqual(agent.message_history[0].content, agent.instructions)
 
         with self.subTest('Test EvaluationAgent evaluate'):
-            evaluation = agent.evaluate(target_response='Test target response')
+            evaluation = agent.evaluate(asset_response='Test target response')
             self.assertEqual(evaluation, 'Yes')
             self.assertEqual(len(agent.message_history), 2)
