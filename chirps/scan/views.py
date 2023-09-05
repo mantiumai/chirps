@@ -108,7 +108,9 @@ def view_scan_run(request, scan_run_id):
             'finding_count': finding_count,  # Total number of findings
             'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
             'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
-            'severities': list(finding_severities.keys()),  # List of all the severities encountered
+            'severities': [
+                str(severity).replace("'", '"') for severity in finding_severities.keys()
+            ],  # List of all the severities encountered
             'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
             'finding_preview_size': finding_preview_size,
         },
