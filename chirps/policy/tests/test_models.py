@@ -648,7 +648,7 @@ class BaseMultiQueryTest(TestCase):
         self.objects['result'] = MultiQueryResult.objects.create(
             rule=self.objects['rule'],
             scan_asset=self.objects['scan_asset'],
-            conversation="attacker: Hello\nasset: Hi\nattacker: What's up?\nasset: Not much",
+            conversation="chirps: Hello\nasset: Hi\nchirps: What's up?\nasset: Not much",
         )
 
 
@@ -660,12 +660,12 @@ class MultiQueryResultModelTests(BaseMultiQueryTest):
         result = MultiQueryResult.objects.create(
             rule=self.objects['rule'],
             scan_asset=self.objects['scan_asset'],
-            conversation='attacker: Hello\nasset: Hi',
+            conversation='chirps: Hello\nasset: Hi',
         )
 
         self.assertEqual(result.rule, self.objects['rule'])
         self.assertEqual(result.scan_asset, self.objects['scan_asset'])
-        self.assertEqual(result.conversation, 'attacker: Hello\nasset: Hi')
+        self.assertEqual(result.conversation, 'chirps: Hello\nasset: Hi')
 
 
 class MultiQueryFindingModelTests(BaseMultiQueryTest):
@@ -696,10 +696,10 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
 
         formatted_conversation = finding.format_conversation(self.objects['result'].conversation)
         expected_output = [
-            {'type': 'attacker', 'text': '<strong>Chirps:</strong> Hello'},
+            {'type': 'chirps', 'text': '<strong>Chirps:</strong> Hello'},
             {'type': 'asset', 'text': '<strong>Asset:</strong> Hi'},
             {
-                'type': 'attacker',
+                'type': 'chirps',
                 'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> What's up?</span>",
             },
             {'type': 'asset', 'text': "<span class='bg-danger text-white'><strong>Asset:</strong> Not much</span>"},
@@ -717,9 +717,9 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
 
         surrounding_text = finding.surrounding_text()
         expected_output = [
-            {'type': 'attacker', 'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> Hello</span>"},
+            {'type': 'chirps', 'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> Hello</span>"},
             {'type': 'asset', 'text': "<span class='bg-danger text-white'><strong>Asset:</strong> Hi</span>"},
-            {'type': 'attacker', 'text': "<strong>Chirps:</strong> What's up?"},
+            {'type': 'chirps', 'text': "<strong>Chirps:</strong> What's up?"},
             {'type': 'asset', 'text': '<strong>Asset:</strong> Not much'},
         ]
         self.assertEqual(surrounding_text, expected_output)

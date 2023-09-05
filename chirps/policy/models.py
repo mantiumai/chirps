@@ -281,28 +281,30 @@ class MultiQueryFinding(BaseFinding):
         formatted_lines = []
 
         for line in lines:
-            if line.startswith('attacker:'):
+            if line.startswith('chirps:'):
+                message = line[len('chirps: ') :]
                 identifier = '<strong>Chirps:</strong>'
-                if line[10:] in self.chirps_question:
+                if message in self.chirps_question:
                     formatted_lines.append(
                         {
-                            'type': 'attacker',
-                            'text': f"<span class='bg-danger text-white'>{identifier} {line[10:]}</span>",
+                            'type': 'chirps',
+                            'text': f"<span class='bg-danger text-white'>{identifier} {message}</span>",
                         }
                     )
                 else:
-                    formatted_lines.append({'type': 'attacker', 'text': f'{identifier} {line[10:]}'})
+                    formatted_lines.append({'type': 'chirps', 'text': f'{identifier} {message}'})
             elif line.startswith('asset:'):
+                message = line[len('asset: ') :]
                 identifier = '<strong>Asset:</strong>'
-                if line[7:] in self.target_response:
+                if message in self.target_response:
                     formatted_lines.append(
                         {
                             'type': 'asset',
-                            'text': f"<span class='bg-danger text-white'>{identifier} {line[7:]}</span>",
+                            'text': f"<span class='bg-danger text-white'>{identifier} {message}</span>",
                         }
                     )
                 else:
-                    formatted_lines.append({'type': 'asset', 'text': f'{identifier} {line[7:]}'})
+                    formatted_lines.append({'type': 'asset', 'text': f'{identifier} {message}'})
 
         return formatted_lines
 
@@ -314,8 +316,8 @@ class MultiQueryFinding(BaseFinding):
     def with_highlight(self, conversation: str):
         """Return the conversation text with the finding highlighted."""
         highlighted_conversation = conversation.replace(
-            f'attacker: {self.chirps_question}\nasset: {self.target_response}',
-            f"<span class='bg-danger text-white'>attacker: {self.chirps_question}\n"
+            f'chirps: {self.chirps_question}\nasset: {self.target_response}',
+            f"<span class='bg-danger text-white'>chirps: {self.chirps_question}\n"
             f'asset: {self.target_response}</span>',
         )
         return mark_safe(highlighted_conversation)
