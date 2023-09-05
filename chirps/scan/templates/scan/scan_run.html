@@ -130,9 +130,6 @@
 
 <script>
     const ctx = document.getElementById('scan_findings_chart');
-    const severities = JSON.parse(document.getElementById('severities_js').textContent);
-    const severity_counts = JSON.parse(document.getElementById('severity_counts_js').textContent);
-
 
     new Chart(ctx, {
         type: 'doughnut',
