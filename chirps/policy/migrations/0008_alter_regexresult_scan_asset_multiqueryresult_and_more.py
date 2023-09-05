@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ),
                 ('source_id', models.TextField(blank=True, null=True)),
                 ('chirps_question', fernet_fields.fields.EncryptedTextField()),
-                ('target_response', fernet_fields.fields.EncryptedTextField()),
+                ('asset_response', fernet_fields.fields.EncryptedTextField()),
                 (
                     'result',
                     models.ForeignKey(

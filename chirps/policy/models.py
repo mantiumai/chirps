@@ -272,8 +272,8 @@ class MultiQueryFinding(BaseFinding):
     # Chirps question (encrypted at REST) that led to a successful evaluation
     chirps_question = EncryptedTextField()
 
-    # Target response (encrypted at REST) that was successfully evaluated
-    target_response = EncryptedTextField()
+    # Asset response (encrypted at REST) that was successfully evaluated
+    asset_response = EncryptedTextField()
 
     def format_conversation(self, conversation: str):
         """Format a conversation for display in the UI."""
@@ -296,7 +296,7 @@ class MultiQueryFinding(BaseFinding):
             elif line.startswith('asset:'):
                 message = line[len('asset: ') :]
                 identifier = '<strong>Asset:</strong>'
-                if message in self.target_response:
+                if message in self.asset_response:
                     formatted_lines.append(
                         {
                             'type': 'asset',
@@ -316,9 +316,9 @@ class MultiQueryFinding(BaseFinding):
     def with_highlight(self, conversation: str):
         """Return the conversation text with the finding highlighted."""
         highlighted_conversation = conversation.replace(
-            f'chirps: {self.chirps_question}\nasset: {self.target_response}',
+            f'chirps: {self.chirps_question}\nasset: {self.asset_response}',
             f"<span class='bg-danger text-white'>chirps: {self.chirps_question}\n"
-            f'asset: {self.target_response}</span>',
+            f'asset: {self.asset_response}</span>',
         )
         return mark_safe(highlighted_conversation)
 

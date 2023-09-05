@@ -677,13 +677,13 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
             result=self.objects['result'],
             source_id='1',
             chirps_question='Hello',
-            target_response='Hi',
+            asset_response='Hi',
         )
 
         self.assertEqual(finding.result, self.objects['result'])
         self.assertEqual(finding.source_id, '1')
         self.assertEqual(finding.chirps_question, 'Hello')
-        self.assertEqual(finding.target_response, 'Hi')
+        self.assertEqual(finding.asset_response, 'Hi')
 
     def test_format_conversation(self):
         """Verify that the conversation is formatted correctly for display in the UI."""
@@ -691,7 +691,7 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
             result=self.objects['result'],
             source_id='1',
             chirps_question="What's up?",
-            target_response='Not much',
+            asset_response='Not much',
         )
 
         formatted_conversation = finding.format_conversation(self.objects['result'].conversation)
@@ -712,7 +712,7 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
             result=self.objects['result'],
             source_id='1',
             chirps_question='Hello',
-            target_response='Hi',
+            asset_response='Hi',
         )
 
         surrounding_text = finding.surrounding_text()
