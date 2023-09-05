@@ -80,6 +80,7 @@ def view_scan_run(request, scan_run_id):
             if result.has_findings():
                 results.append(result)
 
+    # Step 2: aggregate results by rules with matching rule IDs
     unique_regex_rules = get_unique_rules(results, RegexRule)
     unique_multiquery_rules = get_unique_rules(results, MultiQueryRule)
 
