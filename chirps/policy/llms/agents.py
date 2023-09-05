@@ -64,10 +64,10 @@ class AttackAgent(Agent):
         )
         super().__init__(model, instructions)
 
-    def _generate_attack(self, target_response: str | None = None) -> str:
-        """Generate an attack message based on the target_response."""
-        if target_response is not None:
-            self.message_history.append(AIMessage(content=target_response))
+    def _generate_attack(self, asset_response: str | None = None) -> str:
+        """Generate an attack message based on the asset_response."""
+        if asset_response is not None:
+            self.message_history.append(AIMessage(content=asset_response))
 
         # Generate the attack message
         attack_message = self.model(self.message_history)
@@ -75,7 +75,7 @@ class AttackAgent(Agent):
 
         return attack_message.content
 
-    def generate_attack(self, target_response: str | None = None) -> str:
+    def generate_attack(self, asset_response: str | None = None) -> str:
         """Generate an attack message using retries if a ValueError occurs."""
         try:
             for attempt in tenacity.Retrying(
@@ -87,7 +87,7 @@ class AttackAgent(Agent):
                 ),
             ):
                 with attempt:
-                    return self._generate_attack(target_response)
+                    return self._generate_attack(asset_response)
         except tenacity.RetryError as e:
             raise ValueError('Error: Unable to generate attack message') from e
 
@@ -111,11 +111,11 @@ class EvaluationAgent(Agent):
         """
         super().__init__(model, instructions)
 
-    def evaluate(self, target_response: str) -> str:
+    def evaluate(self, asset_response: str) -> str:
         """Evaluate a target response."""
         self.reset()
 
         # Generate the evaluation message and return its content
-        self.message_history.append(AIMessage(content=target_response))
+        self.message_history.append(AIMessage(content=asset_response))
         evaluation_message = self.model(self.message_history)
         return evaluation_message.content

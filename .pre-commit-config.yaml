@@ -71,7 +71,6 @@ repos:
       - id: mypy
         name: mypy
         entry: "./scripts/run-mypy"
-        # A script hook uses the active virtual environment, so it must be up-to-date with `poetry install --sync`
         language: script
         types_or: [python, toml]
         # use require_serial so that script
