@@ -255,7 +255,7 @@ class MultiQueryResult(BaseResult):
     # Scan asset that the result belongs to
     scan_asset = models.ForeignKey('scan.ScanAsset', on_delete=models.CASCADE, related_name='multiquery_results')
 
-    # The entire conversation (encrypted at REST) between chirps_attacker and target
+    # The entire conversation (encrypted at REST) between chirps and asset
     conversation = EncryptedTextField()
 
     def findings_count(self) -> int:
@@ -264,7 +264,7 @@ class MultiQueryResult(BaseResult):
 
 
 class MultiQueryFinding(BaseFinding):
-    """Model to identify the location of a finding within a MultiQuery result."""
+    """Model to identify the location of a finding within a MultiQueryResult."""
 
     result = models.ForeignKey(MultiQueryResult, on_delete=models.CASCADE, related_name='findings')
     source_id = models.TextField(blank=True, null=True)
@@ -309,7 +309,7 @@ class MultiQueryFinding(BaseFinding):
         return formatted_lines
 
     def surrounding_text(self):
-        """Return the surrounding text of the finding with the target message highlighted."""
+        """Return the surrounding text of the finding with the asset message highlighted."""
         formatted_conversation = self.format_conversation(self.result.conversation)
         return formatted_conversation
 
