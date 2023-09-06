@@ -271,7 +271,7 @@ class MultiQueryRule(BaseRule):
 
             # Generate a new question
             question = chirps_attacker.generate_attack(asset_response)
-            conversation += f'attacker: {question}\n'
+            conversation += f'chirps: {question}\n'
 
             try:
                 response = asset.fetch_api_data(question)
@@ -361,7 +361,7 @@ class MultiQueryFinding(BaseFinding):
 
         return formatted_lines
 
-    def surrounding_text(self, preview_size: int = 20):
+    def surrounding_conversation_text(self):
         """Return the surrounding text of the finding with the asset message highlighted."""
         formatted_conversation = self.format_conversation(self.result.conversation)
         return formatted_conversation

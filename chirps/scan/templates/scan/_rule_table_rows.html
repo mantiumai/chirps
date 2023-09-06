@@ -30,8 +30,14 @@
                     <tbody>
                         {% for finding in rule.findings %}
                         <tr>
-                            <td>{{finding|surrounding_text_with_preview_size:finding_preview_size}}
+                            {% if finding.result.rule.rule_type == 'regex' %}
+                            <td>{{finding|surrounding_text_with_preview_size:finding_preview_size|safe}}
                             </td>
+                            {% endif %}
+                            {% if finding.result.rule.rule_type == 'multiquery' %}
+                            <td>{{finding|surrounding_conversation_text|safe}}
+                            </td>
+                            {% endif %}
                             <td>{{ finding.source_id }}</td>
                             <td>{{ finding.result.scan_asset.asset.name }}</td>
                         </tr>

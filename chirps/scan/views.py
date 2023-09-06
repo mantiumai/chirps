@@ -110,6 +110,7 @@ def view_scan_run(request, scan_run_id):
         {
             'scan_run': scan_run,  # The scan run object
             'finding_count': finding_count,  # Total number of findings
+            'multiquery_results': multiquery_results,
             'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
             'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
             'severities': severities,  # List of all the severities encountered
