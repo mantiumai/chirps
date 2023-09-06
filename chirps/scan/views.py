@@ -68,7 +68,7 @@ def get_unique_rules_and_findings(results):
         finding_severities[rule.severity] += count
         unique_rules[type(rule)].add(rule)
 
-    return dict(unique_rules), finding_count, finding_severities
+    return unique_rules, finding_count, finding_severities
 
 
 @login_required
