@@ -45,22 +45,30 @@ def view_scan_history(request, scan_id):
     )
 
 
-def get_unique_rules(results, rule_class):
-    """Return a list of unique rules from a list of results."""
-    unique_rules = {result.rule for result in results if isinstance(result.rule, rule_class)}
+def get_unique_rules_and_findings(results):
+    """Return a dictionary of unique rules for each rule class from a list of results."""
+    rule_dict = {}
+    finding_count = 0
+    finding_severities = defaultdict(int)
+    unique_rules = defaultdict(set)
 
-    for rule in unique_rules:
-        rule.finding_count = 0
-        rule.findings = []
+    for result in results:
+        rule = result.rule
 
-        for result in results:
-            if result.rule.id == rule.id:
-                findings = list(result.findings.all())
-                count = len(findings)
-                rule.finding_count += count
-                rule.findings.extend(findings)
+        if rule.id not in rule_dict:
+            rule.finding_count = 0
+            rule.findings = []
+            rule_dict[rule.id] = rule
 
-    return unique_rules
+        findings = list(result.findings.all())
+        count = len(findings)
+        rule.finding_count += count
+        rule.findings.extend(findings)
+        finding_count += count
+        finding_severities[rule.severity] += count
+        unique_rules[type(rule)].add(rule)
+
+    return dict(unique_rules), finding_count, finding_severities
 
 
 @login_required
@@ -72,7 +80,7 @@ def view_scan_run(request, scan_run_id):
     results = []
     scan_assets = ScanAsset.objects.filter(scan=scan_run)
 
-    # Step 1: build a list of all the results (rules) with findings.
+    # Build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
         # Iterate through the rule set
         for result in scan_asset.results:
@@ -80,23 +88,12 @@ def view_scan_run(request, scan_run_id):
             if result.has_findings():
                 results.append(result)
 
-    # Step 2: aggregate results by rules with matching rule IDs
-    unique_regex_rules = get_unique_rules(results, RegexRule)
-    unique_multiquery_rules = get_unique_rules(results, MultiQueryRule)
-
-    # Next, walk through all of the results, aggregating the findings count for each unique rule ID
-    finding_count = 0
-    finding_severities = defaultdict(int)
-
-    # Calculate finding_count and finding_severities
-    finding_count = 0
-    finding_severities = defaultdict(int)
-
-    for rule_set in [unique_regex_rules, unique_multiquery_rules]:
-        for rule in rule_set:
-            count = rule.finding_count
-            finding_count += count
-            finding_severities[rule.severity] += count
+    # Aggregate results by rules with matching rule IDs
+    unique_rules, finding_count, finding_severities = get_unique_rules_and_findings(results)
+    unique_regex_rules = unique_rules.get(RegexRule, [])
+    unique_multiquery_rules = unique_rules.get(MultiQueryRule, [])
+    severity_counts = list(finding_severities.values())
+    severities = [str(severity).replace("'", '"') for severity in finding_severities.keys()]
 
     # Retrieve finding_preview_size from the user's profile
     finding_preview_size = request.user.profile.finding_preview_size
@@ -109,10 +106,8 @@ def view_scan_run(request, scan_run_id):
             'finding_count': finding_count,  # Total number of findings
             'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
             'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
-            'severities': [
-                str(severity).replace("'", '"') for severity in finding_severities.keys()
-            ],  # List of all the severities encountered
-            'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
+            'severities': severities,  # List of all the severities encountered
+            'severity_counts': severity_counts,  # List of all the severity counts encountered
             'finding_preview_size': finding_preview_size,
         },
     )
