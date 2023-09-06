@@ -75,7 +75,10 @@ class ScanVersion(models.Model):
 
     number = models.IntegerField(default=1)
     scan = models.ForeignKey(ScanTemplate, on_delete=models.CASCADE, related_name='versions')
+    # TODO: make this policy version
+    # set on initial scan creation and when a scan gets edited
     policies = models.ManyToManyField('policy.Policy')
+    policy_versions = models.ManyToManyField('policy.PolicyVersion')
     assets = models.ManyToManyField(BaseAsset, related_name='scan_assets')
 
 
