@@ -291,7 +291,7 @@ class MultiQueryRule(BaseRule):
             asset_response = str(response)
             conversation += f'asset: {asset_response}\n'
 
-            # Evaluate the response
+            # Evaluate the response to see if it meets the rule's success outcome
             # The evaluation agent will reset its conversation before each evaluation
             response_evaluation = evaluator.evaluate(asset_response)
 
