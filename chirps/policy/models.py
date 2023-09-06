@@ -361,7 +361,7 @@ class MultiQueryFinding(BaseFinding):
 
         return formatted_lines
 
-    def surrounding_text(self):
+    def surrounding_text(self, preview_size: int = 20):
         """Return the surrounding text of the finding with the asset message highlighted."""
         formatted_conversation = self.format_conversation(self.result.conversation)
         return formatted_conversation
