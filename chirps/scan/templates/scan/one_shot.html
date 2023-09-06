@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Schedule a Scan{% endblock %}
+
+{% block content %}
+
+<div>
+  <h1 class="text-success">One-Time Scan Schedule</h1>
+  <div class="card my-4">
+    <div class="card-body cardbody-color p-4">
+      <div class="form-group">
+        <form class="my-3" method="POST" action="{% url 'scan_one_shot' %}">
+          {% csrf_token %}
+          <strong>{{form}}</strong>
+          <div class="d-flex mt-3">
+            <a class="btn btn-danger ml-auto mr-0" type="button" href="{% url 'scan_dashboard' %}">Cancel</a>
+            <button class="btn btn-success ml-2 mr-0" type="submit">Schedule</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -4,6 +4,7 @@ from asset.models import BaseAsset
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django_celery_beat.models import PeriodicTask
 from django_celery_results.models import TaskResult
 
 
@@ -78,9 +79,11 @@ class ScanVersion(models.Model):
 class ScanRun(models.Model):
     """Models a singular run of a versioned scan."""
 
-    started_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField()
     finished_at = models.DateTimeField(null=True)
     scan_version = models.ForeignKey(ScanVersion, on_delete=models.CASCADE, related_name='scan_runs')
+    one_shot_celery_id = models.CharField(max_length=256, null=True)
+    one_shot_celery_task = models.ForeignKey(PeriodicTask, null=True, on_delete=models.CASCADE)
 
     status = models.CharField(
         max_length=32,
@@ -91,6 +94,8 @@ class ScanRun(models.Model):
             ('Complete', 'Complete'),
             ('Failed', 'Failed'),
             ('Canceled', 'Canceled'),
+            ('Scheduled', 'Scheduled'),
+            ('Skipped', 'Skipped'),
         ],
     )
 
@@ -101,10 +106,20 @@ class ScanRun(models.Model):
 
         return False
 
+    def is_scheduled(self):
+        """Determine if the scan is scheduled."""
+        if self.status == 'Scheduled':
+            return True
+
+        return False
+
     def duration(self):
         """Calculate the duration the scan has run."""
         if self.finished_at and self.started_at:
             return self.finished_at - self.started_at
+
+        if self.status == 'Scheduled':
+            return 'N/A'
 
         if self.started_at:
             return timezone.now() - self.started_at

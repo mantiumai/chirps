@@ -6,10 +6,9 @@
 {% block content %}
 <div class="d-flex">
     <h1 class="my-auto ml-0 mr-auto text-success">Scan History: {{scan.name}}</h1>
+    <a class="btn btn-primary my-auto ml-auto mr-0" href="{% url 'scan_one_shot' %}">Schedule</a>
 </div>
 <small>{{scan.description}}</small>
-
-<hr/>
 
 {% if paginator.count == 0%}
 <h3 class="display-3 text-center">No scan history found</h3>
@@ -35,9 +34,9 @@
       <tr id="chirps-scan-{{scan_run.id}}">
         <td>{{ scan_run.id }}</td>
         <td>{{ scan_run.started_at }}</td>
-        <td>{{ scan_run.finished_at }}</td>
+        <td>{% if scan_run.finished_at %}{{ scan_run.finished_at }}{% else %}N/A{% endif %}</td>
         <td>{{ scan_run.duration }}</td>
-        <td>{{ scan_run.status }} </td>
+        <td>{{ scan_run.status }}{% if scan_run.is_scheduled %}<a class="btn btn-danger" href="{% url 'scan_one_shot_delete' scan_run.id %}"><i class="text-white fa-solid fa-trash"></i></a>{% endif %}</td>
         <td>{{ scan_run.scan_version.assets.count }}</td>
         <td>{{ scan_run.scan_version.policies.count }}</td>
         <td>{{ scan.current_version.number }}</td>

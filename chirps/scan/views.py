@@ -11,14 +11,15 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils import timezone
+from django_celery_beat.models import ClockedSchedule, PeriodicTask
 from embedding.models import Embedding
 from policy.models import Policy
 
 from chirps.celery import app as celery_app
 
-from .forms import ScanForm
+from .forms import OneShotScanForm, ScanForm
 from .models import ScanAsset, ScanRun, ScanTemplate, ScanVersion
-from .tasks import scan_task
+from .tasks import one_shot_scan, scan_task
 
 logger = getLogger(__name__)
 
@@ -370,9 +371,10 @@ def vcr_start(request, scan_id):
     # Create a new scan run
     scan_run = ScanRun.objects.create(
         scan_version=scan.current_version,
+        started_at=timezone.now(),
     )
 
-    # For every asset configured for the scan, kick off a task
+    # Kick off the scan run, which queues a scan task for each asset
     for asset in scan.assets():
         scan_asset = ScanAsset.objects.create(scan=scan_run, asset=asset)
 
@@ -418,3 +420,58 @@ def vcr_stop(request, scan_id):   # pylint: disable=unused-argument
 
     # Return the VCR controls
     return render(request, 'scan/vcr.html', {'scan': scan})
+
+
+@login_required
+def one_shot(request):
+    """Render the one shot modal."""
+    if request.method == 'POST':
+        form = OneShotScanForm(request.POST, user=request.user)
+
+        if form.is_valid():
+
+            # Create a ScanRun with a start-date in the future
+            scan = form.cleaned_data['scan']
+            scan_run = ScanRun.objects.create(
+                scan_version=scan.current_version, started_at=form.cleaned_data['start_on'], status='Scheduled'
+            )
+
+            schedule, _ = ClockedSchedule.objects.get_or_create(clocked_time=form.cleaned_data['start_on'])
+            task = PeriodicTask.objects.create(
+                one_off=True,
+                enabled=True,
+                clocked=schedule,
+                name=f'One-Shot Scan: {scan.id}',
+                task=one_shot_scan,
+                args=[scan_run.id],
+            )
+
+            # Schedule the Celery task for sometime in the future
+            # celery_id = one_shot_scan.apply_async(
+            #     args=[scan_run.id],
+            #     eta=form.cleaned_data['start_on']
+            # )
+
+            # Persist the one-shot Celery task ID to the ScanRun model
+            # scan_run.one_shot_celery_id = task.id
+            scan_run.one_shot_celery_task = task
+            scan_run.save()
+
+            return redirect('scan_history_view', scan_id=form.cleaned_data['scan'].id)
+    else:
+        form = OneShotScanForm(user=request.user)
+
+    return render(request, 'scan/one_shot.html', {'form': form})
+
+
+@login_required
+def one_shot_delete(request, scan_run_id):
+    """Delete a one-shot scan that is still scheduled."""
+    scan_run = get_object_or_404(ScanRun, pk=scan_run_id, scan_version__scan__user=request.user)
+
+    # Delete the Celery task
+    if scan_run.status == 'Scheduled':
+        scan_run.one_shot_celery_task.delete()
+        scan_run.delete()
+
+    return redirect('scan_history_view', scan_id=scan_run.scan_version.scan.id)

@@ -8,6 +8,7 @@ from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 
 from .models import CeleryWorker
 
@@ -22,12 +23,15 @@ class ServiceStatus:
     job_count: int
 
 
+@login_required
+@never_cache
 def worker_status(request: HttpRequest) -> HttpResponse:
     """Return the status widget."""
     return render(request, 'worker/status.html', {'service_status': _get_service_status()})
 
 
 @login_required
+@never_cache
 def status_details(request: HttpRequest) -> HttpResponse:
     """Fetch the status details modal."""
     return render(request, 'worker/status_modal.html', {'service_status': _get_service_status()})

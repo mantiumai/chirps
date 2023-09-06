@@ -6,7 +6,7 @@ from celery import shared_task
 from django.utils import timezone
 from policy.models import RuleExecuteArgs
 
-from .models import ScanAsset, ScanAssetFailure
+from .models import ScanAsset, ScanAssetFailure, ScanRun
 
 logger = getLogger(__name__)
 
@@ -41,6 +41,38 @@ def task_failure_handler(self, exc, task_id, args, kwargs, einfo):
     scan_run.status = 'Failed'
     scan_run.finished_at = timezone.now()
     scan_run.save()
+
+
+@shared_task(on_failure=task_failure_handler)
+def one_shot_scan(scan_run_id):
+    """Task for running a one-shot scan."""
+    logger.info('Starting one shot scan task', extra={'scan_run_id': scan_run_id})
+    try:
+        scan_run = ScanRun.objects.get(pk=scan_run_id)
+
+    except ScanRun.DoesNotExist:
+        logger.error('ScanRun record not found', extra={'scan_run_id': scan_run_id})
+        scan_task.update_state(state='FAILURE', meta={'error': f'ScanRun record not found ({scan_run_id})'})
+        return
+
+    # Test if the scan is running - mark it as failed if it is
+    if scan_run.scan_version.scan.is_running():
+        logger.info('Scan already running', extra={'scan_run_id': scan_run_id})
+        scan_run.status = 'Skipped'
+        scan_run.finished_at = timezone.now()
+        scan_run.save()
+        return
+
+    # Kick off the scan run, which queues a scan task for each asset
+    for asset in scan_run.scan_version.scan.assets():
+        scan_asset = ScanAsset.objects.create(scan=scan_run, asset=asset)
+
+        # Kick off the scan task
+        result = scan_task.delay(scan_asset_id=scan_asset.id)
+
+        # Save off the Celery task ID on the Scan object
+        scan_asset.celery_task_id = result.id
+        scan_asset.save()
 
 
 @shared_task(on_failure=task_failure_handler)

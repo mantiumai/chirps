@@ -15,4 +15,6 @@ urlpatterns = [
     path('vcr/<int:scan_id>/', views.vcr_control, name='scan_vcr'),
     path('vcr_start/<int:scan_id>/', views.vcr_start, name='scan_vcr_start'),
     path('vcr_stop/<int:scan_id>/', views.vcr_stop, name='scan_vcr_stop'),
+    path('one_shot/', views.one_shot, name='scan_one_shot'),
+    path('one_shot_delete/<int:scan_run_id>', views.one_shot_delete, name='scan_one_shot_delete'),
 ]

@@ -7,6 +7,30 @@ from policy.models import Policy
 from .models import ScanTemplate
 
 
+class DateInput(forms.DateInput):
+    """DateInput widget for the OneShotScanForm."""
+
+    input_type = 'datetime-local'
+
+
+class OneShotScanForm(forms.Form):
+    """Form for scheduling a scan to run at some point in the future."""
+
+    scan = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true', 'data-size': '10'}),
+    )
+
+    start_on = forms.DateTimeField(widget=DateInput)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        # Only show scans that the user owns
+        self.fields['scan'].queryset = ScanTemplate.objects.filter(user=self.user)
+
+
 class ScanForm(ModelForm):
     """Form for the main scan model."""
 
