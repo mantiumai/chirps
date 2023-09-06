@@ -705,7 +705,7 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
         ]
         self.assertEqual(formatted_conversation, expected_output)
 
-    def test_surrounding_text(self):
+    def test_surrounding_conversation_text(self):
         """Verify that the surrounding_text method returns the correct output."""
         finding = MultiQueryFinding.objects.create(
             result=self.objects['result'],
@@ -714,7 +714,7 @@ class MultiQueryFindingModelTests(BaseMultiQueryTest):
             asset_response='Hi',
         )
 
-        surrounding_text = finding.surrounding_text()
+        surrounding_text = finding.surrounding_conversation_text()
         expected_output = [
             {'type': 'chirps', 'text': "<span class='bg-danger text-white'><strong>Chirps:</strong> Hello</span>"},
             {'type': 'asset', 'text': "<span class='bg-danger text-white'><strong>Asset:</strong> Hi</span>"},

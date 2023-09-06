@@ -2,17 +2,25 @@
 import re
 from abc import abstractmethod
 from dataclasses import dataclass
+from logging import getLogger
 from typing import Any
 
 from asset.models import SearchResult
+from asset.providers.api_endpoint import APIEndpointAsset
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
+from langchain.chat_models import ChatOpenAI
+from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent, EvaluationAgent
+from policy.llms.utils import num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
+from requests import RequestException
 from severity.models import Severity
+
+logger = getLogger(__name__)
 
 
 class Policy(models.Model):
@@ -243,7 +251,64 @@ class MultiQueryRule(BaseRule):
 
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""
-        raise NotImplementedError(f'{self.__class__.__name__} does not implement execute()')
+        user = args.scan_asset.scan.scan_version.scan.user
+        asset: APIEndpointAsset = args.asset
+        openai_api_key = user.profile.openai_key
+
+        # Eventually we should support multiple models and model hosting services (e.g. cohere)
+        model = ChatOpenAI(openai_api_key=openai_api_key, model_name=DEFAULT_MODEL)
+        chirps_attacker = AttackAgent(model, asset.description, self.task_description)
+        chirps_attacker.reset()
+
+        evaluator = EvaluationAgent(model, self.success_outcome)
+
+        # Set the asset_response to None before the conversation begins in order
+        # to properly configure the conversation
+        # This will be overwritten by the first response from the asset
+        asset_response = None
+
+        # Create the MultiQueryResult object
+        result = MultiQueryResult(rule=self, scan_asset=args.scan_asset)
+        conversation = ''
+
+        for _ in range(self.attack_count):
+            num_tokens = num_tokens_from_messages(chirps_attacker.message_history)
+
+            if num_tokens >= MAX_TOKENS:
+                logger.info(
+                    'Truncating conversation', extra={'scan_asset_id': args.scan_asset.id, 'num_tokens': num_tokens}
+                )
+                chirps_attacker.truncate()
+
+            # Generate a new question
+            question = chirps_attacker.generate_attack(asset_response)
+            conversation += f'chirps: {question}\n'
+
+            try:
+                response = asset.fetch_api_data(question)
+            except RequestException:
+                continue
+            asset_response = str(response)
+            conversation += f'asset: {asset_response}\n'
+
+            # Evaluate the response to see if it meets the rule's success outcome
+            # The evaluation agent will reset its conversation before each evaluation
+            response_evaluation = evaluator.evaluate(asset_response)
+
+            if response_evaluation == 'Yes':
+                # Save the conversation to the result and save the result
+                result.conversation = conversation
+                result.save()
+
+                # Create and save the MultiQueryFinding object
+                finding = MultiQueryFinding(result=result, chirps_question=question, asset_response=asset_response)
+                finding.save()
+
+                break
+        else:
+            # If no successful evaluation, save the conversation without findings
+            result.conversation = conversation
+            result.save()
 
 
 class MultiQueryResult(BaseResult):
@@ -308,7 +373,7 @@ class MultiQueryFinding(BaseFinding):
 
         return formatted_lines
 
-    def surrounding_text(self):
+    def surrounding_conversation_text(self):
         """Return the surrounding text of the finding with the asset message highlighted."""
         formatted_conversation = self.format_conversation(self.result.conversation)
         return formatted_conversation

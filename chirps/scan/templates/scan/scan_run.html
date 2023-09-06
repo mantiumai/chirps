@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load scan_extras %}
 {% load scan_filters %}
 {% load static %}
 {% block title %}Scans{% endblock %}
@@ -36,6 +37,14 @@
                     </span>
                 </a>
             </li>
+        {% if multiquery_results %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-4" data-bs-toggle="tab" href="#tabs-4" role="tab" aria-controls="tabs-4"
+                    aria-selected="false">
+                    Conversation
+                </a>
+            </li>
+        {% endif %}
         </ul>
         <!-- tab navs -->
 
@@ -87,6 +96,33 @@
                     </tbody>
                 </table>
             </div>
+            {% if multiquery_results %}
+                <div class="tab-pane fade" id="tabs-4" role="tabpanel" aria-labelledby="tab-4">
+                    {% for scan_asset in scan_run.run_assets.all %}
+                        {% for multiquery_result in scan_asset.multiquery_results.all %}
+                            <div class="card my-4">
+                                <div class="card-header">
+                                    <h5>{{ multiquery_result.rule.name }} - {{ scan_asset.asset.name }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="conversation">
+                                        {% for line in multiquery_result.conversation|format_conversation %}
+                                            {% if line.type == 'chirps' %}
+                                                <strong>Chirps: </strong>{{ line.text }}<br>
+                                            {% elif line.type == 'asset' %}
+                                                <strong>Asset: </strong>{{ line.text }}<br>
+                                            {% else %}
+                                                {{ line.text }}<br>
+                                            {% endif %}
+                                            <br>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 

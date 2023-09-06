@@ -1,5 +1,6 @@
 """Views for the scan application."""
 from collections import defaultdict
+from itertools import chain
 from logging import getLogger
 
 from asset.models import BaseAsset
@@ -83,7 +84,12 @@ def view_scan_run(request, scan_run_id):
     # Build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
         # Iterate through the rule set
-        for result in scan_asset.results:
+        multiquery_results = scan_asset.multiquery_results.all()
+        regex_results = scan_asset.regex_results.all()
+
+        all_results = list(chain(multiquery_results, regex_results))
+
+        for result in all_results:
 
             if result.has_findings():
                 results.append(result)
@@ -104,6 +110,7 @@ def view_scan_run(request, scan_run_id):
         {
             'scan_run': scan_run,  # The scan run object
             'finding_count': finding_count,  # Total number of findings
+            'multiquery_results': multiquery_results,  # Included to determine if Conversation tab is visible
             'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
             'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
             'severities': severities,  # List of all the severities encountered
@@ -132,7 +139,11 @@ def create(request):
                     policies_and_rules.append((policy, rule))
 
             # Check if any non-template policies don't have an associated embedding for their rule's query_string
-            rule_strings = [rule.query_string for policy, rule in policies_and_rules if not policy.is_template]
+            rule_strings = []
+            for policy, rule in policies_and_rules:
+                if hasattr(rule, 'query_string') and not policy.is_template:
+                    rule_strings.append(rule.query_string)
+
             rule_count = len(rule_strings)
 
             rule_embedding_count = Embedding.objects.filter(text__in=rule_strings).count()
