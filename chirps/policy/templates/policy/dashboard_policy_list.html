@@ -18,7 +18,7 @@
             {% with grouped_rules=policy.current_version.rules.all|group_by_rule_type %}
             {% for rule_type, rules in grouped_rules.items %}
             {% if rule_type == 'regex' and rules %}
-            <h6>Regex Rules</h6>
+            <h5>Regex Rules</h5>
             <table class="table">
                 <thead>
                     <tr>
@@ -58,7 +58,7 @@
             </table>
 
             {% elif rule_type == 'multiquery' and rules %}
-            <h6>MultiQuery Rules</h6>
+            <h5>MultiQuery Rules</h5>
             <table class="table">
                 <thead>
                     <tr>
