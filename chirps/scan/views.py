@@ -110,7 +110,7 @@ def view_scan_run(request, scan_run_id):
         {
             'scan_run': scan_run,  # The scan run object
             'finding_count': finding_count,  # Total number of findings
-            'multiquery_results': multiquery_results,
+            'multiquery_results': multiquery_results,  # Included to determine if Conversation tab is visible
             'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
             'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
             'severities': severities,  # List of all the severities encountered
@@ -120,7 +120,6 @@ def view_scan_run(request, scan_run_id):
     )
 
 
-# pylint: disable=too-many-branches
 @login_required
 def create(request):
     """Render the scan creation page and handle POST requests."""
@@ -142,9 +141,8 @@ def create(request):
             # Check if any non-template policies don't have an associated embedding for their rule's query_string
             rule_strings = []
             for policy, rule in policies_and_rules:
-                if not policy.is_template:
-                    if hasattr(rule, 'query_string'):
-                        rule_strings.append(rule.query_string)
+                if hasattr(rule, 'query_string') and not policy.is_template:
+                    rule_strings.append(rule.query_string)
 
             rule_count = len(rule_strings)
 
