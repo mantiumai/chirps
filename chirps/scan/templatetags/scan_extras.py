@@ -1,3 +1,4 @@
+"""Custom template tags for the scan app."""
 from django import template
 
 register = template.Library()
@@ -10,10 +11,12 @@ def format_conversation(text: str) -> list:
     formatted_lines = []
 
     for line in lines:
-        if line.startswith('chirps:'):
-            formatted_lines.append({'type': 'chirps', 'text': line[7:]})
+        chirps_prefix = 'chirps:'
+        asset_prefix = 'asset:'
+        if line.startswith(chirps_prefix):
+            formatted_lines.append({'type': 'chirps', 'text': line[len(chirps_prefix) :]})
         elif line.startswith('asset:'):
-            formatted_lines.append({'type': 'asset', 'text': line[6:]})
+            formatted_lines.append({'type': 'asset', 'text': line[len(asset_prefix) :]})
         else:
             formatted_lines.append({'type': 'normal', 'text': line})
 

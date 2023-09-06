@@ -16,6 +16,7 @@ from langchain.chat_models import ChatOpenAI
 from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent, EvaluationAgent
 from policy.llms.utils import num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
+from requests import RequestException
 from severity.models import Severity
 
 
@@ -275,7 +276,7 @@ class MultiQueryRule(BaseRule):
 
             try:
                 response = asset.fetch_api_data(question)
-            except Exception:
+            except RequestException:
                 continue
             asset_response = str(response)
             conversation += f'asset: {asset_response}\n'

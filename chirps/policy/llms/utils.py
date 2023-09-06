@@ -1,6 +1,6 @@
+"""Utility functions for LLMs."""
 import tiktoken
-
-from .agents import DEFAULT_MODEL
+from policy.llms.agents import DEFAULT_MODEL
 
 
 def num_tokens_from_messages(messages, model=DEFAULT_MODEL):

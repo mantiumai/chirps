@@ -120,6 +120,7 @@ def view_scan_run(request, scan_run_id):
     )
 
 
+# pylint: disable=too-many-branches
 @login_required
 def create(request):
     """Render the scan creation page and handle POST requests."""
