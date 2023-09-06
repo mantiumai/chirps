@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils import timezone
 from embedding.models import Embedding
-from policy.models import Policy
+from policy.models import MultiQueryRule, Policy, RegexRule
 
 from chirps.celery import app as celery_app
 
@@ -45,6 +45,32 @@ def view_scan_history(request, scan_id):
     )
 
 
+def get_unique_rules_and_findings(results):
+    """Return a dictionary of unique rules for each rule class from a list of results."""
+    rule_dict = {}
+    finding_count = 0
+    finding_severities = defaultdict(int)
+    unique_rules = defaultdict(set)
+
+    for result in results:
+        rule = result.rule
+
+        if rule.id not in rule_dict:
+            rule.finding_count = 0
+            rule.findings = []
+            rule_dict[rule.id] = rule
+
+        findings = list(result.findings.all())
+        count = len(findings)
+        rule.finding_count += count
+        rule.findings.extend(findings)
+        finding_count += count
+        finding_severities[rule.severity] += count
+        unique_rules[type(rule)].add(rule)
+
+    return unique_rules, finding_count, finding_severities
+
+
 @login_required
 def view_scan_run(request, scan_run_id):
     """View details for a particular scan."""
@@ -54,40 +80,20 @@ def view_scan_run(request, scan_run_id):
     results = []
     scan_assets = ScanAsset.objects.filter(scan=scan_run)
 
-    # Step 1: build a list of all the results (rules) with findings.
+    # Build a list of all the results (rules) with findings.
     for scan_asset in scan_assets:
         # Iterate through the rule set
-        for result in scan_asset.results.all():
+        for result in scan_asset.results:
 
             if result.has_findings():
                 results.append(result)
 
-    # Step 2: aggregate results by rules with matching rule IDs
-    unique_rules = {result.rule for result in results}
-
-    # Next, walk through all of the results, aggregating the findings count for each unique rule ID
-    finding_count = 0
-    finding_severities = defaultdict(int)
-
-    # Walk through each unique rule
-    for rule in unique_rules:
-        rule.finding_count = 0
-        rule.findings = []
-
-        # Iterate through each result that was hit for the rule
-        for result in results:
-
-            # Increment the number of findings for this rule
-            if result.rule.id == rule.id:
-                findings = list(result.findings.all())
-                count = len(findings)
-                rule.finding_count += count
-                finding_count += count
-                rule.findings.extend(findings)
-
-                # While we're in this loop, store off the number of times each severity is encountered
-                # This will be used to render the pie-chart in the UI
-                finding_severities[rule.severity] += count
+    # Aggregate results by rules with matching rule IDs
+    unique_rules, finding_count, finding_severities = get_unique_rules_and_findings(results)
+    unique_regex_rules = unique_rules.get(RegexRule, [])
+    unique_multiquery_rules = unique_rules.get(MultiQueryRule, [])
+    severity_counts = list(finding_severities.values())
+    severities = [str(severity).replace("'", '"') for severity in finding_severities.keys()]
 
     # Retrieve finding_preview_size from the user's profile
     finding_preview_size = request.user.profile.finding_preview_size
@@ -98,11 +104,10 @@ def view_scan_run(request, scan_run_id):
         {
             'scan_run': scan_run,  # The scan run object
             'finding_count': finding_count,  # Total number of findings
-            'unique_rules': unique_rules,  # List of unique rules hit by findings
-            'severities': [
-                str(severity).replace("'", '"') for severity in finding_severities.keys()
-            ],  # List of all the severities encountered
-            'severity_counts': list(finding_severities.values()),  # List of all the severity counts encountered
+            'unique_regex_rules': unique_regex_rules,  # List of unique regex rules hit by findings
+            'unique_multiquery_rules': unique_multiquery_rules,  # List of unique multiquery rules hit by findings
+            'severities': severities,  # List of all the severities encountered
+            'severity_counts': severity_counts,  # List of all the severity counts encountered
             'finding_preview_size': finding_preview_size,
         },
     )
