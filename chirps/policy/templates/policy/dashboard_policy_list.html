@@ -1,3 +1,4 @@
+{% load policy_filter %}
 {% for policy in policy_list %}
 <div class="accordion-item policy-row" , id="chirps-policy-{{policy.id}}" hx-target="closest .policy-row"
     hx-swap="outerHTML">
@@ -14,7 +15,6 @@
     </div>
     <div id="collapse-{{policy.id}}" class="accordion-collapse collapse">
         <div class="accordion-body">
-            {% load policy_filter %}
             {% with grouped_rules=policy.current_version.rules.all|group_by_rule_type %}
             {% for rule_type, rules in grouped_rules.items %}
             {% if rule_type == 'regex' and rules %}
