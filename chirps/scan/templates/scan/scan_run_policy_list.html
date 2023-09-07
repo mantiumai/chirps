@@ -15,7 +15,7 @@
     </div>
     <div id="collapse-{{policy.id}}" class="accordion-collapse collapse">
         <div class="accordion-body">
-            {% include 'policy/policy_rules_grouped.html' with policy_rules=policy.current_version.rules.all %}
+            {% include 'policy/policy_rules_grouped.html' with policy_rules=policy.rules.all %}
         </div>
 
         {% if edit_mode %}
