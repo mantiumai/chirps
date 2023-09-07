@@ -35,7 +35,9 @@
               <select class="selectpicker form-control" id="{{ form.policies.auto_id }}"
                 name="{{ form.policies.html_name }}" multiple data-actions-box="true" data-live-search="true">
                 {% for policy in form.policies.field.queryset %}
+                {% if policy.archived == False %}
                 <option value="{{ policy.id }}">{{ policy }}</option>
+                {% endif %}
                 {% endfor %}
               </select>
             </div>
