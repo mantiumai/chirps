@@ -120,14 +120,25 @@ def clone(request, policy_id):
 
     # Clone the rules
     for rule in policy.current_version.rules.all():
-        save_rule(
-            rule.rule_type,
-            name=rule.name,
-            query_string=rule.query_string,
-            regex_test=rule.regex_test,
-            severity=rule.severity,
-            policy=policy_version,
-        )
+        if rule.rule_type == 'regex':
+            save_rule(
+                rule.rule_type,
+                name=rule.name,
+                query_string=rule.query_string,
+                regex_test=rule.regex_test,
+                severity=rule.severity,
+                policy=policy_version,
+            )
+        elif rule.rule_type == 'multiquery':
+            save_rule(
+                rule.rule_type,
+                name=rule.name,
+                task_description=rule.task_description,
+                success_outcome=rule.success_outcome,
+                attack_count=rule.attack_count,
+                severity=rule.severity,
+                policy=policy_version,
+            )
 
     # Redirect to the edit page for the new policy
     return redirect('policy_edit', policy_id=cloned_policy.id)

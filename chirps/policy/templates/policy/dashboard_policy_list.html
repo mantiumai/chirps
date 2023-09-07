@@ -70,30 +70,32 @@
                 </thead>
                 <tbody>
                     {% for rule in rules %}
-                    <td>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                            title="{{rule.success_outcome}}">
-                            {{rule.name|truncatechars:50}}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                            title="{{rule.task_description}}">
-                            {{rule.task_description|truncatechars:50}}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                            title="{{rule.success_outcome}}">
-                            {{rule.success_outcome|truncatechars:50}}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                            title="{{rule.success_outcome}}">
-                            {{rule.severity|truncatechars:50}}
-                        </span>
-                    </td>
+                    <tr>
+                        <td>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                title="{{rule.name}}">
+                                {{rule.name|truncatechars:50}}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                title="{{rule.task_description}}">
+                                {{rule.task_description|truncatechars:50}}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                title="{{rule.success_outcome}}">
+                                {{rule.success_outcome|truncatechars:50}}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                title="{{rule.severity}}">
+                                {{rule.severity|truncatechars:50}}
+                            </span>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
