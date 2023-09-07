@@ -1,0 +1,37 @@
+name: Bump version workflow
+
+on:
+  push:
+    branches: [ "main" ]
+    # Prevent the workflow from triggering when only the 'VERSION' file is updated
+    paths-ignore:
+    - 'VERSION'
+
+jobs:
+  bump-version:
+    name: Bump package version
+    # Ensure that the action doesn't trigger on commits with the message 'Bump version'.
+    if: "!contains(github.event.head_commit.message, 'Bump version')"
+    # The example on the docs uses a specific version of Ubuntu, so I'm doing the same.
+    # https://github.com/marketplace/actions/bump2version-action#bump2version-action
+    runs-on: ubuntu-20.04
+    steps:
+
+    - name: actions/checkout
+      uses: actions/checkout@v2
+      with:
+          persist-credentials: false
+
+    - name: current_version
+      run: echo "current_version=$(cat VERSION)" >> $GITHUB_ENV
+
+    - name: FragileTech/bump-version
+      uses: FragileTech/bump-version@main
+      with:
+        current_version: "${{ env.current_version }}"
+        files: VERSION
+        part: patch
+        commit_name: Version Bump Bot
+        commit_email: bot@noreply.example.com
+        login: REPLACE_WITH_PAT_USERNAME
+        token: "${{ secrets.BOT_TOKEN }}"
