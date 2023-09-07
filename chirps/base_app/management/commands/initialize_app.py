@@ -70,8 +70,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING('Loading data from fixtures...'))
         self.load_data_from_fixtures('/severity/fixtures/severity')
         self.stdout.write(self.style.SUCCESS('Severity data loaded from fixtures'))
-        self.load_data_from_fixtures('/policy/fixtures/policy')
-        self.stdout.write(self.style.SUCCESS('Policy data loaded from fixtures'))
+        self.load_data_from_fixtures('/policy/fixtures/policy/regex_rules')
+        self.stdout.write(self.style.SUCCESS('Policy data loaded from regex_rules fixtures'))
+        self.load_data_from_fixtures('/policy/fixtures/policy/multiquery_rules')
+        self.stdout.write(self.style.SUCCESS('Policy data loaded from multiquery_rules fixtures'))
         self.load_data_from_fixtures('/embedding/fixtures/embedding')
         self.stdout.write(self.style.SUCCESS('Policy rule text embeddings data loaded from fixtures'))
 

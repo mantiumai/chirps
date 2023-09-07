@@ -11,7 +11,7 @@ from policy.models import MultiQueryFinding, MultiQueryResult, MultiQueryRule, P
 from scan.models import ScanAsset, ScanRun, ScanTemplate, ScanVersion
 from severity.models import Severity
 
-cfixtures = ['policy/network.json']
+cfixtures = ['policy/regex_rules/network.json']
 
 
 def setUp(self):
@@ -102,7 +102,7 @@ def test_network_authentication_pattern_invalid(self):
 class StandardPIIRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/standard_pii.json', 'severity/default_severities.json']
+    fixtures = ['policy/regex_rules/standard_pii.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -215,7 +215,7 @@ class StandardPIIRegexTests(TestCase):
 class FinanceRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/finance.json', 'severity/default_severities.json']
+    fixtures = ['policy/regex_rules/finance.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -290,7 +290,7 @@ class FinanceRegexTests(TestCase):
 class HealthRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/health.json', 'severity/default_severities.json']
+    fixtures = ['policy/regex_rules/health.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -325,7 +325,7 @@ class HealthRegexTests(TestCase):
 class CredentialsRegexTests(TestCase):
     """Test rule regex"""
 
-    fixtures = ['policy/credentials.json', 'severity/default_severities.json']
+    fixtures = ['policy/regex_rules/credentials.json', 'severity/default_severities.json']
 
     def setUp(self):
         """Set up tests"""
@@ -425,9 +425,9 @@ class PolicyPaginationTests(TestCase):
     """Test the policy application pagination."""
 
     fixtures = [
-        'policy/employee.json',
-        'policy/network.json',
-        'policy/sensitive_data.json',
+        'policy/regex_rules/employee.json',
+        'policy/regex_rules/network.json',
+        'policy/regex_rules/sensitive_data.json',
         'severity/default_severities.json',
     ]
 
