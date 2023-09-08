@@ -69,24 +69,6 @@ class APIEndpointAsset(BaseAsset):
 
     def fetch_api_data(self, query: str) -> dict:
         """Fetch data from the API using the provided query."""
-        # # Convert headers JSON string into a dictionary
-        # headers_dict = json.loads(self.headers) if self.headers else {}
-
-        # # Build the request headers
-        # headers = headers_dict.copy()
-        # if self.authentication_method == 'Bearer':
-        #     headers['Authorization'] = f'Bearer {self.api_key}'
-        # elif self.authentication_method == 'Basic':
-        #     headers['Authorization'] = f'Basic {self.api_key}'
-
-        # # Replace the %query% placeholder in the body
-        # body = json.loads(json.dumps(self.body).replace('%query%', query))
-
-        # # Send the request
-        # try:
-        #     response = requests.post(self.url, headers=headers, json=body, timeout=self.timeout)
-        # except Timeout as exc:
-        #     raise RequestException('Error: API request timed out') from exc
         response = self._send_request(query)
 
         # Check if the request was successful
@@ -99,25 +81,7 @@ class APIEndpointAsset(BaseAsset):
 
     def test_connection(self) -> PingResult:
         """Ensure that the API Endpoint asset can be connected to."""
-        # # Convert headers JSON string into a dictionary
-        # headers_dict = json.loads(self.headers) if self.headers else {}
-
-        # # Build the request headers
-        # headers = headers_dict.copy()
-        # if self.authentication_method == 'Bearer':
-        #     headers['Authorization'] = f'Bearer {self.api_key}'
-        # elif self.authentication_method == 'Basic':
-        #     headers['Authorization'] = f'Basic {self.api_key}'
-
-        # # Replace the %query% placeholder in the body
         message = 'Test message'
-        # body = json.loads(json.dumps(self.body).replace('%query%', message))
-
-        # # Send the request
-        # try:
-        #     response = requests.post(self.url, headers=headers, json=body, timeout=self.timeout)
-        # except RequestException as exc:
-        #     return PingResult(success=False, error=f'Error: {str(exc)}')
         response = self._send_request(message)
 
         # Check if the request was successful and return a PingResult object

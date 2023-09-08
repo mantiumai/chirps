@@ -300,11 +300,8 @@ class APIEndpointAssetTests(TestCase):
 
     def test_test_connection(self):
         """Test the test_connection method."""
-        mock_response_data = {'message': 'Connection successful'}
-
         with mock.patch('requests.post') as mock_post:
             mock_post.return_value.status_code = 200
-            mock_post.return_value.json.return_value = mock_response_data
 
             ping_result = self.api_endpoint_asset.test_connection()
             self.assertIsInstance(ping_result, PingResult)
