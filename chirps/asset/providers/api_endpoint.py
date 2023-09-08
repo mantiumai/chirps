@@ -45,8 +45,7 @@ class APIEndpointAsset(BaseAsset):
                 return 'Error: Decryption failed'
         return None
 
-    def fetch_api_data(self, query: str) -> dict:
-        """Fetch data from the API using the provided query."""
+    def _send_request(self, message: str) -> requests.Response:
         # Convert headers JSON string into a dictionary
         headers_dict = json.loads(self.headers) if self.headers else {}
 
@@ -58,13 +57,19 @@ class APIEndpointAsset(BaseAsset):
             headers['Authorization'] = f'Basic {self.api_key}'
 
         # Replace the %query% placeholder in the body
-        body = json.loads(json.dumps(self.body).replace('%query%', query))
+        body = json.loads(json.dumps(self.body).replace('%query%', message))
 
         # Send the request
         try:
             response = requests.post(self.url, headers=headers, json=body, timeout=self.timeout)
         except Timeout as exc:
             raise RequestException('Error: API request timed out') from exc
+
+        return response
+
+    def fetch_api_data(self, query: str) -> dict:
+        """Fetch data from the API using the provided query."""
+        response = self._send_request(query)
 
         # Check if the request was successful
         if response.status_code != 200:
@@ -76,7 +81,21 @@ class APIEndpointAsset(BaseAsset):
 
     def test_connection(self) -> PingResult:
         """Ensure that the API Endpoint asset can be connected to."""
-        raise NotImplementedError('The test_connection method is not implemented for this asset.')
+        message = 'Test message'
+        response = self._send_request(message)
+
+        # Check if the request was successful and return a PingResult object
+        if response.status_code == 200:
+            return PingResult(success=True)
+
+        try:
+            response_data = response.json()
+            error_message = json.dumps(response_data, indent=2)
+        except ValueError:
+            error_message = response.text
+
+        error = f'Error: API request failed with status code {response.status_code} and response:\n{error_message}'
+        return PingResult(success=False, error=error)
 
     def displayable_attributes(self):
         """Display a subset of the model's attributes"""

@@ -4,6 +4,7 @@ from unittest import mock
 
 import fakeredis
 from asset.forms import APIEndpointAssetForm, PineconeAssetForm, RedisAssetForm
+from asset.models import PingResult
 from asset.providers.api_endpoint import APIEndpointAsset
 from asset.providers.mantium import MantiumAsset
 from asset.providers.redis import RedisAsset
@@ -296,3 +297,40 @@ class APIEndpointAssetTests(TestCase):
             self.assertEqual(result['avatarFormat'], 'webm')
             self.assertEqual(result['secure'], 'true')
             self.assertEqual(result['message'], 'hello')
+
+    def test_test_connection(self):
+        """Test the test_connection method."""
+        with mock.patch('requests.post') as mock_post:
+            mock_post.return_value.status_code = 200
+
+            ping_result = self.api_endpoint_asset.test_connection()
+            self.assertIsInstance(ping_result, PingResult)
+            self.assertTrue(ping_result.success)
+            self.assertIsNone(ping_result.error)
+
+            expected_url = self.api_endpoint_asset.url
+            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
+            expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
+
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=30)
+
+    def test_test_connection_failure(self):
+        """Test the test_connection method when the API request fails."""
+        mock_response_data = {'error': 'API request failed'}
+
+        with mock.patch('requests.post') as mock_post:
+            mock_post.return_value.status_code = 400
+            mock_post.return_value.json.return_value = mock_response_data
+
+            ping_result = self.api_endpoint_asset.test_connection()
+            self.assertIsInstance(ping_result, PingResult)
+            self.assertFalse(ping_result.success)
+            self.assertIn(mock_response_data['error'], ping_result.error)
+
+            expected_url = self.api_endpoint_asset.url
+            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
+            expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
+
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=30)
