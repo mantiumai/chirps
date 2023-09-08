@@ -183,7 +183,7 @@ def create(request):
             )
 
             # Set the foreign keys to the selected policies and assets
-            new_scan_version.policies.set(selected_policies)
+            new_scan_version.policy_versions.set([policy.current_version for policy in selected_policies])
             new_scan_version.assets.set(selected_assets)
             new_scan_version.save()
 
@@ -266,7 +266,7 @@ def edit(request, scan_id):
             new_scan_version = ScanVersion.objects.create(scan=scan, number=scan.current_version.number + 1)
 
             # Set the foreign keys to the selected policies and assets
-            new_scan_version.policies.set(selected_policies)
+            new_scan_version.policy_versions.set([policy.current_version for policy in selected_policies])
             new_scan_version.assets.set(selected_assets)
             new_scan_version.save()
 

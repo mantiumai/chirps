@@ -1,0 +1,3 @@
+{% for policy in policy_list %}
+    {% include 'policy/policy_list_item.html' with policy=policy policy_rules=policy.rules.all edit_mode=edit_mode %}
+{% endfor %}

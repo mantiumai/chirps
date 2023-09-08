@@ -1,0 +1,83 @@
+{% load policy_filter %}
+{% with grouped_rules=policy_rules|group_by_rule_type %}
+{% for rule_type, rules in grouped_rules.items %}
+{% if rule_type == 'regex' and rules %}
+<h5>Regex Rules</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Query</th>
+            <th scope="col">Test</th>
+            <th scope="col">Severity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rule in rules %}
+        <tr>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.name}}">
+                    {{rule.name|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.query_string}}">
+                    {{rule.query_string|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.regex_test}}">
+                    {{rule.regex_test|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.severity}}">
+                    {{rule.severity|truncatechars:50}}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% elif rule_type == 'multiquery' and rules %}
+<h5>MultiQuery Rules</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Success Outcome</th>
+            <th scope="col">Severity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rule in rules %}
+        <tr>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.name}}">
+                    {{rule.name|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.task_description}}">
+                    {{rule.task_description|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.success_outcome}}">
+                    {{rule.success_outcome|truncatechars:50}}
+                </span>
+            </td>
+            <td>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="{{rule.severity}}">
+                    {{rule.severity|truncatechars:50}}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endfor %}
+{% endwith %}

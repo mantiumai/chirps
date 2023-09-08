@@ -67,7 +67,8 @@ def scan_task(scan_asset_id):
 
     # Build a complete list of all the rules, across policies, that need to be evaluated
     policy_rules = []
-    for policy in scan_run.scan_version.policies.all():
+    for policy_version in scan_run.scan_version.policy_versions.all():
+        policy = policy_version.policy
         for rule in policy.current_version.rules.all():
             policy_rules.append((policy, rule))
 

@@ -29,7 +29,7 @@ class ScanTemplate(models.Model):
 
     def policy_count(self):
         """Fetch the number of policies associated with this scan."""
-        return self.current_version.policies.count()
+        return self.current_version.policy_versions.count()
 
     def asset_count(self):
         """Fetch the number of assets associated with this scan."""
@@ -76,6 +76,7 @@ class ScanVersion(models.Model):
     number = models.IntegerField(default=1)
     scan = models.ForeignKey(ScanTemplate, on_delete=models.CASCADE, related_name='versions')
     policies = models.ManyToManyField('policy.Policy')
+    policy_versions = models.ManyToManyField('policy.PolicyVersion')
     assets = models.ManyToManyField(BaseAsset, related_name='scan_assets')
 
 

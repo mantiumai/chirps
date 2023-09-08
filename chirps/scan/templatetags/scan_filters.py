@@ -39,3 +39,14 @@ def surrounding_conversation_text(finding):
     """
     formatted_conversation = finding.surrounding_conversation_text()
     return mark_safe('<br />'.join([line['text'] for line in formatted_conversation]))
+
+
+@register.filter
+def policies_by_rule(policy_versions):
+    """Build a list of policies containing the rules associated with each policy version."""
+    policies = []
+    for policy_version in policy_versions:
+        policy = policy_version.policy
+        policy.rules = policy_version.rules.all()
+        policies.append(policy)
+    return policies

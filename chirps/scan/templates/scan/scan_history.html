@@ -39,7 +39,7 @@
         <td>{{ scan_run.duration }}</td>
         <td>{{ scan_run.status }} </td>
         <td>{{ scan_run.scan_version.assets.count }}</td>
-        <td>{{ scan_run.scan_version.policies.count }}</td>
+        <td>{{ scan_run.scan_version.policy_versions.count }}</td>
         <td>{{ scan.current_version.number }}</td>
         <td>
           <a class="btn btn-primary" href="{% url 'view_scan_run' scan_run.id %}"><i class="fa-solid fa-magnifying-glass"></i></a>
