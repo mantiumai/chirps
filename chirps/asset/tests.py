@@ -314,8 +314,9 @@ class APIEndpointAssetTests(TestCase):
             expected_url = self.api_endpoint_asset.url
             expected_headers = json.loads(self.api_endpoint_asset.headers)
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
+            expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
 
-            mock_post.assert_called_once_with(expected_url, headers=expected_headers, timeout=30)
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=30)
 
     def test_test_connection_failure(self):
         """Test the test_connection method when the API request fails."""
@@ -333,5 +334,6 @@ class APIEndpointAssetTests(TestCase):
             expected_url = self.api_endpoint_asset.url
             expected_headers = json.loads(self.api_endpoint_asset.headers)
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
+            expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
 
-            mock_post.assert_called_once_with(expected_url, headers=expected_headers, timeout=30)
+            mock_post.assert_called_once_with(expected_url, headers=expected_headers, json=expected_body, timeout=30)
