@@ -76,7 +76,34 @@ class APIEndpointAsset(BaseAsset):
 
     def test_connection(self) -> PingResult:
         """Ensure that the API Endpoint asset can be connected to."""
-        raise NotImplementedError('The test_connection method is not implemented for this asset.')
+        # Convert headers JSON string into a dictionary
+        headers_dict = json.loads(self.headers) if self.headers else {}
+
+        # Build the request headers
+        headers = headers_dict.copy()
+        if self.authentication_method == 'Bearer':
+            headers['Authorization'] = f'Bearer {self.api_key}'
+        elif self.authentication_method == 'Basic':
+            headers['Authorization'] = f'Basic {self.api_key}'
+
+        # Send the request
+        try:
+            response = requests.post(self.url, headers=headers, timeout=self.timeout)
+        except RequestException as exc:
+            return PingResult(success=False, error=f'Error: {str(exc)}')
+
+        # Check if the request was successful and return a PingResult object
+        if response.status_code == 200:
+            return PingResult(success=True)
+        else:
+            try:
+                response_data = response.json()
+                error_message = json.dumps(response_data, indent=2)
+            except ValueError:
+                error_message = response.text
+
+            error = f'Error: API request failed with status code {response.status_code} and response:\n{error_message}'
+            return PingResult(success=False, error=error)
 
     def displayable_attributes(self):
         """Display a subset of the model's attributes"""
