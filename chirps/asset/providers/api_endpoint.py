@@ -86,9 +86,13 @@ class APIEndpointAsset(BaseAsset):
         elif self.authentication_method == 'Basic':
             headers['Authorization'] = f'Basic {self.api_key}'
 
+        # Replace the %query% placeholder in the body
+        message = 'Test message'
+        body = json.loads(json.dumps(self.body).replace('%query%', message))
+
         # Send the request
         try:
-            response = requests.post(self.url, headers=headers, timeout=self.timeout)
+            response = requests.post(self.url, headers=headers, json=body, timeout=self.timeout)
         except RequestException as exc:
             return PingResult(success=False, error=f'Error: {str(exc)}')
 
