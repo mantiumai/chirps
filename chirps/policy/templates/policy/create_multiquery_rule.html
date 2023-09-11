@@ -18,22 +18,27 @@
             <div class="col-3">
                 <select class="form-control" name="rule_model_service_multiquery_{{rule_id}}"
                         id="rule_model_service_multiquery_{{rule_id}}"
-                        hx-get="{% url 'embedding_models' %}"
-                        hx-trigger="load change"
+                        hx-get="{% url 'get_model_names' 'dummy' %}".replace('dummy', encodeURIComponent(this.value))
+                        hx-trigger="change"
                         hx-target="#rule_model_name_multiquery_{{rule_id}}"
                         required>
-                    <option value="" disabled selected>Select LLM Service</option>
-                    {% for service_name in service_names %}
-                    <option value="{{ service_name }}">{{ service_name }}</option>
+                    {% for service_name, model_names in services_and_models.items %}
+                        {% if forloop.first %}
+                            <option value="{{ service_name }}" selected>{{ service_name }}</option>
+                        {% else %}
+                            <option value="{{ service_name }}">{{ service_name }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
+
             <div class="col-3">
                 <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
-                        id="rule_model_name_multiquery_{{rule_id}}" required>
-                    <option value="" disabled selected>Select Model Name</option>
+                        id="rule_model_name_multiquery_{{rule_id}}"
+                        required>
                 </select>
             </div>
+
             <div class="col-2 d-flex">
                 <input class="form-control" type="number" name="rule_attack_count_multiquery_{{rule_id}}"
                     id="rule_attack_count_multiquery_{{rule_id}}" placeholder="Attack Count" min="1" max="100" required></input>
