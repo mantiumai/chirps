@@ -28,7 +28,7 @@ class PolicyForm(forms.Form):
             }
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service', 'model_name']:
                     rule[field_name] = self.data[f'rule_{field_name}_{rule_id}']
 
             rules.append(rule)
@@ -59,10 +59,12 @@ class PolicyForm(forms.Form):
             data[f'rule_type_{index}'] = rule_type
             data[f'rule_name_{index}'] = rule.name
             data[f'rule_severity_{index}'] = rule.severity
+            data[f'rule_model_service_{index}'] = rule.model_service
+            data[f'rule_model_name_{index}'] = rule.model_name
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
-                    data[f'{field_name}_{index}'] = getattr(rule, field_name)
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service', 'model_name']:
+                    data[f'rule_{field_name}_{index}'] = getattr(rule, field_name)
 
             index += 1
 

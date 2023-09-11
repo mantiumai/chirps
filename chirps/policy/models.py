@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
+from embedding.models import Embedding
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
 from langchain.chat_models import ChatOpenAI
@@ -248,6 +249,12 @@ class MultiQueryRule(BaseRule):
 
     # The number of attack messages that should be generated in a scan
     attack_count = models.IntegerField(default=10, validators=[MinValueValidator(1), MaxValueValidator(100)])
+
+    # The LLM hosting service to use for the attack
+    model_service = models.CharField(max_length=256, default=Embedding.Service.OPEN_AI)
+
+    # The name of the LLM to use for the attack
+    model_name = models.CharField(max_length=256, default=DEFAULT_MODEL)
 
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""

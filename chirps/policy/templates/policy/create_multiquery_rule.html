@@ -16,12 +16,22 @@
                     placeholder="Success Outcome" required></input>
             </div>
             <div class="col-3">
-                <select class="form-control" name="rule_severity_multiquery_{{rule_id}}"
-                    id="rule_severity_multiquery_{{rule_id}}" required>
-                    <option value="" disabled selected>Select Severity</option>
-                    {% for severity in severities %}
-                    <option value="{{ severity.value }}">{{ severity.name }}</option>
+                <select class="form-control" name="rule_model_service_multiquery_{{rule_id}}"
+                        id="rule_model_service_multiquery_{{rule_id}}"
+                        hx-get="{% url 'embedding_models' %}"
+                        hx-trigger="load change"
+                        hx-target="#rule_model_name_multiquery_{{rule_id}}"
+                        required>
+                    <option value="" disabled selected>Select LLM Service</option>
+                    {% for service_name in service_names %}
+                    <option value="{{ service_name }}">{{ service_name }}</option>
                     {% endfor %}
+                </select>
+            </div>
+            <div class="col-3">
+                <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
+                        id="rule_model_name_multiquery_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Model Name</option>
                 </select>
             </div>
             <div class="col-2 d-flex">
