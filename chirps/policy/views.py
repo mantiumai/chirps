@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from policy.llms.utils import GENERATIVE_MODELS
 from severity.forms import CreateSeverityForm, EditSeverityForm
 from severity.models import Severity
 
@@ -197,8 +198,12 @@ def create_rule(request, rule_type: str):
     severities = Severity.objects.filter(archived=False)
     template_name = RULES.get(rule_type).create_template
     rule_id = request.GET.get('rule_id', 0)
+    context = {'rule_id': rule_id, 'severities': severities}
 
-    return render(request, template_name, {'rule_id': rule_id, 'severities': severities})
+    if rule_type == 'multiquery':
+        context['services_and_models'] = GENERATIVE_MODELS
+
+    return render(request, template_name, context)
 
 
 @login_required

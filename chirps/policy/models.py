@@ -14,8 +14,8 @@ from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
 from langchain.chat_models import ChatOpenAI
-from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent, EvaluationAgent
-from policy.llms.utils import num_tokens_from_messages
+from policy.llms.agents import AttackAgent, EvaluationAgent
+from policy.llms.utils import DEFAULT_MODEL, DEFAULT_SERVICE, MAX_TOKENS, num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
 from requests import RequestException
 from severity.models import Severity
@@ -248,6 +248,12 @@ class MultiQueryRule(BaseRule):
 
     # The number of attack messages that should be generated in a scan
     attack_count = models.IntegerField(default=10, validators=[MinValueValidator(1), MaxValueValidator(100)])
+
+    # The LLM hosting service to use for the attack
+    model_service = models.CharField(max_length=256, default=DEFAULT_SERVICE)
+
+    # The name of the LLM to use for the attack
+    model_name = models.CharField(max_length=256, default=DEFAULT_MODEL)
 
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""

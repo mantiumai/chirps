@@ -1,6 +1,33 @@
 """Utility functions for LLMs."""
 import tiktoken
-from policy.llms.agents import DEFAULT_MODEL
+
+GENERATIVE_MODELS = {
+    'OpenAI': ['gpt-4-0613'],
+    'cohere': ['command', 'command-nightly', 'command-light', 'command-light-nightly'],
+}
+
+DEFAULT_SERVICE = 'OpenAI'
+DEFAULT_MODEL = 'gpt-4-0613'
+MAX_TOKENS = 4096
+
+
+def get_generative_services() -> list[str]:
+    """Return a list of generative services."""
+    return list(GENERATIVE_MODELS.keys())
+
+
+def get_generative_models_for_service(service: str) -> list[str]:
+    """Return a list of generative models for a given service."""
+    return GENERATIVE_MODELS.get(service, [])
+
+
+def get_generative_service_from_model(model: str) -> str:
+    """Return the service for a given model."""
+    for service, models in GENERATIVE_MODELS.items():
+        if model in models:
+            return service
+
+    return ''
 
 
 def num_tokens_from_messages(messages, model=DEFAULT_MODEL):
