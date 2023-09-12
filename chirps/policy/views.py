@@ -1,7 +1,7 @@
 """Views for the policy app."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from embedding.models import Embedding
@@ -190,14 +190,6 @@ def edit(request, policy_id):
             'rule_classes': RULES,
         },
     )
-
-
-def get_model_names(request: HttpRequest, selected_service: str) -> JsonResponse:
-    """Get the model names for the selected service."""
-    model_choices = Embedding.get_models_for_service(selected_service)
-
-    context = {'model_choices': model_choices}
-    return render(request, 'policy/model_name_options.html', context)
 
 
 @login_required

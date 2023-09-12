@@ -27,12 +27,14 @@ class PolicyForm(forms.Form):
                 'name': self.data[f'rule_name_{rule_id}'],
                 'severity': self.data[f'rule_severity_{rule_id}'],
             }
+            excluded_fields = ['id', 'name', 'severity', 'policy', 'rule_type']
 
             if rule_type == 'multiquery':
                 rule['model_service'] = Embedding.get_service_from_model(self.data[f'rule_model_name_{rule_id}'])
+                excluded_fields.append('model_service')
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service']:
+                if field_name not in excluded_fields:
                     rule[field_name] = self.data[f'rule_{field_name}_{rule_id}']
 
             rules.append(rule)
@@ -67,8 +69,8 @@ class PolicyForm(forms.Form):
             data[f'rule_model_name_{index}'] = rule.model_name
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service', 'model_name']:
-                    data[f'rule_{field_name}_{index}'] = getattr(rule, field_name)
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                    data[f'{field_name}_{index}'] = getattr(rule, field_name)
 
             index += 1
 

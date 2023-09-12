@@ -52,16 +52,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const modelNameDropdown = document.getElementById('rule_model_name_multiquery_{{rule_id}}');
-        const modelServiceHiddenInput = document.getElementById('rule_model_service_multiquery_{{rule_id}}');
-
-        modelNameDropdown.addEventListener('input', function (event) {
-            const selectedOption = event.target.options[event.target.selectedIndex];
-            const selectedService = selectedOption.parentElement.getAttribute('data-service');
-            modelServiceHiddenInput.value = selectedService;
-        });
-    });
-</script>
