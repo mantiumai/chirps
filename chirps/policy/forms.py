@@ -1,5 +1,6 @@
 """Forms for the Policy app."""
 from django import forms
+from embedding.models import Embedding
 
 from .models import RULES, Policy
 
@@ -27,8 +28,11 @@ class PolicyForm(forms.Form):
                 'severity': self.data[f'rule_severity_{rule_id}'],
             }
 
+            if rule_type == 'multiquery':
+                rule['model_service'] = Embedding.get_service_from_model(self.data[f'rule_model_name_{rule_id}'])
+
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service', 'model_name']:
+                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type', 'model_service']:
                     rule[field_name] = self.data[f'rule_{field_name}_{rule_id}']
 
             rules.append(rule)

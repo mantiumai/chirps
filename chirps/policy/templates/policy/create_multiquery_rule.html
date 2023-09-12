@@ -12,36 +12,34 @@
             </div>
             <div class="col-4">
                 <input class="form-control" type="text" name="rule_success_outcome_multiquery_{{rule_id}}"
-                    id="rule_success_outcome_multiquery_{{rule_id}}"
-                    placeholder="Success Outcome" required></input>
+                    id="rule_success_outcome_multiquery_{{rule_id}}" placeholder="Success Outcome" required></input>
             </div>
-            <div class="col-3">
-                <select class="form-control" name="rule_model_service_multiquery_{{rule_id}}"
-                        id="rule_model_service_multiquery_{{rule_id}}"
-                        hx-get="{% url 'get_model_names' 'dummy' %}".replace('dummy', encodeURIComponent(this.value))
-                        hx-trigger="change"
-                        hx-target="#rule_model_name_multiquery_{{rule_id}}"
-                        required>
-                    {% for service_name, model_names in services_and_models.items %}
-                        {% if forloop.first %}
-                            <option value="{{ service_name }}" selected>{{ service_name }}</option>
-                        {% else %}
-                            <option value="{{ service_name }}">{{ service_name }}</option>
-                        {% endif %}
+            <div class="col-2">
+                <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
+                    id="rule_model_name_multiquery_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Model</option>
+                    {% for service, models in services_and_models.items %}
+                    <optgroup label="{{ service }}" data-service="{{ service }}">
+                        {% for model in models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                        {% endfor %}
+                    </optgroup>
                     {% endfor %}
                 </select>
             </div>
-
             <div class="col-3">
-                <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
-                        id="rule_model_name_multiquery_{{rule_id}}"
-                        required>
+                <select class="form-control" name="rule_severity_multiquery_{{rule_id}}"
+                    id="rule_severity_multiquery_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Severity</option>
+                    {% for severity in severities %}
+                    <option value="{{ severity.value }}">{{ severity.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
-
             <div class="col-2 d-flex">
                 <input class="form-control" type="number" name="rule_attack_count_multiquery_{{rule_id}}"
-                    id="rule_attack_count_multiquery_{{rule_id}}" placeholder="Attack Count" min="1" max="100" required></input>
+                    id="rule_attack_count_multiquery_{{rule_id}}" placeholder="Attack Count" min="1" max="100"
+                    required></input>
                 <span class="info-icon ml-2 align-self-center" data-toggle="tooltip" data-placement="right"
                     title="The number of attack messages that should be generated in a scan">
                     <i class="fa-solid fa-info-circle"></i>
@@ -54,3 +52,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modelNameDropdown = document.getElementById('rule_model_name_multiquery_{{rule_id}}');
+        const modelServiceHiddenInput = document.getElementById('rule_model_service_multiquery_{{rule_id}}');
+
+        modelNameDropdown.addEventListener('input', function (event) {
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            const selectedService = selectedOption.parentElement.getAttribute('data-service');
+            modelServiceHiddenInput.value = selectedService;
+        });
+    });
+</script>

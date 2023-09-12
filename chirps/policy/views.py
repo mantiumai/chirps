@@ -1,11 +1,8 @@
 """Views for the policy app."""
-import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 from embedding.models import Embedding
 from severity.forms import CreateSeverityForm, EditSeverityForm
@@ -197,15 +194,10 @@ def edit(request, policy_id):
 
 def get_model_names(request: HttpRequest, selected_service: str) -> JsonResponse:
     """Get the model names for the selected service."""
-    services_and_models = request.session.get('services_and_models', {})
+    model_choices = Embedding.get_models_for_service(selected_service)
 
-    if selected_service in services_and_models:
-        model_choices = services_and_models[selected_service]
-    else:
-        model_choices = []
-
-    rendered_template = render_to_string('policy/model_name_options.html', {'model_choices': model_choices})
-    return JsonResponse({'rendered_template': rendered_template})
+    context = {'model_choices': model_choices}
+    return render(request, 'policy/model_name_options.html', context)
 
 
 @login_required
@@ -222,14 +214,7 @@ def create_rule(request, rule_type: str):
         for service in model_services:
             services_and_models[service] = Embedding.get_model_names(service)
 
-        default_service = list(services_and_models.keys())[0]
-        fake_request = HttpRequest()
-        fake_request.session = request.session
-        model_choices_response = get_model_names(fake_request, default_service)
-        model_choices = json.loads(model_choices_response.content)['rendered_template']
-
         context['services_and_models'] = services_and_models
-        context['model_choices'] = model_choices
 
     return render(request, template_name, context)
 

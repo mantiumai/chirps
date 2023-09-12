@@ -82,3 +82,14 @@ class Embedding(models.Model):
             return []
 
         return embedding_service_models[service]
+
+    @staticmethod
+    def get_service_from_model(model_name: str) -> str:
+        """Get the service name given a model name."""
+        embedding_model_services = {
+            'text-embedding-ada-002': Embedding.Service.OPEN_AI,
+            'embed-english-light-v2.0': Embedding.Service.COHERE,
+            'embed-english-v2.0': Embedding.Service.COHERE,
+            'embed-multilingual-v2.0': Embedding.Service.COHERE,
+        }
+        return embedding_model_services.get(model_name, '')

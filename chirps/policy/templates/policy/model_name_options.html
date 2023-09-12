@@ -1,6 +1,12 @@
 <div class="col-3">
     <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
             id="rule_model_name_multiquery_{{rule_id}}" hx-target="this" required>
-        {{ model_choices|safe }}
+        {% for choice in model_choices %}
+            {% if forloop.first %}
+                <option value="{{ choice }}" selected>{{ choice }}</option>
+            {% else %}
+                <option value="{{ choice }}">{{ choice }}</option>
+            {% endif %}
+        {% endfor %}
     </select>
 </div>
