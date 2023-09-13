@@ -1,11 +1,12 @@
 """Utility functions for LLMs."""
 import tiktoken
+from account.models import Profile
 from langchain.chat_models import ChatAnthropic, ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
 
 GENERATIVE_MODELS = {
+    'Anthropic': {'models': ['claude-2'], 'chat_model_class': ChatAnthropic, 'kwargs': ['anthropic_api_key']},
     'OpenAI': {'models': ['gpt-4-0613'], 'chat_model_class': ChatOpenAI, 'kwargs': ['openai_api_key']},
-    'anthropic': {'models': ['claude-2'], 'chat_model_class': ChatAnthropic, 'kwargs': ['anthropic_api_key']},
 }
 
 DEFAULT_SERVICE = 'OpenAI'
@@ -49,8 +50,8 @@ def num_tokens_from_messages(messages, model=DEFAULT_MODEL):
     return 0
 
 
-def chat_model(model_name: str, model_service: str, user_profile) -> BaseChatModel:
+def chat_model(model_name: str, model_service: str, user_profile: Profile) -> BaseChatModel:
     """Instantiate a chat model."""
     model_info = GENERATIVE_MODELS[model_service]
     kwargs = {k: getattr(user_profile, k) for k in model_info['kwargs']}
-    return GENERATIVE_MODELS[model_service]['chat_model_class'](model_name=model_name, **kwargs)
+    return model_info['chat_model_class'](model_name=model_name, **kwargs)

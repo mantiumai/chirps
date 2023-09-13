@@ -107,7 +107,7 @@ def api_key_edit(request, key_name):
                 request.user.profile.save()
                 field = request.user.profile.openai_api_key
                 masked_value = request.user.profile.masked_openai_api_key
-            elif key_name == 'anthropic':
+            elif key_name == 'Anthropic':
                 request.user.profile.anthropic_api_key = form.cleaned_data['key']
                 request.user.profile.save()
                 field = request.user.profile.anthropic_api_key
@@ -145,7 +145,7 @@ def api_key_masked(request, key_name):
         masked_value = request.user.profile.masked_cohere_key
     elif key_name == 'openai':
         masked_value = request.user.profile.masked_openai_api_key
-    elif key_name == 'anthropic':
+    elif key_name == 'Anthropic':
         masked_value = request.user.profile.masked_anthropic_api_key
     else:
         raise ValueError('No key specified.')

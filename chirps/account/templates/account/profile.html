@@ -39,7 +39,7 @@
             <div class="form-group">
 
                 <div class="mt-3 d-flex">
-                    <!-- anthropic key -->
+                    <!-- Anthropic Key -->
                     <div class="form-group col">
                         <label for="{{ form.anthropic_key.id_for_label }}">
                             <img src="{% static 'account/anthropic_logo.png' %}" alt="Anthropic Logo" class="img-fluid"
@@ -47,7 +47,7 @@
                         </label>
 
                         <div class="input-group mb-3" id="anthropic_group"
-                            hx-get="{% url 'api_key_masked' 'anthropic' %}" hx-trigger="load">
+                            hx-get="{% url 'api_key_masked' 'Anthropic' %}" hx-trigger="load">
                             <i id="spinner-{{scan.id}}" class="fa-solid fa-spinner fa-spin"></i>
                         </div>
                         <!-- Cohere Key -->
