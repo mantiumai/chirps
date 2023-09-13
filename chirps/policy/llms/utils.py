@@ -49,7 +49,7 @@ def num_tokens_from_messages(messages, model=DEFAULT_MODEL):
     return 0
 
 
-def instantiate_chat_model(model_name: str, model_service: str, user_profile) -> BaseChatModel:
+def chat_model(model_name: str, model_service: str, user_profile) -> BaseChatModel:
     """Instantiate a chat model."""
     model_info = GENERATIVE_MODELS[model_service]
     kwargs = {k: getattr(user_profile, k) for k in model_info['kwargs']}

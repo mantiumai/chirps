@@ -14,13 +14,7 @@ from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
 from policy.llms.agents import AttackAgent, EvaluationAgent
-from policy.llms.utils import (
-    DEFAULT_MODEL,
-    DEFAULT_SERVICE,
-    MAX_TOKENS,
-    instantiate_chat_model,
-    num_tokens_from_messages,
-)
+from policy.llms.utils import DEFAULT_MODEL, DEFAULT_SERVICE, MAX_TOKENS, chat_model, num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
 from requests import RequestException
 from severity.models import Severity
@@ -265,7 +259,7 @@ class MultiQueryRule(BaseRule):
         user = args.scan_asset.scan.scan_version.scan.user
         asset: APIEndpointAsset = args.asset
 
-        model = instantiate_chat_model(self.model_name, self.model_service, user.profile)
+        model = chat_model(self.model_name, self.model_service, user.profile)
         chirps_attacker = AttackAgent(model, asset.description, self.task_description)
         chirps_attacker.reset()
 
