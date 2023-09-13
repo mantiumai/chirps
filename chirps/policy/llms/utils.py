@@ -3,7 +3,7 @@ import tiktoken
 
 GENERATIVE_MODELS = {
     'OpenAI': ['gpt-4-0613'],
-    'cohere': ['command', 'command-nightly', 'command-light', 'command-light-nightly'],
+    'anthropic': ['claude-2'],
 }
 
 DEFAULT_SERVICE = 'OpenAI'
