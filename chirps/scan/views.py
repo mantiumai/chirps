@@ -57,16 +57,23 @@ def get_unique_rules_and_findings(results):
         rule = result.rule
 
         if rule.id not in rule_dict:
-            rule.finding_count = 0
-            rule.findings = []
-            rule_dict[rule.id] = rule
+            rule_dict[rule.id] = {'rule': rule, 'findings_count': 0, 'findings': []}
+
+        rule_data = rule_dict[rule.id]
 
         findings = list(result.findings.all())
         count = len(findings)
-        rule.finding_count += count
-        rule.findings.extend(findings)
+
+        rule_data['findings_count'] += count
+        rule_data['findings'].extend(findings)
+
         finding_count += count
         finding_severities[rule.severity] += count
+
+    for rule_data in rule_dict.values():
+        rule = rule_data['rule']
+        rule.findings_count = rule_data['findings_count']
+        rule.findings = rule_data['findings']
         unique_rules[type(rule)].add(rule)
 
     return unique_rules, finding_count, finding_severities
