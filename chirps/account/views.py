@@ -96,8 +96,12 @@ def api_key_edit(request, key_name):
     if request.method == 'POST':
         form = KeyEditForm(request.POST)
         if form.is_valid():
-
-            if key_name == 'cohere':
+            if key_name == 'Anthropic':
+                request.user.profile.anthropic_api_key = form.cleaned_data['key']
+                request.user.profile.save()
+                field = request.user.profile.anthropic_api_key
+                masked_value = request.user.profile.masked_anthropic_api_key
+            elif key_name == 'cohere':
                 request.user.profile.cohere_key = form.cleaned_data['key']
                 request.user.profile.save()
                 field = request.user.profile.cohere_key
@@ -107,11 +111,6 @@ def api_key_edit(request, key_name):
                 request.user.profile.save()
                 field = request.user.profile.openai_api_key
                 masked_value = request.user.profile.masked_openai_api_key
-            elif key_name == 'Anthropic':
-                request.user.profile.anthropic_api_key = form.cleaned_data['key']
-                request.user.profile.save()
-                field = request.user.profile.anthropic_api_key
-                masked_value = request.user.profile.masked_anthropic_api_key
             else:
                 raise ValueError('Invalid key specified.')
 
@@ -128,7 +127,9 @@ def api_key_edit(request, key_name):
 @login_required
 def api_key_unmasked(request, key_name):
     """Render the controls to view a masked version of the API key."""
-    if key_name == 'cohere':
+    if key_name == 'Anthropic':
+        value = request.user.profile.anthropic_api_key
+    elif key_name == 'cohere':
         value = request.user.profile.cohere_key
     elif key_name == 'openai':
         value = request.user.profile.openai_api_key
@@ -141,12 +142,12 @@ def api_key_unmasked(request, key_name):
 @login_required
 def api_key_masked(request, key_name):
     """Fetch the masked key widget for the specified API key."""
-    if key_name == 'cohere':
+    if key_name == 'Anthropic':
+        masked_value = request.user.profile.masked_anthropic_api_key
+    elif key_name == 'cohere':
         masked_value = request.user.profile.masked_cohere_key
     elif key_name == 'openai':
         masked_value = request.user.profile.masked_openai_api_key
-    elif key_name == 'Anthropic':
-        masked_value = request.user.profile.masked_anthropic_api_key
     else:
         raise ValueError('No key specified.')
 
