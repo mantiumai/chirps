@@ -1,5 +1,6 @@
 """Forms for the Policy app."""
 from django import forms
+from policy.llms.utils import get_generative_service_from_model
 
 from .models import RULES, Policy
 
@@ -26,9 +27,16 @@ class PolicyForm(forms.Form):
                 'name': self.data[f'rule_name_{rule_id}'],
                 'severity': self.data[f'rule_severity_{rule_id}'],
             }
+            excluded_fields = ['id', 'name', 'severity', 'policy', 'rule_type']
+
+            if rule_type == 'multiquery':
+                model_name = self.data[f'rule_model_name_{rule_id}']
+                rule['model_service'] = get_generative_service_from_model(model_name)
+                rule['model_name'] = model_name
+                excluded_fields.extend(['model_service', 'model_name'])
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                if field_name not in excluded_fields:
                     rule[field_name] = self.data[f'rule_{field_name}_{rule_id}']
 
             rules.append(rule)
@@ -59,9 +67,15 @@ class PolicyForm(forms.Form):
             data[f'rule_type_{index}'] = rule_type
             data[f'rule_name_{index}'] = rule.name
             data[f'rule_severity_{index}'] = rule.severity
+            excluded_fields = ['id', 'name', 'severity', 'policy', 'rule_type']
+
+            if rule_type == 'multiquery':
+                data[f'rule_model_service_{index}'] = rule.model_service
+                data[f'rule_model_name_{index}'] = rule.model_name
+                excluded_fields.extend(['model_service', 'model_name'])
 
             for field_name in rule_fields:
-                if field_name not in ['id', 'name', 'severity', 'policy', 'rule_type']:
+                if field_name not in excluded_fields:
                     data[f'{field_name}_{index}'] = getattr(rule, field_name)
 
             index += 1

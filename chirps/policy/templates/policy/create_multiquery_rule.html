@@ -24,6 +24,19 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-2">
+                <select class="form-control" name="rule_model_name_multiquery_{{rule_id}}"
+                    id="rule_model_name_multiquery_{{rule_id}}" required>
+                    <option value="" disabled selected>Select Model</option>
+                    {% for service, models in services_and_models.items %}
+                    <optgroup label="{{ service }}" data-service="{{ service }}">
+                        {% for model in models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="col-2 d-flex">
                 <input class="form-control" type="number" name="rule_attack_count_multiquery_{{rule_id}}"
                     id="rule_attack_count_multiquery_{{rule_id}}" placeholder="Attack Count" min="1" max="100" required></input>

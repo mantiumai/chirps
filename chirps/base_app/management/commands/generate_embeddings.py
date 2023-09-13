@@ -69,9 +69,7 @@ class Command(BaseCommand):
         # Authenticate the user
         user = self.authenticate_user()
 
-        service_keys: dict[str, str] = {
-            v: v.lower() + '_key' for v in Embedding.Service.values
-        }    # {'OpenAI': 'openai_key'}
+        service_keys: dict[str, str] = {v: v.lower() + '_key' for v in Embedding.Service.values}
 
         # Retrieve the API key from the User object
         api_key = getattr(user.profile, service_keys[selected_service])

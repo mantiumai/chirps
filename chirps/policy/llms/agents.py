@@ -5,9 +5,6 @@ import tenacity
 from langchain.chat_models.base import BaseChatModel
 from langchain.schema import AIMessage, SystemMessage
 
-DEFAULT_MODEL = 'gpt-4-0613'
-MAX_TOKENS = 4096
-
 
 class Agent:
     """Base class representing an agent that interacts with a model and tracks a message history."""

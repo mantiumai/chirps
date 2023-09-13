@@ -13,9 +13,8 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from embedding.utils import create_embedding
 from fernet_fields import EncryptedTextField
-from langchain.chat_models import ChatOpenAI
-from policy.llms.agents import DEFAULT_MODEL, MAX_TOKENS, AttackAgent, EvaluationAgent
-from policy.llms.utils import num_tokens_from_messages
+from policy.llms.agents import AttackAgent, EvaluationAgent
+from policy.llms.utils import DEFAULT_MODEL, DEFAULT_SERVICE, MAX_TOKENS, chat_model, num_tokens_from_messages
 from polymorphic.models import PolymorphicModel
 from requests import RequestException
 from severity.models import Severity
@@ -249,14 +248,18 @@ class MultiQueryRule(BaseRule):
     # The number of attack messages that should be generated in a scan
     attack_count = models.IntegerField(default=10, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
+    # The LLM hosting service to use for the attack
+    model_service = models.CharField(max_length=256, default=DEFAULT_SERVICE)
+
+    # The name of the LLM to use for the attack
+    model_name = models.CharField(max_length=256, default=DEFAULT_MODEL)
+
     def execute(self, args: RuleExecuteArgs) -> None:
         """Execute the rule against an asset."""
         user = args.scan_asset.scan.scan_version.scan.user
         asset: APIEndpointAsset = args.asset
-        openai_api_key = user.profile.openai_key
 
-        # Eventually we should support multiple models and model hosting services (e.g. cohere)
-        model = ChatOpenAI(openai_api_key=openai_api_key, model_name=DEFAULT_MODEL)
+        model = chat_model(self.model_name, self.model_service, user.profile)
         chirps_attacker = AttackAgent(model, asset.description, self.task_description)
         chirps_attacker.reset()
 
