@@ -156,7 +156,7 @@ def create(request):
                 if missing_embeddings and hasattr(asset, 'embedding_model_service'):
                     if (
                         asset.embedding_model_service == Embedding.Service.OPEN_AI
-                        and not request.user.profile.openai_key
+                        and not request.user.profile.openai_api_key
                     ):
                         fail_scan_create = True
                         messages.error(request, 'User has not configured their OpenAI API key')
@@ -243,7 +243,7 @@ def edit(request, scan_id):
                 if missing_embeddings and hasattr(asset, 'embedding_model_service'):
                     if (
                         asset.embedding_model_service == Embedding.Service.OPEN_AI
-                        and not request.user.profile.openai_key
+                        and not request.user.profile.openai_api_key
                     ):
                         fail_scan_create = True
                         messages.error(request, 'User has not configured their OpenAI API key')

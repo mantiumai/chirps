@@ -43,7 +43,7 @@ class AgentTestCase(TestCase):
         # Create a profile for the test user
         self.profile = Profile.objects.create(user=self.user)
 
-        self.profile.openai_key = 'fake_openai_key'
+        self.profile.openai_api_key = 'fake_openai_key'
         self.profile.cohere_key = 'fake_cohere_key'
         self.profile.save()
 
@@ -67,7 +67,7 @@ class AgentTestCase(TestCase):
                 """Return a mock model."""
                 return MockModel()
 
-        self.model = MockChatOpenAI(openai_api_key=self.user.profile.openai_key, model_name='test-model')
+        self.model = MockChatOpenAI(openai_api_key=self.user.profile.openai_api_key, model_name='test-model')
 
     @patch('openai.api_resources.chat_completion.ChatCompletion.create')
     def test_attack_agent(self, mock_openai_create):

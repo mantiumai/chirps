@@ -201,7 +201,7 @@ class GenerateEmbeddingsTests(TestCase):
         # Create a profile for the test user
         self.profile = Profile.objects.create(user=self.user)
 
-        self.profile.openai_key = self.test_openai_key
+        self.profile.openai_api_key = self.test_openai_key
         self.profile.cohere_key = self.test_cohere_key
         self.profile.save()
 

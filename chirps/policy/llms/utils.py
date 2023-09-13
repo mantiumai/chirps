@@ -1,9 +1,11 @@
 """Utility functions for LLMs."""
 import tiktoken
+from langchain.chat_models import ChatAnthropic, ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 
 GENERATIVE_MODELS = {
-    'OpenAI': ['gpt-4-0613'],
-    'anthropic': ['claude-2'],
+    'OpenAI': {'models': ['gpt-4-0613'], 'chat_model_class': ChatOpenAI, 'kwargs': ['openai_api_key']},
+    'anthropic': {'models': ['claude-2'], 'chat_model_class': ChatAnthropic, 'kwargs': ['anthropic_api_key']},
 }
 
 DEFAULT_SERVICE = 'OpenAI'
@@ -18,13 +20,13 @@ def get_generative_services() -> list[str]:
 
 def get_generative_models_for_service(service: str) -> list[str]:
     """Return a list of generative models for a given service."""
-    return GENERATIVE_MODELS.get(service, [])
+    return GENERATIVE_MODELS.get(service, {}).get('models', [])
 
 
 def get_generative_service_from_model(model: str) -> str:
     """Return the service for a given model."""
-    for service, models in GENERATIVE_MODELS.items():
-        if model in models:
+    for service, info in GENERATIVE_MODELS.items():
+        if model in info.get('models', []):
             return service
 
     return ''
@@ -45,3 +47,10 @@ def num_tokens_from_messages(messages, model=DEFAULT_MODEL):
         return num_tokens
 
     return 0
+
+
+def instantiate_chat_model(model_name: str, model_service: str, user_profile) -> BaseChatModel:
+    """Instantiate a chat model."""
+    model_info = GENERATIVE_MODELS[model_service]
+    kwargs = {k: getattr(user_profile, k) for k in model_info['kwargs']}
+    return GENERATIVE_MODELS[model_service]['chat_model_class'](model_name=model_name, **kwargs)

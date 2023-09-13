@@ -16,12 +16,12 @@ class OpenAIEmbeddingProvider(BaseEmbeddingProvider):
     def embed(self, user: User, model: str, text: str) -> Any:
         """Use OpenAI to generate embeddings for the specified text."""
         # If the OpenAI API key is not set, raise an error
-        if user.profile.openai_key in [None, '']:
+        if user.profile.openai_api_key in [None, '']:
             logger.error('User OpenAI key not set', extra={'user_id': user.id})
             raise EmbeddingError('OpenAI API key not set')
 
         # Initialize the OpenAI API key from the user's profile
-        openai.api_key = user.profile.openai_key
+        openai.api_key = user.profile.openai_api_key
 
         logger.debug('Generating embedding for text', extra={'text': text})
 

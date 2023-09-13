@@ -201,7 +201,8 @@ def create_rule(request, rule_type: str):
     context = {'rule_id': rule_id, 'severities': severities}
 
     if rule_type == 'multiquery':
-        context['services_and_models'] = GENERATIVE_MODELS
+        services_and_models = {k: v['models'] for k, v in GENERATIVE_MODELS.items()}
+        context['services_and_models'] = services_and_models
 
     return render(request, template_name, context)
 

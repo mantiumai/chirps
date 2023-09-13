@@ -290,7 +290,7 @@ This Django-based Python web application provides user authentication and accoun
 
 The `Profile` model is a custom user profile model that extends Django's built-in User model with a one-to-one relationship. It contains the following field:
 
-- `openai_key`: A CharField with a maximum length of 100 characters. This field is optional and can be left blank. It is used to store the user's OpenAI API key, which is hashed before being saved to the database.
+- `openai_api_key`: A CharField with a maximum length of 100 characters. This field is optional and can be left blank. It is used to store the user's OpenAI API key, which is hashed before being saved to the database.
 
 ## Forms
 

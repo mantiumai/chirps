@@ -94,7 +94,7 @@ The `Plan` application manages scanning plans and rules for the Scan application
 
 The authentication system in this Django-based Python web application manages user authentication and account features. Users can sign up, log in, and update their profiles, including an optional OpenAI API key, which is hashed before saving.
 
-The `Profile` model extends Django's built-in User model with a one-to-one relationship and includes an `openai_key` field. Forms such as `ProfileForm`, `LoginForm`, and `SignupForm` handle user profile updates, logins, and registrations, with custom methods like `clean_openai_key()` for hashing the OpenAI API key.
+The `Profile` model extends Django's built-in User model with a one-to-one relationship and includes an `openai_api_key` field. Forms such as `ProfileForm`, `LoginForm`, and `SignupForm` handle user profile updates, logins, and registrations, with custom methods like `clean_openai_key()` for hashing the OpenAI API key.
 
 ## License
 

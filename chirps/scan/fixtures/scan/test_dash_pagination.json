@@ -22,7 +22,7 @@
         "pk": 1,
         "fields": {
             "user": 1,
-            "openai_key": "",
+            "openai_api_key": "",
             "cohere_key": "",
             "finding_preview_size": 20
         }
