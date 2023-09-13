@@ -1,6 +1,9 @@
 """Tests for the account application."""
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+
+from .models import Profile
 
 
 class AccountTests(TestCase):
@@ -132,3 +135,20 @@ class AccountTests(TestCase):
             },
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_masked_api_keys(self):
+        """Verify that the masked API keys are returned correctly."""
+        username = 'test_user'
+        password = 'test_password'
+        email = 'test_user@mantiumai.com'
+
+        # Create a new user and profile
+        user = User.objects.create_user(username, email, password)
+        profile = Profile.objects.create(
+            user=user, anthropic_api_key='anthropic123456', cohere_key='cohere123456', openai_api_key='openai123456'
+        )
+
+        # Check the masked API keys
+        self.assertEqual(profile.masked_anthropic_api_key, 'anthro*********')
+        self.assertEqual(profile.masked_cohere_key, 'cohere******')
+        self.assertEqual(profile.masked_openai_api_key, 'openai******')
