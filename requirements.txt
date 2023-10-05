@@ -8,7 +8,7 @@ django-fernet-fields==0.6
 django-polymorphic==3.1.0
 django-stubs
 fakeredis==2.16.0
-langchain==0.0.275
+langchain==0.0.308
 mantium-client
 openai==0.27.8
 pinecone-client
