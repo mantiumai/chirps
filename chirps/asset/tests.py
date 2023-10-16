@@ -12,6 +12,7 @@ from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
 from embedding.models import Embedding
+from parameterized import parameterized
 
 
 class AssetTests(TestCase):
@@ -127,7 +128,23 @@ class AssetTests(TestCase):
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
 
-    def test_api_endpoint_asset_creation(self):
+    @parameterized.expand(
+        [
+            ('Flat headers and body', {'Content-Type': 'application/json'}, {'data': '%query%'}),
+            (
+                'Nested headers and flat body',
+                {'Content-Type': 'application/json', 'custom': {'nested': 'yes'}},
+                {'data': '%query%'},
+            ),
+            ('Flat headers and nested body', {'Content-Type': 'application/json'}, {'data': {'nested': 'yes'}}),
+            (
+                'Nested headers and nested body',
+                {'Content-Type': 'application/json', 'custom': {'nested': 'yes'}},
+                {'data': {'nested': 'yes'}},
+            ),
+        ]
+    )
+    def test_api_endpoint_asset_creation(self, _, headers, body):
         """Test the creation of an API Endpoint asset with the dropdown."""
         self.client.post(
             reverse('login'),
@@ -143,8 +160,8 @@ class AssetTests(TestCase):
             'url': 'https://api.example.com/endpoint',
             'authentication_method': 'Bearer',
             'api_key': 'example-api-key',
-            'headers': '{"Content-Type": "application/json"}',
-            'body': '{"data": "%query%"}',
+            'headers': json.dumps(headers),
+            'body': json.dumps(body),
             'timeout': '30',
         }
         form = APIEndpointAssetForm(data=form_data)
