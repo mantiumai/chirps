@@ -1,7 +1,7 @@
 """Test cases for the asset application."""
 import json
 from unittest import mock
-from parameterized import parameterized
+
 import fakeredis
 from asset.forms import APIEndpointAssetForm, PineconeAssetForm, RedisAssetForm
 from asset.models import PingResult
@@ -12,6 +12,7 @@ from django.contrib.auth.models import User  # noqa: E5142
 from django.test import TestCase
 from django.urls import reverse
 from embedding.models import Embedding
+from parameterized import parameterized
 
 
 class AssetTests(TestCase):
@@ -127,12 +128,22 @@ class AssetTests(TestCase):
         response = self.client.post(reverse('asset_create', args=['Pinecone']), form_data)
         self.assertRedirects(response, reverse('asset_dashboard'))
 
-    @parameterized.expand([  
-        ("Flat headers and body", {"Content-Type": "application/json"}, {"data": "%query%"}),  
-        ("Nested headers and flat body", {"Content-Type": "application/json", "custom": {"nested": "yes"}}, {"data": "%query%"}),  
-        ("Flat headers and nested body", {"Content-Type": "application/json"}, {"data": {"nested": "yes"}}),  
-        ("Nested headers and nested body", {"Content-Type": "application/json", "custom": {"nested": "yes"}}, {"data": {"nested": "yes"}}),  
-    ])
+    @parameterized.expand(
+        [
+            ('Flat headers and body', {'Content-Type': 'application/json'}, {'data': '%query%'}),
+            (
+                'Nested headers and flat body',
+                {'Content-Type': 'application/json', 'custom': {'nested': 'yes'}},
+                {'data': '%query%'},
+            ),
+            ('Flat headers and nested body', {'Content-Type': 'application/json'}, {'data': {'nested': 'yes'}}),
+            (
+                'Nested headers and nested body',
+                {'Content-Type': 'application/json', 'custom': {'nested': 'yes'}},
+                {'data': {'nested': 'yes'}},
+            ),
+        ]
+    )
     def test_api_endpoint_asset_creation(self, _, headers, body):
         """Test the creation of an API Endpoint asset with the dropdown."""
         self.client.post(
