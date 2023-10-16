@@ -261,7 +261,7 @@ class APIEndpointAssetTests(TestCase):
             headers='{"Content-Type": "application/json"}',
             body='{"data": "%query%"}',
         )
-    
+
     def test_fetch_api_data(self):
         """Test that the search method sends the request and processes the response."""
         # Define the mocked response data
