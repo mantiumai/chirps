@@ -47,7 +47,7 @@ class APIEndpointAsset(BaseAsset):
 
     def _send_request(self, message: str) -> requests.Response:
         # Convert headers JSON string into a dictionary
-        headers_dict = json.loads(self.headers) if self.headers else {}
+        headers_dict = self.headers or {}
 
         # Build the request headers
         headers = headers_dict.copy()
