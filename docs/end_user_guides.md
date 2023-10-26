@@ -21,7 +21,7 @@ The `initialize_app` management command initializes the app by running multiple 
 
 ### Usage
 
-`./manage.py initialize_app
+`./manage.py initialize_app`
 
 ## Start Services Command
 
@@ -37,7 +37,7 @@ The `load_redis_data` management command loads data from a JSON file into Redis 
 
 ### Usage
 
-python manage.py load_redis_data [file_path] [options]
+`python manage.py load_redis_data [file_path] [options]`
 
 ### Arguments
 
@@ -71,7 +71,7 @@ The `rabbitmq` management command allows you to interact with the local RabbitMQ
 
 ### Usage
 
-`./manage.py rabbitmq [options]
+`./manage.py rabbitmq [options]`
 
 ### Options
 
@@ -85,7 +85,7 @@ The `redis` management command allows you to interact with the local Redis devel
 
 ### Usage
 
-`./manage.py redis [options]
+`./manage.py redis [options]`
 
 ### Options
 
