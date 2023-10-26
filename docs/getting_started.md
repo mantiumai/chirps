@@ -4,7 +4,7 @@ title: Getting Started
 permalink: /getting-started/
 ---
 
-Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to Mantium applications and to vector databases like Redis and Pinecone. Users can create and manage scanning policies, execute scans against an asset using a selected policy, and view the results of the scan, including any findings.
+Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data, and to perform vulnerability testing against Large Language Models (LLM). The application can connect to Mantium applications and to vector databases like Redis and Pinecone, as well as API endpoints where LLMs are hosted. Users can create and manage scanning policies, execute scans against an asset using a selected policy, and view the results of the scan, including any findings.
 
 ## Project Layout
 
