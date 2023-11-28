@@ -1,6 +1,6 @@
 # Chirps
 
-Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data. The application can connect to [Mantium](https://mantiumai.com/) applications and to vector databases like Redis and Pinecone. Users can create and manage scanning plans, execute scans against an asset using a selected plan, and view the results of the scan, including any findings.
+Chirps is a Django-based Python web application that allows users to search and scan vector databases for sensitive data, and to perform vulnerability testing against Large Language Models (LLM). The application can connect to [Mantium](https://mantiumai.com) applications and to vector databases like Redis and Pinecone, as well as API endpoints where LLMs are hosted. Users can create and manage scanning policies, execute scans against an asset using a selected policy, and view the results of the scan, including any findings.
 
 [![Chirps Demo](https://cdn.loom.com/sessions/thumbnails/d0829947113b4f3cbee90a1800335c1f-with-play.gif)](https://www.loom.com/share/d0829947113b4f3cbee90a1800335c1f?sid=84c4d9d7-ae12-44d7-8500-c3c8abb00f7d)
 
@@ -8,19 +8,26 @@ Chirps is a Django-based Python web application that allows users to search and 
 ## Architecture
 ![architecture](https://github.com/mantiumai/chirps/blob/main/docs/assets/images/application_architecture.png)
 
+## Getting Started with GitHub Codespaces
+- Click the green “Code” button on your forked repository and choose “Open with Codespaces.”
+- Click “New codespace” to create a new codespace for the project.
+- Wait for the codespace to be created and the dependencies to be installed. Expect this first build to take at least 10 minutes. Codespace rebuilds should be much faster.
+
 ## Quick Start
 
-- `pip install -r requirements.txt`
+- Create a codespace using the instructions above
+- Install the project dependencies by running the following command in the codepsace's terminal `pip install -r requirements.txt`
 - Initialize the app by running the following command `./chirps/manage.py initialize_app`
+  - This runs database migrations and populates the database, starts services like Celery and RabbitMQ, and starts the web app
 - In the codespace, click "Ports" on the lower toolbar and click the link under "Forwarded Ports" to access the application at port 8000.
 - Create a user account in the UI.
 
 ## Getting Started
-Please familiarize yourself with the project by visiting our [Getting Started](https://chirps.mantiumai.com/getting-started/) page.
+Please familiarize yourself with the project by visiting our [Getting Started](https://chirps-scanner.org/getting-started/) page.
 
 ## Support
 
-For any questions on the usage of `chirps` please visit us on [Discord](https://discord.gg/wUsVGHFq). If you found a software issue, please [create an issue](https://github.com/mantiumai/chirps/issues) on GitHub.
+For any questions on the usage of Chirps please visit us on [Discord](https://discord.gg/wUsVGHFq). If you found a software issue, please [create an issue](https://github.com/mantiumai/chirps/issues) on GitHub.
 
 ## Maintainer
 
