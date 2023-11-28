@@ -269,7 +269,7 @@ class APIEndpointAssetTests(TestCase):
             url='https://api.example.com/endpoint',
             authentication_method='Bearer',
             api_key='example-api-key',
-            headers={"Content-Type": "application/json"},
+            headers={'Content-Type': 'application/json'},
             body='{"data": "%query%"}',
         )
 
