@@ -269,7 +269,7 @@ class APIEndpointAssetTests(TestCase):
             url='https://api.example.com/endpoint',
             authentication_method='Bearer',
             api_key='example-api-key',
-            headers='{"Content-Type": "application/json"}',
+            headers={"Content-Type": "application/json"},
             body='{"data": "%query%"}',
         )
 
@@ -299,7 +299,7 @@ class APIEndpointAssetTests(TestCase):
 
             # Assert that requests.post was called with the expected arguments
             expected_url = self.api_endpoint_asset.url
-            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers = self.api_endpoint_asset.headers
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
             expected_body = self.api_endpoint_asset.body.replace('%query%', 'test query')
 
@@ -326,7 +326,7 @@ class APIEndpointAssetTests(TestCase):
             self.assertIsNone(ping_result.error)
 
             expected_url = self.api_endpoint_asset.url
-            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers = self.api_endpoint_asset.headers
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
             expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
 
@@ -346,7 +346,7 @@ class APIEndpointAssetTests(TestCase):
             self.assertIn(mock_response_data['error'], ping_result.error)
 
             expected_url = self.api_endpoint_asset.url
-            expected_headers = json.loads(self.api_endpoint_asset.headers)
+            expected_headers = self.api_endpoint_asset.headers
             expected_headers['Authorization'] = f'Bearer {self.api_endpoint_asset.api_key}'
             expected_body = self.api_endpoint_asset.body.replace('%query%', 'Test message')
 
